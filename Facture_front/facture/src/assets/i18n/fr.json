@@ -1,0 +1,71 @@
+{
+  "WELCOME": "Bienvenue à,",
+  "LOGIN_PROMPT": "Connectez-vous pour accéder à votre compte",
+  "EMAIL": "Adresse e-mail",
+  "PASSWORD": "Mot de passe",
+  "FORGOT_PASSWORD": "Mot de passe oublié ?",
+  "ERROR_MESSAGE": "Une erreur s'est produite. Veuillez réessayer.",
+  "LOGIN": "Connexion",
+  "SIGN_UP": "Pas encore de compte ? Inscrivez-vous",
+  "welcome": "Bienvenue,",
+  "description": "Il ne faut que quelques secondes pour créer votre compte",
+  "few_seconds": "quelques secondes",
+  "create_account": "pour créer votre compte",
+  "step1": "Étape 1 : Informations personnelles",
+  "firstName": "Prénom",
+  "lastName": "Nom de famille",
+  "email": "Adresse e-mail",
+  "phone": "Numéro de téléphone",
+  "password": "Mot de passe",
+  "next": "Suivant",
+  "alreadyHaveAccount": "Vous avez déjà un compte ?",
+  "login_here": "Connectez-vous ici",
+  "step2Title": "Étape 2 : Informations sur l'entreprise",
+  "companyName": "Nom de l'entreprise",
+  "companyAddress": "Adresse de l'entreprise",
+  "companyType": "Type d'entreprise",
+  "companyTypeOptions": {
+    "sarl": "SARL",
+    "sas": "SAS",
+    "eirl": "EIRL"
+  },
+  "companyLogo": "Logo de l'entreprise",
+  "previous": "Précédent",
+  "createAccount": "Créer un compte",
+  "errorMessage": "Une erreur s'est produite. Veuillez réessayer.",
+  "firstName_error": "Le prénom est requis",
+  "lastName_error": "Le nom de famille est requis",
+  "email_error": "L'adresse e-mail est invalide",
+  "phone_error": "Le numéro de téléphone est invalide",
+  "password_error": "Le mot de passe est requis",
+  "companyName_error": "Le nom de l'entreprise est requis",
+  "companyAddress_error": "L'adresse de l'entreprise est requise",
+  "companyType_error": "Le type d'entreprise est requis",
+  "logo_error": "Le logo de l'entreprise est requis",
+  "Partners List":"Liste des Partenaires",
+  "Name":"Nom",
+  "Status":"Statu",
+  "Actions":"Actes",
+  "It's a good day to simplify your invoicing!":"C'est un bon jour pour simplifier votre facturation!",
+  "Hello":"Bonjour",
+  "Create my first invoice":"Créez votre première facture",
+  "Transform your management with ease":"Transformez votre gestion avec facilité",
+  "New Invoice":"Nouvelle facture",
+  "No partner to validate":"Aucun partenaire pour valider",
+ 
+  
+    "MENU": {
+      "HOME": "Accueil",
+      "DASHBOARD": "Tableau de bord",
+      "FACTURE_EMPLOYE": "Facture Employé",
+      "SERVICE": "Service",
+      "LOGOUT": "Se Déconnecter",
+      "SETTINGS": "Paramètres",
+      "Partners":"Partenaires"
+    }
+  
+  
+  
+
+
+}

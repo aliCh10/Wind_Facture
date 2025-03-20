@@ -1,0 +1,190 @@
+<div class="h-100 bg-gradient">
+  <div class="d-flex h-100 justify-content-center align-items-center">
+    <div class="mx-auto app-login-box col-md-8">
+      <!-- Card Container -->
+      <div class="modal-dialog w-100">
+        <div class="modal-content shadow-lg rounded-lg bg-white p-4"
+             style="border-radius: 20px; box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);">
+          <div class="modal-body text-center">
+            <h4 class="font-weight-bold mb-2"
+            style="font-size: 2rem; color: #2c3e50; font-family: 'cursive', sans-serif;">
+          {{ 'WELCOME' | translate }}
+        </h4>
+        
+        
+          
+            <!-- Image Responsive -->
+            <img src="assets/images/LOGO-svg.webp" alt="Logo" style="max-width: 80%; height: auto;">
+
+
+            <!-- Stepper -->
+            <mat-horizontal-stepper [linear]="true" #stepper>
+              <!-- Step 1: Personal Information -->
+              <mat-step [stepControl]="personalInfo">
+                <ng-template matStepLabel>
+                  <span class="step-label">{{ 'step1' | translate }}</span>
+                </ng-template>
+
+                <form [formGroup]="personalInfo">
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>{{ 'firstName' | translate }}</mat-label>
+                        <input matInput placeholder="{{ 'firstName' | translate }}" formControlName="name">
+                        <mat-icon matSuffix>person</mat-icon>
+                        <mat-error *ngIf="personalInfo.get('name')?.invalid">
+                          {{ 'firstName_error' | translate }}
+                        </mat-error>
+                      </mat-form-field>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>{{ 'lastName' | translate }}</mat-label>
+                        <input matInput placeholder="{{ 'lastName' | translate }}" formControlName="secondName">
+                        <mat-icon matSuffix>person_outline</mat-icon>
+                        <mat-error *ngIf="personalInfo.get('secondName')?.invalid">
+                          {{ 'lastName_error' | translate }}
+                        </mat-error>
+                      </mat-form-field>
+                    </div>
+                  </div>
+
+                  <!-- Email -->
+                  <div class="mb-3">
+                    <mat-form-field appearance="outline" class="w-100">
+                      <mat-label>{{ 'email' | translate }}</mat-label>
+                      <input matInput type="email" placeholder="{{ 'email' | translate }}" formControlName="email">
+                      <mat-icon matSuffix>email</mat-icon>
+                      <mat-error *ngIf="personalInfo.get('email')?.invalid">
+                        {{ 'email_error' | translate }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <!-- Phone -->
+                  <div class="mb-3">
+                    <mat-form-field appearance="outline" class="w-100">
+                      <mat-label>{{ 'phone' | translate }}</mat-label>
+                      <input matInput type="tel" placeholder="{{ 'phone' | translate }}" formControlName="tel">
+                      <mat-icon matSuffix>phone</mat-icon>
+                      <mat-error *ngIf="personalInfo.get('tel')?.invalid">
+                        {{ 'phone_error' | translate }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <!-- Password -->
+                  <div class="mb-3">
+                    <mat-form-field appearance="outline" class="w-100">
+                      <mat-label>{{ 'password' | translate }}</mat-label>
+                      <input matInput type="password" placeholder="{{ 'password' | translate }}" formControlName="password">
+                      <mat-icon matSuffix>lock</mat-icon>
+                      <mat-error *ngIf="personalInfo.get('password')?.invalid">
+                        {{ 'password_error' | translate }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                  <!-- Next Button -->
+                  <div class="text-center mt-4">
+                    <button mat-raised-button color="primary" (click)="stepper.next()" [disabled]="personalInfo.invalid"
+                            class="w-100 py-2" style="background: linear-gradient(180deg, #2c3e50, #34495e);color: #FFD700;">
+                      {{ 'next' | translate }}
+                    </button>
+                  </div>
+
+                  <p class="mt-4 text-center">
+                    {{ 'alreadyHaveAccount' | translate }}
+                    <a routerLink="/signin" style="color: #2c3e50; font-weight: bold; text-decoration: none;">
+                      {{ 'login_here' | translate }}
+                    </a>
+                  </p>
+
+                </form>
+              </mat-step>
+
+              <!-- Step 2: Company Information -->
+              <mat-step [stepControl]="companyInfo">
+                <ng-template matStepLabel>
+                  <span class="step-label">{{ 'step2Title' | translate }}</span>
+                </ng-template>
+
+                <form [formGroup]="companyInfo">
+                  <!-- Company Name -->
+                  <div class="mb-3">
+                    <mat-form-field appearance="outline" class="w-100">
+                      <mat-label>{{ 'companyName' | translate }}</mat-label>
+                      <input matInput placeholder="{{ 'companyName' | translate }}" formControlName="companyName">
+                      <mat-icon matSuffix>business</mat-icon>
+                      <mat-error *ngIf="companyInfo.get('companyName')?.invalid">
+                        {{ 'companyName_error' | translate }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <!-- Company Address -->
+                  <div class="mb-3">
+                    <mat-form-field appearance="outline" class="w-100">
+                      <mat-label>{{ 'companyAddress' | translate }}</mat-label>
+                      <input matInput placeholder="{{ 'companyAddress' | translate }}" formControlName="address">
+                      <mat-icon matSuffix>location_on</mat-icon>
+                      <mat-error *ngIf="companyInfo.get('address')?.invalid">
+                        {{ 'companyAddress_error' | translate }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <!-- Company Type -->
+                  <div class="mb-3">
+                    <mat-form-field appearance="outline" class="w-100">
+                      <mat-label>{{ 'companyType' | translate }}</mat-label>
+                      <mat-select formControlName="companytype">
+                        <mat-option value="SARL">{{ 'companyTypeOptions.sarl' | translate }}</mat-option>
+                        <mat-option value="SAS">{{ 'companyTypeOptions.sas' | translate }}</mat-option>
+                        <mat-option value="EIRL">{{ 'companyTypeOptions.eirl' | translate }}</mat-option>
+                      </mat-select>
+                      <mat-icon matSuffix>work</mat-icon>
+                      <mat-error *ngIf="companyInfo.get('companytype')?.invalid">
+                        {{ 'companyType_error' | translate }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <!-- Logo Upload -->
+                  <div class="mb-3">
+                    <div class="file-input-container">
+                      <label class="file-input-label">
+                        <span>{{ 'companyLogo' | translate }}</span>
+                        <input type="file" (change)="onFileChange($event)" formControlName="logo" class="file-input">
+                        <mat-icon class="file-input-icon">image</mat-icon>
+                      </label>
+                      <mat-error *ngIf="companyInfo.get('logo')?.invalid">
+                        {{ 'logo_error' | translate }}
+                      </mat-error>
+                    </div>
+                  </div>
+
+                  <!-- Previous and Submit Buttons -->
+                  <div class="d-flex justify-content-between mt-4">
+                    <button mat-raised-button color="basic" (click)="stepper.previous()"
+                            class="w-45 py-2" style="background: linear-gradient(180deg, #2c3e50, #34495e);color:#FFD700">
+                      {{ 'previous' | translate }}
+                    </button>
+                    <button mat-raised-button color="primary" type="submit" [disabled]="companyInfo.invalid"
+                            class="w-45 py-2" style="background: linear-gradient(180deg, #2c3e50, #34495e);color: #FFD700;" (click)="onSubmit()">
+                      {{ 'createAccount' | translate }}
+                    </button>
+                  </div>
+                </form>
+              </mat-step>
+            </mat-horizontal-stepper>
+
+            <!-- Error Message -->
+            <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+              {{ 'errorMessage' | translate }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

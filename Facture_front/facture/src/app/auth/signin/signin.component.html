@@ -1,0 +1,48 @@
+<div class="h-100 bg-primary-light d-flex justify-content-center align-items-center">
+  <div class="mx-auto app-login-box col-md-6 col-lg-4 col-sm-8">
+    <div class="modal-dialog w-100">
+      <div class="modal-content shadow-lg rounded-lg bg-white p-5" style="border-radius: 15px;">
+        <div class="modal-body text-center">
+          <h4 class="font-weight-bold" style="font-size: 2rem; color: #2c3e50; font-family: 'Montserrat', sans-serif;">
+            {{ 'WELCOME' | translate }}
+          </h4>
+          <img src="assets/images/LOGO-svg.webp" alt="Logo" style="max-width: 80%; height: auto;">
+          
+          <p class="text-muted" style="font-size: 1rem; color: #7f8c8d;">
+            {{ 'LOGIN_PROMPT' | translate }}
+          </p>
+
+          <hr class="my-4" style="border-color: #ecf0f1;">
+          <form #loginForm="ngForm" (ngSubmit)="onLogin(loginForm)">
+            <div class="mb-4">
+              <input type="email" placeholder="{{ 'EMAIL' | translate }}" [(ngModel)]="email" name="email" required
+                     class="form-control rounded-pill border-secondary shadow-sm p-3">
+            </div>
+            <div class="mb-4">
+              <input type="password" placeholder="{{ 'PASSWORD' | translate }}" [(ngModel)]="password" name="password" required
+                     class="form-control rounded-pill border-secondary shadow-sm p-3">
+            </div>
+            <div class="text-right mb-3">
+              <!-- Forgot Password link with custom color -->
+              <a routerLink="/forgot-password" style="font-weight: bold; color: #2c3e50; ">{{ 'FORGOT_PASSWORD' | translate }}</a>
+            </div>
+            <div *ngIf="errorMessage" class="text-danger mb-3">
+              {{ 'ERROR_MESSAGE' | translate }}
+            </div>
+            <div class="modal-footer d-block text-center">
+              <button type="submit" class="btn btn-lg btn-pill w-100"
+                      style="background: linear-gradient(180deg, #2c3e50, #34495e); color: #FFD700; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);"
+                      [disabled]="!email || !password || loading">
+                {{ 'LOGIN' | translate }}
+              </button>
+            </div>
+          </form>
+          <p class="text-center mt-3">
+            <!-- Sign Up link with custom color -->
+            <a routerLink="/signup" style="font-weight: bold; color: #2c3e50;text-decoration: none; ">{{ 'SIGN_UP' | translate }}</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

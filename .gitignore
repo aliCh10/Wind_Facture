@@ -1,0 +1,27 @@
+# Ignorer tous les fichiers .yml dans tout le projet
+*.yml
+
+# Backend - Spring (Facture_back)
+/Facture_back/target/
+/Facture_back/.mvn/
+/Facture_back/.idea/
+/Facture_back/.classpath
+/Facture_back/.settings/
+/Facture_back/*.log
+/Facture_back/*.db
+
+# Frontend - Angular (Facture_front)
+/Facture_front/node_modules/
+/Facture_front/dist/
+/Facture_front/.angular/
+/Facture_front/.idea/
+/Facture_front/npm-debug.log
+/Facture_front/yarn-error.log
+
+# Système (Fichiers systèmes)
+.DS_Store
+Thumbs.db
+
+# Fichiers temporaires ou générés
+*.log
+*.tmp

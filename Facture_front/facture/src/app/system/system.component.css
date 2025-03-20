@@ -1,0 +1,163 @@
+.container{
+  display: flex;
+margin-left: 8rem;
+margin-top: 7rem;
+}
+.sidebar.collapsed ~ .content {
+  margin-left: 60px;
+  width: calc(100% - 60px);
+}
+.menu-item.active {
+  background-color: yellow;
+  color: black;
+}
+
+
+/* Titre du tableau */
+.table-title {
+  font-size: 28px;
+  font-weight: 600;
+  background: linear-gradient(to right, #FFD700, #ffcc00);
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-align: left;
+  margin-bottom: 20px;
+  padding: 12px 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  letter-spacing: 1px;
+  transition: all 0.3s ease-in-out;
+  line-height: 1.4;
+}
+
+/* Effet au survol du titre */
+.table-title:hover {
+  transform: scale(1.05);
+  color: #fff;
+  background: linear-gradient(to right, #ffd900, #f3d769);
+}
+
+/* Conteneur du tableau */
+.table-container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Tableau */
+.full-width-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+}
+
+/* En-têtes du tableau */
+th.mat-header-cell {
+  background: linear-gradient(to right, #6a11cb, #2575fc);
+  font-weight: 500;
+  text-align: left;
+  padding: 12px;
+  color: white;
+  border-bottom: 2px solid #ddd;
+}
+
+/* Effet de survol sur les en-têtes */
+th.mat-header-cell:hover {
+  background: linear-gradient(to right, #2575fc, #6a11cb);
+  cursor: pointer;
+}
+
+/* Cellules du tableau */
+td.mat-cell {
+  padding: 8px 12px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+/* Paginator */
+mat-paginator {
+  margin-top: 20px;
+  text-align: center;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Boutons d'action */
+.action-buttons {
+  display: flex;
+  gap: 5px;
+}
+
+/* Effet de survol sur les boutons d'action */
+.action-buttons button:hover {
+  transform: scale(1.1);
+}
+.empty-table-message {
+  text-align: center;
+  font-size: 18px;
+  color: #6b6969;
+  margin-top: 20px;
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .content {
+    margin-left: 0;
+    width: 100%;
+    padding: 10px;
+  }
+
+  .table-title {
+    font-size: 24px;
+    padding: 10px;
+  }
+
+  .table-container {
+    padding: 10px;
+  }
+
+  th.mat-header-cell,
+  td.mat-cell {
+    padding: 8px;
+  }
+
+  mat-paginator {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .table-title {
+    font-size: 20px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  /* Ajustement des cellules pour les très petits écrans */
+  td.mat-cell {
+    padding: 6px;
+    font-size: 14px;
+  }
+
+  th.mat-header-cell {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  /* Masquer certaines colonnes si nécessaire */
+  .mat-column-email,
+  .mat-column-companyName {
+    display: none;
+  }
+}

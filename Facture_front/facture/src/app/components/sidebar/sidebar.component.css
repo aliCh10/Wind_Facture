@@ -1,0 +1,177 @@
+/* Style général du sidebar */
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background: linear-gradient(180deg, #2c3e50, #34495e);
+  color: #FFD700;
+  padding: 20px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.6);
+  transition: width 0.3s ease-in-out, transform 0.3s ease-in-out;
+  overflow: hidden;
+}
+
+.sidebar.collapsed {
+  width: 60px;
+  padding: 10px;
+}
+
+/* Logo */
+.logo img {
+  width: 100%;
+  height: auto;
+  max-height: 120px;
+  object-fit: contain;
+  margin-bottom: 30px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.menu {
+  list-style-type: none;
+  padding: 0;
+  width: 100%;
+}
+
+/* Élément du menu */
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease-in-out;
+  color: white;
+  font-weight: 500;
+  position: relative;
+  margin-bottom: 10px;
+  background: rgba(255, 215, 0, 0.1);
+}
+.menu-item.active {
+  background: linear-gradient(90deg, #FFD700, #ffcc00);
+  color: black !important; /* Texte noir pour visibilité */
+  font-weight: bold; /* Texte en gras */
+  border-radius: 5px; /* Coins arrondis */
+}
+
+.sidebar.collapsed .menu-item {
+  justify-content: center;
+  padding: 10px;
+}
+
+/* Effet de survol des éléments du menu */
+.menu-item:hover {
+  background: linear-gradient(90deg, #FFD700, #ffcc00);
+  color: #1a1a1a;
+  transform: translateX(10px);
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+}
+
+.sidebar.collapsed .menu-item:hover {
+  transform: none;
+}
+
+/* Icônes */
+mat-icon {
+  font-size: 24px;
+  margin-right: 15px;
+  color: inherit;
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar.collapsed mat-icon {
+  margin-right: 0;
+}
+
+/* Labels */
+.menu-label {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.sidebar.collapsed .menu-label {
+  display: none;
+}
+
+/* Responsive Design pour plusieurs tailles d’écrans */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 200px;
+  }
+  .sidebar.collapsed {
+    width: 50px;
+  }
+  .logo img {
+    max-height: 100px;
+  }
+}
+
+@media (max-width: 600px) {
+  .sidebar {
+    width: 60px;
+    transform: translateX(-100%);
+  }
+  .sidebar.active {
+    transform: translateX(0);
+  }
+  .logo img {
+    max-height: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    padding: 10px;
+  }
+  .menu {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+  }
+  .menu-item {
+    flex-direction: column;
+    text-align: center;
+    padding: 5px;
+  }
+  .menu-label {
+    font-size: 12px;
+  }
+}/* Bouton hamburger pour les petits écrans */
+.hamburger {
+  display: none;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: transparent;
+  border: none;
+  color: #FFD700;
+  font-size: 30px;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+/* Afficher le hamburger uniquement sur les petits écrans */
+@media (max-width: 600px) {
+  .hamburger {
+    display: block;
+  }
+  .sidebar.active {
+    transform: translateX(0);  /* Ouvre le sidebar */
+  }
+  .sidebar {
+    transform: translateX(-100%);  /* Ferme le sidebar */
+  }
+}
+
+/* Ajouter des transitions pour l'ouverture et la fermeture du sidebar */
+.sidebar {
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Autres styles pour le sidebar déjà définis précédemment */

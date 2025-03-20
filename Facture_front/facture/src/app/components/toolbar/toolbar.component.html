@@ -1,0 +1,15 @@
+<div class="card">
+    <p-toolbar [style]="{ 'border-radius': '1.5rem', 'padding': '0.75rem 1.5rem' }">
+      <ng-template #start>
+        <!-- Search Input on the left side -->
+        <input type="text" placeholder="Rechercher dans mes factures" class="search-input" />
+      </ng-template>
+
+      <ng-template #end>
+        <div class="flex items-center gap-2">
+          <!-- Share Button on the right side -->
+          <p-button label="Nouvelle facture" severity="contrast" size="small" class="share-button" />
+        </div>
+      </ng-template>
+    </p-toolbar>
+  </div>

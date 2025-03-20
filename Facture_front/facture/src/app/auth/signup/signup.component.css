@@ -1,0 +1,132 @@
+/* Button Styling */
+.mat-raised-button {
+  border-radius: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(180deg, #FFD700, #F39C12);
+  color: white;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mat-raised-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.mat-raised-button:focus {
+  box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.5);
+}
+
+/* File Input Styling */
+.file-input-container {
+  position: relative;
+  width: 100%;
+  margin-top: 1rem;
+  border: #34495e;
+}
+
+.file-input-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border: 2px solid #5b5a58; /* Golden border */
+  border-radius: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #34495e; /* Dark grey text */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+/* Input Field Hover Styling */
+.mat-form-field .mat-input-element {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mat-form-field:hover .mat-input-element {
+  border-color: #FFD700 !important; /* Golden border on hover */
+  box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); /* Golden glow effect on hover */
+}
+
+
+
+.file-input-label:hover {
+  border: 2px solid #f39c12; /* Slightly darker golden color on hover */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.file-input-icon {
+  color: #6c757d;
+  margin-left: 0.5rem;
+  font-size: 1.4rem;
+}
+
+.file-input-label span {
+  flex-grow: 1;
+  text-align: left;
+}
+
+/* Form Field Styling */
+.mat-form-field .mat-label {
+  color: #34495e; /* Darker grey for labels */
+}
+
+.mat-form-field .mat-input-element {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mat-form-field.mat-focused .mat-input-element {
+  box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+.mat-form-field .mat-error {
+  color: #e74c3c; /* Red color for error messages */
+  font-size: 0.9rem;
+}
+
+/* Modal and Card Styling */
+.modal-content {
+  background: linear-gradient(135deg, #fff, #f9f9f9);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.modal-body {
+  padding: 2rem;
+}
+
+h4 {
+  color: #2c3e50;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+p {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+}
+
+/* Stepper Styling */
+.mat-horizontal-stepper-header {
+  background: #ecf0f1;
+}
+
+.mat-step-header {
+  color: #34495e;
+  font-weight: 600;
+}
+
+.mat-step-label {
+  font-size: 1.1rem;
+}
+
+.mat-step-content {
+  padding: 1.5rem;
+}
+
+.mat-stepper-horizontal-line {
+  background-color: #f0f0f0;
+  height: 2px;
+}

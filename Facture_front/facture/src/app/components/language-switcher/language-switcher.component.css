@@ -1,0 +1,38 @@
+.language-switcher {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .language-switcher button {
+    border: none;
+    border-radius: 50%; /* Boutons ronds */
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre légère pour donner un effet de flottement */
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s ease-in-out;
+  }
+  
+  .language-switcher button:hover {
+    transform: scale(1.1); /* Effet de zoom */
+  }
+  
+  .language-switcher .lang-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%; /* Rendre l'image ronde */
+    transition: filter 0.3s ease-in-out;
+  }
+  
+
+  
+  .language-switcher button:focus {
+    outline: none; /* Enlever le contour par défaut sur le bouton */
+  }
+  
