@@ -1,19 +1,26 @@
-.container{
+/* Container style for responsiveness */
+.container {
   display: flex;
-margin-left: 8rem;
-margin-top: 7rem;
+  flex-direction: column; /* Ensure the layout adjusts vertically on smaller screens */
+  margin-left: 8rem;
+  margin-top: 7rem;
+width:70rem;  
+max-width: 100%; /* Prevent overflow */
+  padding: 0 15px; /* Add padding for spacing */
+  box-sizing: border-box;
 }
+
 .sidebar.collapsed ~ .content {
   margin-left: 60px;
   width: calc(100% - 60px);
 }
+
 .menu-item.active {
   background-color: yellow;
   color: black;
 }
 
-
-/* Titre du tableau */
+/* Title of the table */
 .table-title {
   font-size: 28px;
   font-weight: 600;
@@ -31,14 +38,14 @@ margin-top: 7rem;
   line-height: 1.4;
 }
 
-/* Effet au survol du titre */
+/* Hover effect for the title */
 .table-title:hover {
   transform: scale(1.05);
   color: #fff;
   background: linear-gradient(to right, #ffd900, #f3d769);
 }
 
-/* Conteneur du tableau */
+/* Table container */
 .table-container {
   width: 100%;
   margin: 0 auto;
@@ -47,16 +54,17 @@ margin-top: 7rem;
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  margin-left: 4rem;
 }
 
-/* Tableau */
+/* Full width table */
 .full-width-table {
   width: 100%;
   border-collapse: collapse;
   background-color: #fff;
 }
 
-/* En-têtes du tableau */
+/* Table headers */
 th.mat-header-cell {
   background: linear-gradient(to right, #6a11cb, #2575fc);
   font-weight: 500;
@@ -66,13 +74,13 @@ th.mat-header-cell {
   border-bottom: 2px solid #ddd;
 }
 
-/* Effet de survol sur les en-têtes */
+/* Hover effect for table headers */
 th.mat-header-cell:hover {
   background: linear-gradient(to right, #2575fc, #6a11cb);
   cursor: pointer;
 }
 
-/* Cellules du tableau */
+/* Table cells */
 td.mat-cell {
   padding: 8px 12px;
   border-bottom: 1px solid #eee;
@@ -89,16 +97,18 @@ mat-paginator {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Boutons d'action */
+/* Action buttons */
 .action-buttons {
   display: flex;
   gap: 5px;
 }
 
-/* Effet de survol sur les boutons d'action */
+/* Hover effect for action buttons */
 .action-buttons button:hover {
   transform: scale(1.1);
 }
+
+/* Empty table message */
 .empty-table-message {
   text-align: center;
   font-size: 18px;
@@ -106,10 +116,9 @@ mat-paginator {
   margin-top: 20px;
 }
 
-
 /* Responsive Design */
-@media (max-width: 768px) {
-  .content {
+@media (max-width: 1024px) {
+  .container {
     margin-left: 0;
     width: 100%;
     padding: 10px;
@@ -134,6 +143,41 @@ mat-paginator {
   }
 }
 
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  .table-title {
+    font-size: 22px;
+    padding: 10px;
+  }
+
+  .table-container {
+    padding: 10px;
+  }
+
+  th.mat-header-cell,
+  td.mat-cell {
+    padding: 8px;
+  }
+
+  mat-paginator {
+    padding: 10px;
+  }
+
+  /* Adjust table layout */
+  .full-width-table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  th.mat-header-cell,
+  td.mat-cell {
+    font-size: 14px;
+  }
+}
+
 @media (max-width: 480px) {
   .table-title {
     font-size: 20px;
@@ -144,7 +188,7 @@ mat-paginator {
     gap: 3px;
   }
 
-  /* Ajustement des cellules pour les très petits écrans */
+  /* Adjust cells for very small screens */
   td.mat-cell {
     padding: 6px;
     font-size: 14px;
@@ -155,9 +199,13 @@ mat-paginator {
     font-size: 14px;
   }
 
-  /* Masquer certaines colonnes si nécessaire */
+  /* Hide certain columns if necessary */
   .mat-column-email,
   .mat-column-companyName {
     display: none;
+  }
+
+  .container {
+    width: 100%;
   }
 }

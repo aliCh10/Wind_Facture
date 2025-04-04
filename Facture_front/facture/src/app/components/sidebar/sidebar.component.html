@@ -3,10 +3,9 @@
     <img src="assets/images/LOGO-svg.webp" alt="Logo" />
   </div>
   <ul class="menu">
-    <div class="menu-item" *ngFor="let item of menuItems" [routerLink]="item.route" routerLinkActive="active">
+    <div class="menu-item" *ngFor="let item of menuItems" [routerLink]="item.route" routerLinkActive="active" (click)="selectMenuItem(item)">
       <mat-icon>{{ item.icon }}</mat-icon>
       <span>{{ getTranslation(item.label) }}</span>
     </div>
-    
   </ul>
 </div>

@@ -17,7 +17,6 @@ import com.example.auth_service.model.Role;
 
 
 import lombok.RequiredArgsConstructor;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -32,8 +31,9 @@ public class SecurityConfig implements WebMvcConfigurer {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/public/**").permitAll()
                 .requestMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
-                .requestMatchers("/public/system/**").hasAuthority("ROLE_" + Role.System.name()) // Ajoutez le préfixe ROLE_
-                .anyRequest().authenticated()
+                .requestMatchers("/system/**").hasAuthority("ROLE_System") // Accès réservé aux utilisateurs ayant le rôle SYSTEM
+                .requestMatchers("/employee/**").hasAuthority("ROLE_PARTNER") // Accès réservé aux utilisateurs ayant le rôle EMPLOYE
+                .anyRequest().authenticated() // Toutes les autres requêtes nécessitent une authentification
             )
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authenticationProvider)

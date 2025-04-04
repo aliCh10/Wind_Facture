@@ -3,19 +3,26 @@ import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from
 import { AuthService } from './AuthService';
 
 @Injectable({
-  providedIn: 'root' // Cela permet de s'assurer que le guard est disponible pour toute l'application
+  providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  // Méthode canActivate pour gérer l'accès aux routes protégées
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     if (this.authService.isAuthenticated()) {
-      return true; // L'utilisateur est authentifié, il peut accéder à la route
+      const role = localStorage.getItem('role');
+      const url = state.url;
+
+      if ((role === 'PARTNER' && url.includes('/system')) || (role === 'System' && url.includes('/home'))) {
+        this.router.navigate(['/404']);
+
+      }
+
+      return true;
     } else {
-      this.router.navigate(['/signin']); // Redirige vers la page de connexion si non authentifié
-      return false; // L'utilisateur ne peut pas accéder à la route
+      this.router.navigate(['/404']);
+      return false;
     }
   }
 }

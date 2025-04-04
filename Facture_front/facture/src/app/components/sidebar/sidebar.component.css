@@ -1,4 +1,3 @@
-/* Style général du sidebar */
 .sidebar {
   width: 250px;
   height: 100vh;
@@ -10,7 +9,7 @@
   top: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   box-shadow: 4px 0 15px rgba(0, 0, 0, 0.6);
   transition: width 0.3s ease-in-out, transform 0.3s ease-in-out;
   overflow: hidden;
@@ -21,7 +20,6 @@
   padding: 10px;
 }
 
-/* Logo */
 .logo img {
   width: 100%;
   height: auto;
@@ -35,9 +33,10 @@
   list-style-type: none;
   padding: 0;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Élément du menu */
 .menu-item {
   display: flex;
   align-items: center;
@@ -51,11 +50,12 @@
   margin-bottom: 10px;
   background: rgba(255, 215, 0, 0.1);
 }
+
 .menu-item.active {
   background: linear-gradient(90deg, #FFD700, #ffcc00);
-  color: black !important; /* Texte noir pour visibilité */
-  font-weight: bold; /* Texte en gras */
-  border-radius: 5px; /* Coins arrondis */
+  color: black !important;
+  font-weight: bold;
+  border-radius: 5px;
 }
 
 .sidebar.collapsed .menu-item {
@@ -63,7 +63,6 @@
   padding: 10px;
 }
 
-/* Effet de survol des éléments du menu */
 .menu-item:hover {
   background: linear-gradient(90deg, #FFD700, #ffcc00);
   color: #1a1a1a;
@@ -75,7 +74,6 @@
   transform: none;
 }
 
-/* Icônes */
 mat-icon {
   font-size: 24px;
   margin-right: 15px;
@@ -87,25 +85,12 @@ mat-icon {
   margin-right: 0;
 }
 
-/* Labels */
-.menu-label {
-  transition: opacity 0.3s ease-in-out;
-}
-
-.sidebar.collapsed .menu-label {
-  display: none;
-}
-
-/* Responsive Design pour plusieurs tailles d’écrans */
 @media (max-width: 1024px) {
   .sidebar {
     width: 200px;
   }
   .sidebar.collapsed {
     width: 50px;
-  }
-  .logo img {
-    max-height: 100px;
   }
 }
 
@@ -117,61 +102,23 @@ mat-icon {
   .sidebar.active {
     transform: translateX(0);
   }
-  .logo img {
-    max-height: 80px;
-  }
 }
 
 @media (max-width: 480px) {
   .sidebar {
-    width: 100%;
-    height: auto;
-    flex-direction: row;
+    width: 40%;
+    height: 100%;
+    flex-direction: column;
     padding: 10px;
   }
   .menu {
     display: flex;
-    justify-content: space-around;
+    flex-direction: column;
     width: 100%;
   }
   .menu-item {
-    flex-direction: column;
-    text-align: center;
-    padding: 5px;
-  }
-  .menu-label {
-    font-size: 12px;
-  }
-}/* Bouton hamburger pour les petits écrans */
-.hamburger {
-  display: none;
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  background: transparent;
-  border: none;
-  color: #FFD700;
-  font-size: 30px;
-  cursor: pointer;
-  z-index: 1001;
-}
-
-/* Afficher le hamburger uniquement sur les petits écrans */
-@media (max-width: 600px) {
-  .hamburger {
-    display: block;
-  }
-  .sidebar.active {
-    transform: translateX(0);  /* Ouvre le sidebar */
-  }
-  .sidebar {
-    transform: translateX(-100%);  /* Ferme le sidebar */
+    flex-direction: row;
+    text-align: left;
+    padding: 10px;
   }
 }
-
-/* Ajouter des transitions pour l'ouverture et la fermeture du sidebar */
-.sidebar {
-  transition: transform 0.3s ease-in-out;
-}
-
-/* Autres styles pour le sidebar déjà définis précédemment */

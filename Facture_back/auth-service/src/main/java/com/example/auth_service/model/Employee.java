@@ -19,10 +19,16 @@ public class Employee extends User {
     @NotBlank(message = "Department is required")
     private String department;
 
+    @ManyToOne
+    @JoinColumn(name = "partner_id", referencedColumnName = "id")
+    private User partnerUser;  
+
     public Employee(String name, String secondName, String email, String password, Role role,
-                    String jobTitle, String department) {
+                    String post, String department) {
         super(name, secondName, email, password, role);
-        this.post = jobTitle;
+        this.post = post;
         this.department = department;
     }
+
+
 }

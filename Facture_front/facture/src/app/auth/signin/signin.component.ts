@@ -16,6 +16,8 @@ export class SigninComponent {
   email: string = '';
   password: string = '';
   errorMessage: string = '';
+  passwordVisible: boolean = false; 
+
 
   constructor(
     private authService: AuthService, 
@@ -31,35 +33,51 @@ export class SigninComponent {
       return;
     }
     this.loading = true;
-
+  
     const credentials = {
       email: this.email,
       password: this.password
     };
-
+  
     this.authService.login(credentials).subscribe({
       next: (response) => {
+        console.log('Response:', response);
         if (response && response.token) {
           console.log('Token reçu:', response.token);
           localStorage.setItem('token', response.token);
-
+  
           if (response.role) {
             localStorage.setItem('role', response.role);
             console.log('Role enregistré dans localStorage:', response.role);
             this.toastr.success('Login successful!', 'Success');
-
+           
+  
             if (response.name) {
               localStorage.setItem('name', response.name);
               console.log('Nom dans localStorage:', localStorage.getItem('name'));
             }
-
-            // 🔹 Redirection selon le rôle
+            if (response.id) {
+              localStorage.setItem('partnerId', response.id.toString());
+              console.log('Partner ID stored in localStorage:', response.id);
+            }
+  
             if (response.role === 'System') {
-              this.router.navigate(['/system']);
+              this.router.navigate(['/system']).then(() => {
+                console.log('Navigated to /system');
+              });
             } else if (response.role === 'PARTNER') {
-              this.router.navigate(['/home']);
+              this.router.navigate(['/home']).then(() => {
+                console.log('Navigated to /home');
+              });
             } else {
-              this.router.navigate(['/signup']);
+              this.router.navigate(['/signup']).then(() => {
+                console.log('Navigated to /signup');
+              });
+              if(response.role === 'EMPLOYE') {
+                this.router.navigate(['/home']).then(() => {
+                  console.log('Navigated to /home');
+                });
+              }
             }
           } else {
             this.toastr.error('No role received from server.', 'Login Failed');
@@ -78,4 +96,5 @@ export class SigninComponent {
       }
     });
   }
+  
 }

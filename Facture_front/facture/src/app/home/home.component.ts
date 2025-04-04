@@ -8,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
   currentUserName: string | null = null;
+  
 
   ngOnInit(): void {
 

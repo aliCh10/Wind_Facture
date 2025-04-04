@@ -23,38 +23,45 @@ public class JwtauthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
-     @Override
-    protected void doFilterInternal( 
-       @NonNull HttpServletRequest request,
-       @NonNull HttpServletResponse response,
-       @NonNull FilterChain filterChain)
-     throws ServletException, IOException {
+    @Override
+    protected void doFilterInternal(
+        @NonNull HttpServletRequest request,
+        @NonNull HttpServletResponse response,
+        @NonNull FilterChain filterChain
+    ) throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String email;
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+        final Long tenantId; // Ajout du tenantId
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
-          }
-           jwt = authHeader.substring(7);
-	  email = jwtService.extractUsername(jwt);
-	  if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-		UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
-    logger.info("UserDetails found: {}");
+        }
 
-		if (jwtService.isTokenValid(jwt, userDetails)) {
+        jwt = authHeader.substring(7);
+        email = jwtService.extractUsername(jwt);
+        tenantId = jwtService.extractTenantId(jwt); 
 
-			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
+            logger.info("UserDetails found: {}");
 
-				userDetails, null, userDetails.getAuthorities()
+            if (jwtService.isTokenValid(jwt, userDetails)) {
+                // Créer un objet d'authentification avec le tenantId
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                    userDetails, null, userDetails.getAuthorities()
+                );
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-			);
-			authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-			SecurityContextHolder.getContext().setAuthentication(authToken);
-		}
-    
-	}
-	filterChain.doFilter(request, response);
-    
-}
+                // Ajouter le tenantId au contexte de sécurité
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+                request.setAttribute("tenantId", tenantId); 
+                System.out.println("Authorities: " + userDetails.getAuthorities());
+
+            }
+        }
+
+        filterChain.doFilter(request, response);  
+    }
 }

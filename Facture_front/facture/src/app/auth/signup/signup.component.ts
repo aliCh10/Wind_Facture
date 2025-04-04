@@ -13,12 +13,15 @@ import { ToastrService } from 'ngx-toastr';  // Importer ToastrService
 export class SignupComponent {
   signupForm: FormGroup;
   errorMessage: string = '';
+  hidePassword: boolean = true;
+
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+  
     
   )
   
@@ -107,5 +110,8 @@ export class SignupComponent {
 
       event.target.value = "";
     }
+  }
+  togglePasswordVisibility() {
+    this.hidePassword = !this.hidePassword;
   }
 }

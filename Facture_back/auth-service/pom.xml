@@ -6,7 +6,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.4.3</version>
-		<relativePath>../pom.xml</relativePath> <!-- Path to the parent POM -->
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<groupId>com.example</groupId>
 	<artifactId>auth-service</artifactId>

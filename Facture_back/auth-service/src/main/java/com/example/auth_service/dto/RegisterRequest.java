@@ -44,6 +44,10 @@ public class RegisterRequest {
     private String companytype;
 
      private MultipartFile logo;
+     private String post; 
+     private String department; 
+
+
 
    
 

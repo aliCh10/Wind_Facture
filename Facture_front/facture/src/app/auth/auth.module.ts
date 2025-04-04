@@ -31,7 +31,8 @@ import { TranslateModule } from '@ngx-translate/core';
     SignupComponent,
     VerifyCodeComponent,
     ForgotPasswordComponent,
-    ResetPasswordComponent
+    ResetPasswordComponent,
+    
   ],
   imports: [
     CommonModule,

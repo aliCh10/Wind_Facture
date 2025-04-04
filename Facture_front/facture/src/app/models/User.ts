@@ -31,3 +31,18 @@ export class Partenaire extends User {
     this.logo = data.logo; 
   }
 }
+export class Employee extends User {
+
+  post: string;
+
+  department: string;
+  secondName: string;
+
+
+  constructor(data: Partial<Employee> = {}) {
+    super(data);  // Assuming the User class is the base class
+    this.post = data.post ?? '';
+    this.department = data.department ?? '';
+    this.secondName = data.secondName ?? '';
+  }
+}

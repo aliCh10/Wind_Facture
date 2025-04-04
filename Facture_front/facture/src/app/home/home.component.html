@@ -1,34 +1,33 @@
-      <!-- Banner Card -->
-      <mat-card class="banner-card">
-        <mat-card-content class="banner-content">
-          <div class="banner-image">
-            <img src="assets/icons/tigre.png" alt="Mascotte" class="mascotte" />
-          </div>
-          <div class="banner-text">
-            <h1>{{ 'Hello' | translate }} {{ currentUserName }} 🐾</h1>
-            <p>{{ 'It\'s a good day to simplify your invoicing!' | translate }}</p>
-          </div>
-        </mat-card-content>
-      </mat-card>
-  
-      <!-- Create Invoice Card -->
-      <mat-card class="createfacture-card">
-        <mat-card-header>
-          <div class="header-content">
-            <mat-icon class="invoice-icon">receipt</mat-icon>
-            <div>
-              <mat-card-title>{{"Create my first invoice"|translate}}</mat-card-title>
-              <mat-card-subtitle>{{"Transform your management with ease"|translate}}</mat-card-subtitle>
-            </div>
-          </div>
-        </mat-card-header>
-      
-        <mat-card-content>
-            <button mat-raised-button color="primary" class="invoice-btn" [routerLink]="'/facture'">
-                <mat-icon>add_circle</mat-icon>{{"New Invoice"|translate}} 
-          </button>
-        </mat-card-content>
-      </mat-card>
-      
-    <router-outlet></router-outlet>
+<div class="home-content">
+  <!-- Banner Card -->
+  <mat-card class="banner-card">
+    <mat-card-content class="banner-content">
+      <div class="banner-image">
+        <img src="assets/icons/tigre.png" alt="Mascotte" class="mascotte" />
+      </div>
+      <div class="banner-text">
+        <h1>{{ 'Hello' | translate }} {{ currentUserName }} 🐾</h1>
+        <p>{{ 'It\'s a good day to simplify your invoicing!' | translate }}</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
 
+  <!-- Create Invoice Card -->
+  <mat-card class="createfacture-card">
+    <mat-card-header>
+      <div class="header-content">
+        <mat-icon class="invoice-icon">receipt</mat-icon>
+        <div>
+          <mat-card-title>{{"Create my first invoice" | translate}}</mat-card-title>
+          <mat-card-subtitle>{{"Transform your management with ease" | translate}}</mat-card-subtitle>
+        </div>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content>
+      <button mat-raised-button color="primary" class="invoice-btn" [routerLink]="'/facture'">
+        <mat-icon>add_circle</mat-icon>{{"New Invoice" | translate}}
+      </button>
+    </mat-card-content>
+  </mat-card>
+</div>

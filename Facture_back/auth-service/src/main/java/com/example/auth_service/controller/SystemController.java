@@ -19,8 +19,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @RestController
-@RequestMapping("/public/system")
-@PreAuthorize("hasAuthority('ROLE_SYSTEME')")
+@RequestMapping("/system")
+@PreAuthorize("hasAuthority('ROLE_System')")
 public class SystemController {
 
     private final SystemService systemService;

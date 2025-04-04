@@ -57,11 +57,12 @@
     "MENU": {
       "HOME": "Accueil",
       "DASHBOARD": "Tableau de bord",
-      "FACTURE_EMPLOYE": "Facture Employé",
+      "FACTURE": "Facture ",
       "SERVICE": "Service",
       "LOGOUT": "Se Déconnecter",
       "SETTINGS": "Paramètres",
-      "Partners":"Partenaires"
+      "Partners":"Partenaires",
+      "Employé":"Employé"
     }
   
   

@@ -5,23 +5,27 @@ import { SystemComponent } from './system/system.component';
 import { FactureComponent } from './facture/facture.component';
 import { AuthGuard } from './services/auth.guard';
 import { LayoutComponent } from './components/layout/layout.component';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component'; 
+import { ProfileComponent } from './profile/profile.component';
+import { EmployeeComponent } from './employee/employee.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: LayoutComponent,  
+    component: LayoutComponent,
     canActivate: [AuthGuard],
-    children: [  // Définition des sous-routes
-      { path: 'home', component: HomeComponent },
-      { path: 'facture', component: FactureComponent },
-      { path: 'system', component: SystemComponent },
-      { path: '', redirectTo: 'home', pathMatch: 'full' }
+    children: [ 
+      { path: 'home', component: HomeComponent,canActivate:[AuthGuard] },
+      { path: 'facture', component: FactureComponent ,canActivate:[AuthGuard] },
+      { path: 'system', component: SystemComponent ,canActivate:[AuthGuard] },
+      { path: 'profile',component: ProfileComponent},
+      { path: 'employee/:partnerId', component: EmployeeComponent },
+
     ]
   },
-  { path: '**', redirectTo: 'home' }
+  { path: '404', component: PageNotFoundComponent }, // Route spécifique pour la page non trouvée
+  { path: '**', redirectTo: '/404' } // Redirection vers la page non trouvée pour toutes les autres routes
 ];
-
-
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]

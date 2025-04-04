@@ -14,7 +14,7 @@ import Swal from 'sweetalert2';
 })
 export class SystemComponent implements OnInit, AfterViewInit {
 sidebarMenuItems = [
-  { icon: 'person', label: 'MENU.Partners', route: '/systeme' },
+  { icon: 'person', label: 'MENU.Partners', route: '/system' },
   { icon: 'settings', label: 'MENU.SETTINGS', route: '/settings' },
 ];
 
@@ -34,6 +34,7 @@ sidebarMenuItems = [
 
   ngOnInit(): void {
     this.getPartners();
+    console.log(this.partners)
   }
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
@@ -116,6 +117,15 @@ sidebarMenuItems = [
   onPageChange(event: any): void {
     this.dataSource.paginator!.pageIndex = event.pageIndex;
     this.dataSource.paginator!.pageSize = event.pageSize;
+  }
+  isNavCollapsed = false;
+
+  onNavCollapse() {
+    this.isNavCollapsed = !this.isNavCollapsed;
+  }
+
+  onNavCollapsedMob() {
+    console.log('Mobile collapse clicked');
   }
 
 

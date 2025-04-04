@@ -8,20 +8,28 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./language-switcher.component.css']
 })
 export class LanguageSwitcherComponent {
-  currentLanguage: string = 'fr';  // Langue par défaut
+  currentLanguage: string = 'fr';  // Default language
+  showLanguageMenu: boolean = false; // Track if the language menu is visible
 
   constructor(private translate: TranslateService) {
-    this.translate.setDefaultLang('fr');  // Définir le français comme langue par défaut
-    this.translate.use('fr');  // Appliquer la langue par défaut
+    this.translate.setDefaultLang('fr');  // Set default language to French
+    this.translate.use('fr');  // Apply the default language
   }
 
+  // Toggle language menu visibility
+  toggleLanguageMenu() {
+    this.showLanguageMenu = !this.showLanguageMenu;
+  }
+
+  // Switch language
   switchLanguage(language: string) {
-    this.translate.use(language);  // Applique la nouvelle langue
-    this.currentLanguage = language;  // Met à jour la langue actuelle
+    this.translate.use(language);  // Apply the new language
+    this.currentLanguage = language;  // Update the current language
+    this.showLanguageMenu = false;  // Close the language menu after selection
   }
 
+  // Get the current language flag
   getLanguageFlag(): string {
-    // Retourne le chemin de l'image en fonction de la langue actuelle
-    return this.currentLanguage === 'fr' ? 'assets/icons/france.png' : 'assets/icons/uk.png';
+    return this.currentLanguage === 'fr' ? 'assets/icons/square.png' : 'assets/icons/united-kingdom.png';
   }
 }

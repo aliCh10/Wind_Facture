@@ -5,6 +5,7 @@ import com.example.auth_service.Repository.UserRepository;
 import com.example.auth_service.config.JwtService;
 import com.example.auth_service.config.SystemConfig;
 import com.example.auth_service.dto.RegisterRequest;
+import com.example.auth_service.dto.UpdateProfileRequest;
 import com.example.auth_service.model.Partner;
 import com.example.auth_service.model.Role;
 import com.example.auth_service.model.User;
@@ -48,31 +49,31 @@ public class AuthenticationService {
     private SystemConfig systemConfig;
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$");
 
+
     public ResponseEntity<?> register(RegisterRequest request, MultipartFile file) {
         if (partnerRepository.findByEmail(request.getEmail()).isPresent()) {
             return ResponseEntity.badRequest().body(Map.of("message", "Email already in use"));
         }
-
+    
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             return ResponseEntity.badRequest().body(Map.of("message", "Email already in use"));
         }
-
-        // Validation de la complexité du mot de passe
+    
         if (!PASSWORD_PATTERN.matcher(request.getPassword()).matches()) {
             return ResponseEntity.badRequest().body(Map.of("message", "Password must contain at least 8 characters, one uppercase letter, and one special character."));
         }
-
+    
         String imageUrl = null;
         try {
-            // Téléchargement de l'image de logo (si présente)
             if (file != null && !file.isEmpty()) {
                 imageUrl = cloudinaryService.uploadImage(file);
             }
         } catch (IOException e) {
             return ResponseEntity.badRequest().body(Map.of("message", "Image upload failed"));
         }
-
-        // Création du partenaire
+    
+        Long tenantId = generateTenantId();
+    
         Partner partner = partnerRepository.save(Partner.builder()
             .name(request.getName())
             .secondName(request.getSecondName())
@@ -86,13 +87,14 @@ public class AuthenticationService {
             .enabled(false)
             .companyType(request.getCompanytype())
             .logoUrl(imageUrl)
-            .validated(false) 
+            .validated(false)
+            .tenantId(tenantId) 
             .build());
-            
+    
         String verificationCode = generateVerificationCode();
         partner.setVerificationCode(verificationCode);
         partnerRepository.save(partner);
-
+    
         try {
             emailService.sendVerificationCode(partner.getEmail(), verificationCode);
             log.info("📧 Email de vérification envoyé à {}", partner.getEmail());
@@ -100,62 +102,65 @@ public class AuthenticationService {
             log.error("❌ Erreur d'envoi de l'email de vérification à {} : {}", partner.getEmail(), e.getMessage());
             return ResponseEntity.badRequest().body(Map.of("message", "Error sending verification email"));
         }
-
+    
         return ResponseEntity.ok(Map.of("message", "Registration successful. Check your email for the verification code."));
     }
+    
+    private Long generateTenantId() {
+        return System.currentTimeMillis(); 
+    }
     @PostConstruct
-    public void createSystemAccount() {
-        String systemEmail = systemConfig.getEmail();
-        String systemPassword = systemConfig.getPassword();
-        String systemName = systemConfig.getName();
-        String systemSecondName = systemConfig.getSecondName();
+public void createSystemAccount() {
+    String systemEmail = systemConfig.getEmail();
+    String systemPassword = systemConfig.getPassword();
+    String systemName = systemConfig.getName();
+    String systemSecondName = systemConfig.getSecondName();
 
-        if (userRepository.findByEmail(systemEmail).isEmpty()) {
-            log.info("Creating system account...");
-            User systemUser = User.builder()
-                    .name(systemName)
-                    .secondName(systemSecondName)
-                    .email(systemEmail)
-                    .password(passwordEncoder.encode(systemPassword))  
-                    .role(Role.System)
-                    .enabled(true)
-                    .validated(true)
-                    .build();
+    if (userRepository.findByEmail(systemEmail).isEmpty()) {
+        log.info("Creating system account...");
+        User systemUser = User.builder()
+                .name(systemName)
+                .secondName(systemSecondName)
+                .email(systemEmail)
+                .password(passwordEncoder.encode(systemPassword))  
+                .role(Role.System)
+                .enabled(true)
+                .validated(true)
+                .tenantId(0L) 
+                .build();
 
-            userRepository.save(systemUser);
+        userRepository.save(systemUser);
 
-            String jwtToken = jwtService.generateToken(systemUser);
-            Token token = Token.builder()
-                    .user(systemUser)
-                    .token(jwtToken)
-                    .tokenType(TokenType.BEARER)
-                    .expired(false)
-                    .revoked(false)
-                    .build();
-            tokenRepository.save(token);
+        String jwtToken = jwtService.generateToken(systemUser, systemUser.getTenantId());
+        Token token = Token.builder()
+                .user(systemUser)
+                .token(jwtToken)
+                .tokenType(TokenType.BEARER)
+                .expired(false)
+                .revoked(false)
+                .build();
+        tokenRepository.save(token);
 
-            log.info("✅ System account created successfully!");
-            log.info("🔑 Token: {}", jwtToken);
-        } else {
-            log.info("✅ System account already exists.");
-        }
+        log.info("✅ System account created successfully!");
+        log.info("🔑 Token: {}", jwtToken);
+    } else {
+        log.info("✅ System account already exists.");
     }
-  
+}
 
-    public ResponseEntity<?> verifyCode(String email, String code) {
-        return userRepository.findByEmail(email)
-                .filter(user -> Objects.equals(user.getVerificationCode(), code))
-                .map(user -> {
-                    user.setEnabled(true);
-                    user.setVerificationCode(null);
-                    userRepository.save(user);
 
-                    String jwtToken = generateAndSaveToken(user);
-                    return ResponseEntity.ok(Map.of("token", jwtToken));
-                })
-                .orElseGet(() -> ResponseEntity.badRequest().body(Map.of("message", "Invalid verification code")));
-    }
+public ResponseEntity<?> verifyCode(String email, String code) {
+    return userRepository.findByEmail(email)
+            .filter(user -> Objects.equals(user.getVerificationCode(), code))
+            .map(user -> {
+                user.setEnabled(true); 
+                user.setVerificationCode(null); 
+                userRepository.save(user);
 
+                return ResponseEntity.ok(Map.of("message", "Account verified successfully. Please log in."));
+            })
+            .orElseGet(() -> ResponseEntity.badRequest().body(Map.of("message", "Invalid verification code")));
+}
     public ResponseEntity<?> authenticate(String email, String password) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -167,11 +172,16 @@ public class AuthenticationService {
     
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
     
-        String jwtToken = generateAndSaveToken(user);
-        return ResponseEntity.ok(Map.of("token", jwtToken,
-        "role", user.getRole(),
-        "name", user.getName(),
-        "secondName", user.getSecondName()
+        Long tenantId = user.getTenantId(); 
+        String jwtToken = jwtService.generateToken(user, tenantId);
+    
+        return ResponseEntity.ok(Map.of(
+            "token", jwtToken,
+            "role", user.getRole(),
+            "name", user.getName(),
+            "secondName", user.getSecondName(),
+            "tenantId", tenantId ,
+            "id", user.getId()  
         ));
     }
     
@@ -218,17 +228,19 @@ public class AuthenticationService {
     }
 
     private String generateAndSaveToken(User user) {
-        String jwtToken = jwtService.generateToken(user);
-                revokeAllUserTokens(user);
+        Long tenantId = user.getTenantId(); // Récupérer le tenantId de l'utilisateur
+        String jwtToken = jwtService.generateToken(user, tenantId); // Générer le token avec le tenantId
+    
+        revokeAllUserTokens(user);
         Token token = Token.builder()
-                .user(user)
-                .token(jwtToken)
-                .tokenType(TokenType.BEARER)
-                .expired(false)
-                .revoked(false)
-                .build();
+            .user(user)
+            .token(jwtToken)
+            .tokenType(TokenType.BEARER)
+            .expired(false)
+            .revoked(false)
+            .build();
         tokenRepository.save(token);
-
+    
         return jwtToken;
     }
     private void revokeAllUserTokens(User user) {
@@ -239,4 +251,30 @@ public class AuthenticationService {
                     tokenRepository.save(token);
                 });
     }
+    public ResponseEntity<?> updateProfile(Long userId, UpdateProfileRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User  not found"));
+    
+        if (request.getName() != null) {
+            user.setName(request.getName());
+        }
+        if (request.getSecondName() != null) {
+            user.setSecondName(request.getSecondName());
+        }
+        if (request.getTel() != null) {
+            user.setTel(request.getTel());
+        }
+        if (request.getEmail() != null) {
+            user.setEmail(request.getEmail());
+            
+        }
+       
+       
+        userRepository.save(user);
+    
+        return ResponseEntity.ok(Map.of("message", "Profile updated successfully"));
+    }
+    
+
+    
 }

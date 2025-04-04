@@ -43,8 +43,10 @@ public class SystemService {
             .email(partner.getEmail())
             .password(partner.getPassword())
             .role(Role.PARTNER) 
+            .tel(partner.getTel())
             .enabled(true) 
             .validated(true)
+            .tenantId(partner.getTenantId()) 
             .build();
     
         userRepository.save(newUser);
@@ -52,9 +54,7 @@ public class SystemService {
         partnerRepository.delete(partner);
     
         return "Partenaire validé et déplacé vers la table Users avec succès"; 
-    }
-    
-    public String deletePartner(Integer partnerId) {
+    }    public String deletePartner(Integer partnerId) {
         Optional<Partner> partnerOpt = partnerRepository.findById(partnerId);
         if (partnerOpt.isEmpty()) {
             return "Partenaire non trouvé";  
@@ -63,13 +63,9 @@ public class SystemService {
         Partner partner = partnerOpt.get();
         
     
-
-        // Ensure the partner is not validated before deletion
         if (partner.isValidated()) { 
             return "Ce partenaire a déjà été validé et transféré vers la table Users. Il ne peut pas être supprimé.";
         }
-
-        // Perform deletion
         partnerRepository.delete(partner);
         return "Partenaire supprimé avec succès";
     }

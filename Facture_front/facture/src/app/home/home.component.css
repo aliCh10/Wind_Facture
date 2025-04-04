@@ -1,176 +1,179 @@
+/* Banner Card */
+.banner-card {
+  background: #FFD700; /* Jaune vif */
+  padding: 2rem; /* Augmenter l'espace interne */
+  border-radius: 0.625rem;
+  box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.2);
+  margin: 6rem 0 5rem 10rem; /* Augmenter l'espace à gauche et en bas */
+  width: 90%; /* Rendre la carte plus large */
+  max-width: 1200px; /* Limiter la largeur maximale */
+  margin-bottom: 2rem; /* Augmenter l'espace entre les cartes */
+}
 
-  /* Banner Card */
-  .banner-card {
-    background: #FFD700; /* Jaune vif */
-    padding: 1rem;
-    border-radius: 0.625rem;
-    box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.2);
-    margin: 6rem 0 5rem 8rem; /* Move the card slightly to the right and down */
-    width: 100%;
-    margin-bottom: 1rem; /* Ajoute un espace entre les deux cartes */
-  }
-  .banner-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.3);
-    background: #FFC107; /* Couleur légèrement plus foncée */
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background 0.3s ease-in-out;
-  }
-  
-  .banner-content {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 1.5rem;
-  }
-  
-  .banner-image {
-    width: 4rem;
-  }
-  
-  .mascotte {
-    width: 100%;
-    height: auto;
-  }
-  
-  .banner-text h1 {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #5a4100;
-    margin: 0;
-  }
-  
-  .banner-text p {
-    font-size: 1.2rem;
-    color: #6b4f00;
-    margin-top: 0.625rem;
-  }
-  
- /* Create Invoice Card - Amélioré */
+.banner-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.3);
+  background: #FFC107; /* Couleur légèrement plus foncée */
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background 0.3s ease-in-out;
+}
+
+.banner-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2rem; /* Augmenter l'espace entre les éléments */
+}
+
+.banner-image {
+  width: 6rem; /* Agrandir l'image */
+}
+
+.mascotte {
+  width: 100%;
+  height: auto;
+}
+
+.banner-text h1 {
+  font-size: 2rem; /* Augmenter la taille du titre */
+  font-weight: bold;
+  color: #5a4100;
+  margin: 0;
+}
+
+.banner-text p {
+  font-size: 1.4rem; /* Augmenter la taille du texte */
+  color: #6b4f00;
+  margin-top: 1rem;
+}
+
+/* Create Invoice Card - Amélioré */
 .createfacture-card {
-    width: 100%;
-    margin: 2rem 0 5rem 8rem; /* Move the card slightly to the right and down */
-    border-radius: 1rem;
-    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-    background: linear-gradient(135deg, #f5f7fa, #d4d9f2);
-    overflow: hidden;
-    padding: 1rem;
-  }
-  
-  .createfacture-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.3);
-    background: linear-gradient(135deg, #e0e5ec, #a6b1e1);
-  }
-  
-  .header-content {
-    display: flex;
-    align-items: center;
-    padding: 1rem;
-  }
-  
-  .invoice-icon {
-    font-size: 2.5rem;
-    color: #4CAF50;
-    margin-right: 1rem;
-  }
-  
-  mat-card-title {
-    font-size: 1.6rem;
-    font-weight: bold;
-    color: #2c3e50;
-  }
-  
-  mat-card-subtitle {
-    font-size: 1rem;
-    color: #555;
-  }
-  
-  /* Bouton stylisé */
-  .invoice-btn {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    font-weight: bold;
-    border-radius: 2rem;
-    background: #4CAF50;
-    color: white;
-    transition: all 0.3s ease-in-out;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .invoice-btn mat-icon {
-    font-size: 1.5rem;
-  }
-  
-  .invoice-btn:hover {
-    background: #388E3C;
-    transform: scale(1.05);
-  }
-  
+  width: 90%; /* Rendre la carte plus large */
+  max-width: 1200px; /* Limiter la largeur maximale */
+  margin: 3rem 0 5rem 10rem; /* Espaces plus grands autour de la carte */
+  border-radius: 1rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  background: linear-gradient(135deg, #f5f7fa, #d4d9f2);
+  overflow: hidden;
+  padding: 1.5rem; /* Plus d'espace à l'intérieur */
+}
+
+.createfacture-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #e0e5ec, #a6b1e1);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+}
+
+.invoice-icon {
+  font-size: 3rem; /* Agrandir l'icône */
+  color: #4CAF50;
+  margin-right: 1.5rem; /* Augmenter l'espacement */
+}
+
+mat-card-title {
+  font-size: 1.8rem; /* Augmenter la taille du titre */
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+mat-card-subtitle {
+  font-size: 1.2rem; /* Augmenter la taille du sous-titre */
+  color: #555;
+}
+
+/* Bouton stylisé */
+.invoice-btn {
+  display: flex;
+  align-items: center;
+  padding: 1rem 2rem; /* Augmenter la taille du bouton */
+  font-size: 1.2rem; /* Augmenter la taille du texte du bouton */
+  font-weight: bold;
+  border-radius: 2rem;
+  background: #4CAF50;
+  color: white;
+  transition: all 0.3s ease-in-out;
+  border: none;
+  cursor: pointer;
+}
+
+.invoice-btn mat-icon {
+  font-size: 1.8rem; /* Agrandir l'icône dans le bouton */
+}
+
+.invoice-btn:hover {
+  background: #388E3C;
+  transform: scale(1.05);
+}
+
 /* Responsive styles */
 @media (max-width: 768px) {
-    .banner-card {
-        margin: 2rem 0; /* Center the card on smaller screens */
-    }
-  
-    .banner-content {
-        flex-direction: column;
-        align-items: center;
-    }
+  .banner-card {
+    margin: 3rem 0; 
+    
+  }
 
-    .banner-image {
-        width: 5rem;
-    }
+  .banner-content {
+    flex-direction: column;
+    align-items: center;
+  }
 
-    .banner-text h1 {
-        font-size: 1.5rem;
-    }
+  .banner-image {
+    width: 7rem; /* Agrandir l'image */
+  }
 
-    .banner-text p {
-        font-size: 1rem;
-    }
+  .banner-text h1 {
+    font-size: 1.8rem; /* Agrandir le titre */
+  }
 
-    .createfacture-card {
-        margin: 2rem 0;
-        padding: 1rem;
-    }
+  .banner-text p {
+    font-size: 1.2rem; /* Agrandir le texte */
+  }
 
-    .header-content {
-        flex-direction: column;
-        align-items: center;
-    }
+  .createfacture-card {
+    margin: 3rem 0;
+    padding: 1.5rem;
+  }
 
-    .invoice-btn {
-        width: 100%;
-        padding: 1rem 0;
-        font-size: 1.2rem;
-    }
+  .header-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .invoice-btn {
+    width: 100%;
+    padding: 1.2rem 0;
+    font-size: 1.4rem;
+  }
 }
 
 /* Small devices (phones) */
 @media (max-width: 480px) {
-    .banner-card {
-        margin: 1rem 0; /* Less margin on small screens */
-    }
-    
-    .banner-text h1 {
-        font-size: 1.2rem;
-    }
+  .banner-card {
+    margin: 5em 0;
+  }
 
-    .banner-text p {
-        font-size: 0.9rem;
-    }
+  .banner-text h1 {
+    font-size: 1.4rem; /* Agrandir le titre */
+  }
 
-    .createfacture-card {
-        margin: 1rem 0;
-        padding: 0.5rem;
-    }
+  .banner-text p {
+    font-size: 1.1rem; /* Agrandir le texte */
+  }
 
-    .invoice-btn {
-        font-size: 1.1rem;
-        padding: 0.8rem 1.2rem;
-    }
+  .createfacture-card {
+    margin: 1.5rem 0;
+    padding: 1rem;
+  }
+
+  .invoice-btn {
+    font-size: 1.2rem;
+    padding: 1rem 1.5rem; /* Agrandir le bouton */
+  }
 }

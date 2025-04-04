@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import {  NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { HttpClient, HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
 
@@ -34,15 +34,24 @@ import { InputTextModule } from 'primeng/inputtext';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { DrawerModule } from 'primeng/drawer';
-import { MatCard, MatCardModule } from '@angular/material/card';
+import { MatCardModule } from '@angular/material/card';
 import { NavComponent } from './components/nav/nav.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FactureComponent } from './facture/facture.component';
 import { LayoutComponent } from './components/layout/layout.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ToolbarModule } from 'primeng/toolbar';
 import { SplitButtonModule } from 'primeng/splitbutton';
-import { ToolbarComponent } from './components/toolbar/toolbar.component';  // Import du module SplitButton
+import { ToolbarComponent } from './components/toolbar/toolbar.component';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { ProfileComponent } from './profile/profile.component';
+import { MatInputModule } from '@angular/material/input';
+import { EmployeeComponent } from './employee/employee.component';
+import { DynamicModalComponent } from './components/dynamic-modal/dynamic-modal.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { PhonePipe } from './shared/pipes/phone.pipe';
+import { UpdateEmployeeModalComponent } from './components/update-employee-modal/update-employee-modal.component';
 
 
 
@@ -64,9 +73,16 @@ export function HttpLoaderFactory(http: HttpClient) {
     FactureComponent,
     LayoutComponent,
     ToolbarComponent,
+    PageNotFoundComponent,
+    ProfileComponent,
+    EmployeeComponent,
+    DynamicModalComponent,
+    PhonePipe,
+    UpdateEmployeeModalComponent  
   ],
-
   imports: [
+    MatInputModule,        
+    ReactiveFormsModule,
     AuthModule,
     BrowserModule,
     BrowserAnimationsModule,
@@ -74,22 +90,22 @@ export function HttpLoaderFactory(http: HttpClient) {
     HttpClientModule,
     MatButtonModule,
     MatListModule,
+    MatTooltipModule,
     MatPaginatorModule,
     MatSidenavModule,
     MatSnackBarModule,
     MatFormFieldModule,
     MatIconModule,
     MatCardModule,
-    MatTableModule,    // Module pour le tableau
+    MatTableModule,
     MatToolbarModule,
-    ToolbarModule,
-    MatPaginatorModule, // Module pour la pagination du tableau
     MatSortModule,
+    MatDialogModule,
+    ToolbarModule,
     SplitButtonModule,
-    
     DrawerModule,
-    FontAwesomeModule, 
-    FormsModule,     // Module pour trier les colonnes du tableau
+    FontAwesomeModule,
+    FormsModule,
     ToastrModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
@@ -98,8 +114,6 @@ export function HttpLoaderFactory(http: HttpClient) {
         deps: [HttpClient]
       }
     }),
-
-    // Modules PrimeNG
     TableModule,
     ButtonModule,
     TagModule,
@@ -110,7 +124,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   providers: [
     provideClientHydration(withEventReplay()),
     provideAnimationsAsync(),
-    provideHttpClient(withFetch())  // Activation de 'fetch'
+    provideHttpClient(withFetch())
   ],
   bootstrap: [AppComponent]
 })

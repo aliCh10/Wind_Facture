@@ -1,0 +1,22 @@
+<nav class="modern-navbar">
+  <div class="navbar-container">
+    <div class="navbar-brand">
+    </div>
+
+    <div class="navbar-right">
+      <div class="language-switcher-container">
+        <app-language-switcher></app-language-switcher>
+      </div>
+      <div class="user-account" (click)="toggleUserDropdown()">
+        <img [src]="userAvatar" alt="User" class="user-avatar">
+        <span class="user-name" *ngIf="!isSidebarCollapsed">{{userName}}</span>
+        <div class="user-dropdown" *ngIf="showUserDropdown">
+          <a routerLink="" class="dropdown-item"><i class="fas fa-user"></i> Profile</a>
+            <a routerLink="/profile" class="dropdown-item"><i class="fas fa-cog"></i> Settings <i class="fas fa-chevron-right dropdown-submenu-icon"></i></a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" (click)="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

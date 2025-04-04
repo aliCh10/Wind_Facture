@@ -1,8 +1,11 @@
 <div class="layout">
-    <app-sidebar [menuItems]="sidebarMenuItems"></app-sidebar>
-  
-    <div class="main-content">
-      <router-outlet></router-outlet>
-    </div>
+  <app-nav [isSidebarCollapsed]="!isSidebarActive">
+
+  </app-nav>
+
+  <button class="hamburger" (click)="toggleSidebar()">&#9776;</button>
+  <app-sidebar [isSidebarActive]="isSidebarActive" [isMobile]="isMobile" [menuItems]="sidebarMenuItems"></app-sidebar>
+  <div class="main-content" [class.collapsed]="!isSidebarActive">
+    <router-outlet></router-outlet>
   </div>
-  
+</div>

@@ -2,6 +2,7 @@ package com.example.auth_service.controller;
 
 import com.example.auth_service.dto.AuthentificationRequest;
 import com.example.auth_service.dto.RegisterRequest;
+import com.example.auth_service.dto.UpdateProfileRequest;
 import com.example.auth_service.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,5 +49,11 @@ public ResponseEntity<?> authenticate(@RequestBody AuthentificationRequest authe
                                            @RequestParam String newPassword) {
         return authenticationService.resetPassword(email, code, newPassword);
     }
+       @PutMapping("/profile")
+    public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileRequest request, @RequestParam Long userId) {
+        return authenticationService.updateProfile(userId, request);
+    }
+    
+    
 
 }

@@ -1,14 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private apiUrl = 'http://localhost:8090/public'; 
+  private logo: File | null = null; // Add this line
 
-  constructor(private http: HttpClient) {}
+
+  constructor(private http: HttpClient,private router: Router) {}
 
   register(user: FormData): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, user);
@@ -20,12 +23,13 @@ export class AuthService {
   }
 
   login(credentials: { email: string, password: string }) {
-    return this.http.post<{ token: string; role: string; name?: string }>(
+    return this.http.post<{ token: string; role: string; name?: string ; id?: number}>(
       `${this.apiUrl}/login`,
       credentials
     ).pipe(
       tap(response => {
-        console.log('🔍 Réponse API:', response); // Vérifiez si name est présent
+        console.log(response);
+        console.log('🔍 Réponse API:', response); 
         if (response.token) {
           localStorage.setItem('token', response.token);
         }
@@ -52,7 +56,13 @@ export class AuthService {
   }
   
   
-  
+  setLogo(logo: File | null): void {
+    this.logo = logo;
+  }
+
+  getLogo(): File | null {
+    return this.logo;
+  }
 
   forgotPassword(email: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/forgot-password?email=${email}`, {});
@@ -79,7 +89,17 @@ export class AuthService {
       const token = localStorage.getItem('token');
       return !!token; 
     }
-    return false; // Retourner false si exécuté côté serveur
+    return false; 
   }
+  logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    localStorage.removeItem('name');
+
+    this.router.navigate(['/signin']);
+
+    console.log('🔴 Utilisateur déconnecté');
+  }
+  
   
 }

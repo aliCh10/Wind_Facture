@@ -56,11 +56,13 @@
     "MENU": {
       "HOME": "Home",
       "DASHBOARD": "Dashboard",
-      "FACTURE_EMPLOYE": "Employee Invoice",
+      "FACTURE": " Invoice",
       "SERVICE": "Service",
       "LOGOUT": "Logout",
      "SETTINGS": "Settings",
-     "Partners":"Partners"
+     "Partners":"Partners",
+     "Employé":"Employee"
+
     }
   
   
