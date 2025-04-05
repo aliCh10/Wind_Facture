@@ -8,6 +8,8 @@ import { LayoutComponent } from './components/layout/layout.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component'; 
 import { ProfileComponent } from './profile/profile.component';
 import { EmployeeComponent } from './employee/employee.component';
+import { ClientsComponent } from './clients/clients.component';
+import { ServComponent } from './serv/serv.component';
 
 const routes: Routes = [
   {
@@ -20,11 +22,14 @@ const routes: Routes = [
       { path: 'system', component: SystemComponent ,canActivate:[AuthGuard] },
       { path: 'profile',component: ProfileComponent},
       { path: 'employee/:partnerId', component: EmployeeComponent },
+      {path: 'clients' ,component: ClientsComponent,canActivate:[AuthGuard]},
+      {path: 'services' ,component: ServComponent,canActivate:[AuthGuard]},
+
 
     ]
   },
-  { path: '404', component: PageNotFoundComponent }, // Route spécifique pour la page non trouvée
-  { path: '**', redirectTo: '/404' } // Redirection vers la page non trouvée pour toutes les autres routes
+  { path: '404', component: PageNotFoundComponent }, 
+  { path: '**', redirectTo: '/404' } 
 ];
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

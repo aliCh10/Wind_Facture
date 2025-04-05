@@ -62,7 +62,9 @@
       "LOGOUT": "Se Déconnecter",
       "SETTINGS": "Paramètres",
       "Partners":"Partenaires",
-      "Employé":"Employé"
+      "Employé":"Employé",
+      "client":"client",
+      "SERVICES": "Services"
     }
   
   

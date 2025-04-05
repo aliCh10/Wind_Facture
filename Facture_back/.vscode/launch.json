@@ -72,6 +72,16 @@
             "projectName": "employee-service",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ClientServiceApplication<Client-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.example.Client_service.ClientServiceApplication",
+            "projectName": "Client-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

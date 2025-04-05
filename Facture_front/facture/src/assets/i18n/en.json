@@ -61,7 +61,10 @@
       "LOGOUT": "Logout",
      "SETTINGS": "Settings",
      "Partners":"Partners",
-     "Employé":"Employee"
+     "Employé":"Employee",
+     "client":"client",
+     "SERVICES": "Services"
+
 
     }
   

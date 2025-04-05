@@ -1,4 +1,4 @@
-import {  NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { HttpClient, HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
 
@@ -21,10 +21,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTableModule } from '@angular/material/table';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatPaginatorModule } from '@angular/material/paginator'; // Pour pagination
-import { MatSortModule } from '@angular/material/sort';  // Pour tri
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
 import { MatFormFieldModule } from '@angular/material/form-field';
-
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // Correct import
 
 // Modules PrimeNG
 import { TableModule } from 'primeng/table';
@@ -52,12 +52,10 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { PhonePipe } from './shared/pipes/phone.pipe';
 import { UpdateEmployeeModalComponent } from './components/update-employee-modal/update-employee-modal.component';
+import { ClientsComponent } from './clients/clients.component';
+import { UpdateClientModalComponent } from './components/update-client-modal/update-client-modal.component';
+import { ServComponent } from './serv/serv.component';
 
-
-
-
-
-// Fonction pour charger les traductions
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -78,8 +76,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     EmployeeComponent,
     DynamicModalComponent,
     PhonePipe,
-    UpdateEmployeeModalComponent  
-  ],
+    UpdateEmployeeModalComponent,
+    ClientsComponent,
+    UpdateClientModalComponent,
+    ServComponent, ],
   imports: [
     MatInputModule,        
     ReactiveFormsModule,
@@ -101,6 +101,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatToolbarModule,
     MatSortModule,
     MatDialogModule,
+    MatProgressSpinnerModule, // Correctly added to imports
     ToolbarModule,
     SplitButtonModule,
     DrawerModule,

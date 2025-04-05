@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/AuthService';
-
 @Component({
   selector: 'app-layout',
   standalone: false,
@@ -13,12 +12,12 @@ export class LayoutComponent implements OnInit {
 
   partnerId: number | null = null;
 
-  // Declare the sidebar menu items
   sidebarMenuItems = [
     { icon: 'home', label: 'MENU.HOME', route: '/home' },
-    { icon: 'assignment', label: 'MENU.FACTURE', route: '/facture' },
-    { icon: 'local_offer', label: 'MENU.Employé', route: '' },  // We'll update this dynamically
-    { icon: 'dashboard', label: 'MENU.DASHBOARD', route: '/dashboard' },
+    { icon: 'receipt_long', label: 'MENU.FACTURE', route: '/facture' },  
+    { icon: 'people', label: 'MENU.Employé', route: '' },  
+    { icon: 'description', label: 'MENU.SERVICES', route: '/services' }, // Changé ici
+    { icon: 'person', label: 'MENU.client', route: '/clients' },  
   ];
 
   constructor(private authService: AuthService) {}
@@ -26,11 +25,11 @@ export class LayoutComponent implements OnInit {
   ngOnInit(): void {
     const storedPartnerId = localStorage.getItem('partnerId');
     if (storedPartnerId) {
-      this.partnerId = +storedPartnerId; // Convert to number
+      this.partnerId = +storedPartnerId; // Convertir en nombre
     }
   
     if (this.partnerId !== null) {
-      this.sidebarMenuItems[2].route = `/employee/${this.partnerId}`;  // Update the route with partnerId
+      this.sidebarMenuItems[2].route = `/employee/${this.partnerId}`; 
     }
   }
 

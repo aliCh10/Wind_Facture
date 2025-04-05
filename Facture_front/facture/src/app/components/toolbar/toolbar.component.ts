@@ -10,18 +10,15 @@ import { DynamicModalComponent } from '../dynamic-modal/dynamic-modal.component'
   styleUrls: ['./toolbar.component.css']
 })
 export class ToolbarComponent {
-  @Input() partnerId: number | null = null; 
-  @Output() refreshEmployees = new EventEmitter<void>(); // ✅ Correction de l'EventEmitter
-
+  @Input() partnerId: number | null = null;
+  @Output() refreshEmployees = new EventEmitter<void>();
   buttons = [
     { route: 'facture', label: 'Créer Facture', type: 'facture' },
     { route: 'employe', label: 'Créer Employé', type: 'employe' },
-    { route: 'produit', label: 'Créer Produit', type: 'produit' },
-    { route: 'client', label: 'Créer Client', type: 'client' }
+    { route: 'clients', label: 'Créer Client', type: 'client' },
+    {route: 'services', label: 'Créer Service', type: 'service'}
   ];
-
   currentButtons: { route: string, label: string, type: string }[] = [];
-
   constructor(private router: Router, private dialog: MatDialog) {}
 
   ngOnInit() {
@@ -30,31 +27,36 @@ export class ToolbarComponent {
       this.updateButtons();
     });
   }
-
   updateButtons() {
     const url = this.router.url;
-    this.currentButtons = this.buttons.filter(button => url.includes(`/${button.route}`));
+    console.log('Current URL:', url);
+    if (url.includes('/partners')) {
+      this.currentButtons = this.buttons; 
+    } else {
+      this.currentButtons = this.buttons.filter(button => url.includes(`/${button.route}`));
+    }
+    console.log('Filtered Buttons:', this.currentButtons);
   }
 
   openModal(button: { type: string, label: string }) {
-    if (!this.partnerId) {
-      console.error('Error: partnerId is undefined in ToolbarComponent');
+    if (button.type === 'employe' && !this.partnerId) {
+      console.error('Error: partnerId is undefined in ToolbarComponent for employee');
       return;
     }
-
+    console.log('Opening modal for:', button);
     const dialogRef = this.dialog.open(DynamicModalComponent, {
       width: '400px',
       data: {
         title: button.label,
         type: button.type,
-        partnerId: this.partnerId
+        partnerId: button.type === 'employe' ? this.partnerId : undefined 
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result?.success) {
-        console.log(`${result.type} ajouté avec succès`);
-        this.refreshEmployees.emit(); // ✅ Émettre l'événement correctement
+        console.log(`${button.type} ajouté avec succès`);
+        this.refreshEmployees.emit(); 
       }
     });
   }

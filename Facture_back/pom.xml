@@ -14,8 +14,8 @@
         <module>discovery</module>
         <module>config-server</module>
         <module>auth-service</module>
-        <module>employee-service</module>
-
+        <module>Client-service</module>
+        <module>services-ser</module>
     </modules>
 
     <dependencyManagement>
