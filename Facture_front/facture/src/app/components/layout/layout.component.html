@@ -1,11 +1,9 @@
 <div class="layout">
-  <app-nav [isSidebarCollapsed]="!isSidebarActive">
+  <app-nav>
+ </app-nav>
 
-  </app-nav>
-
-  <button class="hamburger" (click)="toggleSidebar()">&#9776;</button>
-  <app-sidebar [isSidebarActive]="isSidebarActive" [isMobile]="isMobile" [menuItems]="sidebarMenuItems"></app-sidebar>
-  <div class="main-content" [class.collapsed]="!isSidebarActive">
+  <app-sidebar [isMobile]="isMobile" [menuItems]="sidebarMenuItems"></app-sidebar>
+  <div class="main-content">
     <router-outlet></router-outlet>
   </div>
 </div>

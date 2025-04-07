@@ -7,28 +7,16 @@
 .main-content {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: flex-start;
-  padding: 2rem;
+  padding: 2rem 4rem;
   overflow-y: auto;
   height: 100vh;
+  position: fixed;
+  left: 200px;
+  right: 0;
+  top: 60px;
 }
-.main-content {
-  flex-grow: 1;
-  padding: 1rem;
-}
-.hamburger {
-  display: none;
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  background: transparent;
-  border: none;
-  color: #FFD700;
-  font-size: 30px;
-  cursor: pointer;
-  z-index: 1001;
-}
+
 @media (max-width: 600px) {
   .hamburger {
     display: block;

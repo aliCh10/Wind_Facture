@@ -4,9 +4,8 @@
   padding: 2rem; /* Augmenter l'espace interne */
   border-radius: 0.625rem;
   box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.2);
-  margin: 6rem 0 5rem 10rem; /* Augmenter l'espace à gauche et en bas */
-  width: 90%; /* Rendre la carte plus large */
-  max-width: 1200px; /* Limiter la largeur maximale */
+  margin: 6rem 0 5rem 0; /* Augmenter l'espace à gauche et en bas */
+  width: 100%; /* Rendre la carte plus large */
   margin-bottom: 2rem; /* Augmenter l'espace entre les cartes */
 }
 
@@ -48,9 +47,8 @@
 
 /* Create Invoice Card - Amélioré */
 .createfacture-card {
-  width: 90%; /* Rendre la carte plus large */
-  max-width: 1200px; /* Limiter la largeur maximale */
-  margin: 3rem 0 5rem 10rem; /* Espaces plus grands autour de la carte */
+  width: 100%; /* Rendre la carte plus large */
+  margin: 3rem 0 5rem 0; /* Espaces plus grands autour de la carte */
   border-radius: 1rem;
   box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
