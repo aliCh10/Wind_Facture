@@ -1,2 +1,97 @@
-<div class="container">
-    <app-toolbar></app-toolbar>
+<div class="container ">
+  <app-toolbar></app-toolbar>
+
+  <div class="flex justify-between items-center mb-8 px-6" style="margin-left: 8.4rem;">
+    <h2 class="text-3xl font-bold text-gray-800">Liste des Services</h2>
+  </div>
+
+  <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 mx-7" [style]="'margin-left: 10rem;'">
+    <mat-table [dataSource]="services" class="w-full" matSort>
+
+      <!-- Ref Column -->
+      <ng-container matColumnDef="ref">
+        <mat-header-cell *matHeaderCellDef mat-sort-header class="bg-gray-50 px-6 py-4 font-semibold text-gray-700 uppercase text-sm">
+          Référence
+        </mat-header-cell>
+        <mat-cell *matCellDef="let service" class="px-6 py-4 text-gray-800 font-medium">
+          {{ service.ref }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Nom du Service Column -->
+      <ng-container matColumnDef="serviceName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header class="bg-gray-50 px-6 py-4 font-semibold text-gray-700 uppercase text-sm">
+          Nom du Service
+        </mat-header-cell>
+        <mat-cell *matCellDef="let service" class="px-6 py-4 text-gray-800 font-medium">
+          {{ service.serviceName }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Quantité Column -->
+      <ng-container matColumnDef="serviceQuantity">
+        <mat-header-cell *matHeaderCellDef mat-sort-header class="bg-gray-50 px-6 py-4 font-semibold text-gray-700 uppercase text-sm">
+          Quantité
+        </mat-header-cell>
+        <mat-cell *matCellDef="let service" class="px-6 py-4 text-gray-600">
+          {{ service.serviceQuantity }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Prix Column -->
+      <ng-container matColumnDef="servicePrice">
+        <mat-header-cell *matHeaderCellDef mat-sort-header class="bg-gray-50 px-6 py-4 font-semibold text-gray-700 uppercase text-sm">
+          Prix
+        </mat-header-cell>
+        <mat-cell *matCellDef="let service" class="px-6 py-4 text-gray-600">
+          {{ service.servicePrice | currency:'EUR' }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef class="bg-gray-50 px-6 py-4 font-semibold text-gray-700 uppercase text-sm">
+          Actions
+        </mat-header-cell>
+        <mat-cell *matCellDef="let service" class="px-8 py-4">
+          <div class="flex space-x-4">
+            <!-- Edit button -->
+            <button mat-mini-fab color="primary" 
+                    class="bg-blue-100 hover:bg-blue-200 text-blue-600 transition-all transform hover:scale-110"
+                    [matTooltip]="'Modifier'"
+                    >
+              <mat-icon>edit</mat-icon>
+            </button>
+            
+            <!-- Delete button -->
+            <button mat-mini-fab color="warn" 
+                    class="bg-red-100 hover:bg-red-200 text-red-600 transition-all transform hover:scale-110"
+                    [matTooltip]="'Supprimer'"
+                    (click)="delete(service.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Header and Row Definitions -->
+      <mat-header-row *matHeaderRowDef="displayedColumns" class="border-b border-gray-200"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" 
+               class="transition-all hover:bg-gray-50 border-b border-gray-100 last:border-0"></mat-row>
+    </mat-table>
+
+    <!-- Paginator -->
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" 
+                   showFirstLastButtons
+                   class="bg-gray-50 rounded-b-xl border-t border-gray-200"
+                   aria-label="Select page of services">
+    </mat-paginator>
+
+    <!-- Empty State -->
+    <div *ngIf="services.length === 0" class="p-12 text-center text-gray-500">
+      <mat-icon class="text-4xl mb-4 text-gray-300">assignment</mat-icon>
+      <p class="text-lg">Aucun service trouvé</p>
+      <button mat-button color="primary" class="mt-4" >Ajouter un service</button>
+    </div>
+  </div>
+</div>
