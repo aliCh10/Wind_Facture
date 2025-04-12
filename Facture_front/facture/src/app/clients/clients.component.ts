@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ClientService } from '../services/ClientService';
 import { MatDialog } from '@angular/material/dialog';
 import { UpdateClientModalComponent } from '../components/update-client-modal/update-client-modal.component';
@@ -18,7 +18,9 @@ export class ClientsComponent implements OnInit {
 
   constructor(
     private clientService: ClientService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private cdRef: ChangeDetectorRef // Injecter ChangeDetectorRef
+
   ) {}
 
   ngOnInit(): void {
@@ -31,6 +33,7 @@ export class ClientsComponent implements OnInit {
       (response) => {
         this.clients = response;
         this.isLoading = false;
+        this.cdRef.detectChanges(); // Forcer la détection des changements
       },
       (error) => {
         console.error('Error fetching clients', error);
@@ -39,6 +42,12 @@ export class ClientsComponent implements OnInit {
       }
     );
   }
+  
+  // Méthode pour rafraîchir la liste des clients
+  refreshClients(): void {
+    this.fetchClients();  // Appeler la méthode fetchClients pour réactualiser la liste
+  }
+  
 
   openCreateModal(): void {
     const dialogRef = this.dialog.open(DynamicModalComponent, {
@@ -48,13 +57,18 @@ export class ClientsComponent implements OnInit {
         type: 'client'
       }
     });
-
+  
     dialogRef.afterClosed().subscribe(result => {
+      console.log('Résultat du modal :', result); // <-- à observer dans la console
       if (result?.success) {
-        this.fetchClients();
+        Swal.fire('Succès', 'Le client a été ajouté avec succès.', 'success');
+        this.refreshClients();  // Rafraîchir la liste des clients après l'ajout
+      } else if (result?.error) {
+        Swal.fire('Erreur', 'Une erreur est survenue lors de l’ajout.', 'error');
       }
     });
   }
+  
 
   openUpdateModal(client: any): void {
     const dialogRef = this.dialog.open(UpdateClientModalComponent, {

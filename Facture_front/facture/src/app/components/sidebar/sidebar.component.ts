@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -8,21 +9,25 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./sidebar.component.css'],
 })
 export class SidebarComponent {
-  @Input() isSidebarActive: boolean = false;
   @Input() isMobile: boolean = false;
   @Input() menuItems: any[] = [];
+  @Input() isSidebarActive: boolean = false;
+  showChildren: boolean = false;
 
-  constructor(private translate: TranslateService) {}
+  constructor(private translate: TranslateService, private router: Router) {}
+
+  selectMenuItem(item: any) {
+    if (item.route) {
+      this.router.navigate([item.route]);
+    }
+    if (this.isMobile) {
+      this.isSidebarActive = false;
+      this.showChildren = false;
+    }
+  }
 
   getTranslation(key: string): string {
     return this.translate.instant(key);
   }
 
-  selectMenuItem(item: any) {
-    console.log('Selected:', this.getTranslation(item.label));
-  }
-
-  toggleSidebar() {
-    this.isSidebarActive = !this.isSidebarActive;  // Bascule l'état du sidebar
-  }
 }

@@ -1,17 +1,19 @@
 <div class="container">
-    <app-toolbar 
-   >
+    <app-toolbar (refreshClients)="refreshClients()" >
     </app-toolbar> 
-    <div class="flex justify-between items-center mb-8" >
-      <h2 class="text-3xl font-bold text-gray-800">Liste des Clients</h2>
+    <div class="flex justify-between items-center mb-2 hover-header mt-2">
+      <h2 class="employee-title">
+        Liste des Clients
+      </h2>
     </div>
+    
   
     <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100" >
       <mat-table [dataSource]="clients" class="w-full" matSort>
         
         <!-- Nom du Client Column -->
         <ng-container matColumnDef="clientName">
-          <mat-header-cell *matHeaderCellDef mat-sort-header class="bg-gray-50 px-6 py-4 font-semibold text-gray-700 uppercase text-sm">
+          <mat-header-cell *matHeaderCellDef mat-sort-header class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
             Nom du Client
           </mat-header-cell>
           <mat-cell *matCellDef="let client" class="px-6 py-4 text-gray-800 font-medium">
@@ -21,7 +23,7 @@
   
         <!-- Téléphone Column -->
         <ng-container matColumnDef="clientPhone">
-          <mat-header-cell *matHeaderCellDef mat-sort-header class="bg-gray-50 px-6 py-4 font-semibold text-gray-700 uppercase text-sm">
+          <mat-header-cell *matHeaderCellDef mat-sort-header class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
             Téléphone
           </mat-header-cell>
           <mat-cell *matCellDef="let client" class="px-6 py-4 text-gray-600">
@@ -33,7 +35,7 @@
   
         <!-- Adresse Column -->
         <ng-container matColumnDef="clientAddress">
-          <mat-header-cell *matHeaderCellDef mat-sort-header class="bg-gray-50 px-6 py-4 font-semibold text-gray-700 uppercase text-sm">
+          <mat-header-cell *matHeaderCellDef mat-sort-header class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
             Adresse
           </mat-header-cell>
           <mat-cell *matCellDef="let client" class="px-6 py-4 text-gray-600">
@@ -43,7 +45,7 @@
   
         <!-- RIB Column -->
         <ng-container matColumnDef="rib">
-          <mat-header-cell *matHeaderCellDef mat-sort-header class="bg-gray-50 px-6 py-4 font-semibold text-gray-700 uppercase text-sm">
+          <mat-header-cell *matHeaderCellDef mat-sort-header class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
             RIB
           </mat-header-cell>
           <mat-cell *matCellDef="let client" class="px-6 py-4 text-gray-600">
@@ -53,7 +55,7 @@
   
         <!-- Actions Column -->
         <ng-container matColumnDef="actions">
-          <mat-header-cell *matHeaderCellDef class="bg-gray-50 px-6 py-4 font-semibold text-gray-700 uppercase text-sm">
+          <mat-header-cell *matHeaderCellDef class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
             Actions
           </mat-header-cell>
           <mat-cell *matCellDef="let client" class="px-8 py-4">
@@ -83,18 +85,17 @@
                  class="transition-all hover:bg-gray-50 border-b border-gray-100 last:border-0"></mat-row>
       </mat-table>
   
-      <!-- Paginator -->
-      <mat-paginator [pageSizeOptions]="[5, 10, 20]" 
-                     showFirstLastButtons
-                     class="bg-gray-50 rounded-b-xl border-t border-gray-200"
-                     aria-label="Select page of clients">
-      </mat-paginator>
-  
       <!-- Empty State -->
       <div *ngIf="clients.length === 0" class="p-12 text-center text-gray-500">
         <mat-icon class="text-4xl mb-4 text-gray-300">people_outline</mat-icon>
         <p class="text-lg">Aucun client trouvé</p>
-        <button mat-button color="primary" class="mt-4" (click)="openCreateModal()">Ajouter un client</button>
       </div>
+
+            <!-- Paginator -->
+            <mat-paginator [pageSizeOptions]="[5, 10, 20]" 
+            showFirstLastButtons
+            class="bg-gray-50 rounded-b-xl border-t border-gray-200"
+            aria-label="Select page of clients">
+</mat-paginator>
     </div>
   </div>

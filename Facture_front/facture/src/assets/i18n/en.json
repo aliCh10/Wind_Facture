@@ -56,7 +56,7 @@
     "MENU": {
       "HOME": "Home",
       "DASHBOARD": "Dashboard",
-      "FACTURE": " Invoice",
+      "Modele ": " Invoice Model",
       "SERVICE": "Service",
       "LOGOUT": "Logout",
      "SETTINGS": "Settings",
@@ -66,9 +66,22 @@
      "SERVICES": "Services"
 
 
-    }
-  
-  
+    },
+    
+      "or click to select files": "or click to select files",
+     "employee":{
+      "List of Employees":"List of Employees",
+      "Name":"Name",
+      "Second Name":"Second Name",
+      "Email":"Email",
+      "Phone":"Phone",
+      "Actions":"Actions",
+      "Add Employee":"Add Employee",
+      "Department":"Department",
+      "Job":"Job"
+    
+      
+     }
   
 
 }

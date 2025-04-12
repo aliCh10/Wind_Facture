@@ -1,0 +1,12 @@
+<div #footerContainer
+     class="footer-container"
+     cdkDrag
+     [cdkDragBoundary]="'.main-content'"
+     (cdkDragEnded)="onDragEnd($event)"
+     [style.left.px]="position.x"
+     [style.top.px]="position.y">
+  
+  <textarea class="footer-input"
+            placeholder="Enter footer content here..."
+            rows="6"></textarea>
+</div>

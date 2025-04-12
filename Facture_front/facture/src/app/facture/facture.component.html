@@ -1,3 +1,29 @@
-<div class="container">
-  hello from facture
+<div class="container flex w-full min-h-[150vh] mx-auto my-5 gap-4">
+  <div #mainContent class="main-content w-3/4 bg-white p-6 border border-gray-200 rounded-xl shadow-md relative overflow-y-auto">
+    <app-logo></app-logo>
+    <app-info-client [boundaryElement]="mainContent"></app-info-client>
+    <app-info-company [boundaryElement]="mainContent"></app-info-company>
+    <app-calendar [boundaryElement]="mainContent"></app-calendar>
+    <div class="mt-8">
+      <app-table [boundaryElement]="mainContent"></app-table>
+    </div>
+    <app-footer></app-footer>
+  </div>
+
+  <div class="options-wrapper w-1/4" [class.open]="showOptions" [class.closed]="!showOptions">
+    <div class="options-container overflow-y-auto h-full">
+      <app-options></app-options>
+    </div>
+  </div>
+
+  <button
+  class="toggle-options-btn"
+  (click)="toggleOptions()"
+  matTooltip="Afficher/Masquer les options"
+  matTooltipPosition="left"
+  aria-label="Toggle options panel"
+>
+  <mat-icon>settings</mat-icon>
+  <span class="btn-text">Options</span>
+</button>
 </div>

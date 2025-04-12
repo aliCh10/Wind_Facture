@@ -1,0 +1,83 @@
+.example-box {
+    position: absolute;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06); 
+    cursor: move;
+    width: 400px; /* Augmenté de 320px à 400px */
+    border: 1.8px dashed #cbd5e1;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: separate;
+}
+
+.table-row {
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(224, 224, 224, 0.4);
+    overflow: hidden;
+}
+
+
+
+.input-cell {
+    padding: 0;
+    position: relative;
+}
+
+.input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-field {
+    width: 100%;
+    padding: 10px 16px 12px 40px; /* Réduit la hauteur de 14px à 12px */
+    border: none;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background-color: transparent;
+    color: #334155;
+    font-weight: 400;
+}
+
+.input-field:focus {
+    outline: none;
+    background-color: #f8fafc;
+}
+
+.input-field::placeholder {
+    color: #94a3b8;
+    font-weight: 300;
+}
+
+.input-icon {
+    position: absolute;
+    left: 12px;
+    color: #94a3b8;
+    font-size: 16px;
+    pointer-events: none;
+}
+
+/* Séparateurs modernes */
+.input-cell:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 16px;
+    right: 16px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.08), transparent);
+}

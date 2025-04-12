@@ -3,9 +3,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { EmployeeService } from '../../services/employee.service';
 import { Employee } from '../../models/User';
 import { Client } from '../../models/Client';
-import { ToastrService } from 'ngx-toastr';
-import { ClientService } from '../../services/ClientService';
 import { Service } from '../../models/service';
+import { SerService } from '../../services/ser.service';
+import Swal from 'sweetalert2';
+import { ClientService } from '../../services/ClientService';
 
 @Component({
   selector: 'app-dynamic-modal',
@@ -33,7 +34,7 @@ export class DynamicModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: { type: string; partnerId?: number },
     private employeeService: EmployeeService,
     private clientService: ClientService,
-    private toastr: ToastrService
+    private serService: SerService
   ) {
     console.log('Modal opened with type:', this.data.type, 'and partnerId:', this.data.partnerId);
   }
@@ -47,17 +48,61 @@ export class DynamicModalComponent {
       this.saveEmployee();
     } else if (this.data.type === 'client') {
       this.saveClient();
+    } else if (this.data.type === 'service') {
+      this.saveService();
     }
+  }
+
+  private saveService(): void {
+    if (!this.isServiceFormValid()) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Erreur',
+        text: 'Veuillez remplir tous les champs du service'
+      });
+      return;
+    }
+
+    this.isLoading = true;
+
+    this.serService.createService(this.service).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        Swal.fire({
+          icon: 'success',
+          title: 'Succès',
+          text: 'Service ajouté avec succès'
+        });
+        this.dialogRef.close({
+          success: true,
+          service: response,
+          message: 'Service ajouté avec succès'
+        });
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Erreur:', error);
+        this.handleError(error);
+      }
+    });
   }
 
   private saveEmployee(): void {
     if (!this.isEmployeeFormValid()) {
-      this.toastr.error('Veuillez remplir tous les champs obligatoires', 'Erreur');
+      Swal.fire({
+        icon: 'error',
+        title: 'Erreur',
+        text: 'Veuillez remplir tous les champs obligatoires'
+      });
       return;
     }
 
     if (!this.data.partnerId) {
-      this.toastr.error('partnerId est manquant pour l\'employé !', 'Erreur');
+      Swal.fire({
+        icon: 'error',
+        title: 'Erreur',
+        text: 'partnerId est manquant pour l\'employé !'
+      });
       return;
     }
 
@@ -66,7 +111,11 @@ export class DynamicModalComponent {
     this.employeeService.addEmployee(this.data.partnerId, this.employee).subscribe({
       next: (response) => {
         this.isLoading = false;
-        this.toastr.success('Employé ajouté avec succès', 'Succès');
+        Swal.fire({
+          icon: 'success',
+          title: 'Succès',
+          text: 'Employé ajouté avec succès'
+        });
         this.dialogRef.close({
           success: true,
           employee: response,
@@ -83,17 +132,24 @@ export class DynamicModalComponent {
 
   private saveClient(): void {
     if (!this.isClientFormValid()) {
-      this.toastr.error('Veuillez remplir tous les champs obligatoires', 'Erreur');
+      Swal.fire({
+        icon: 'error',
+        title: 'Erreur',
+        text: 'Veuillez remplir tous les champs obligatoires'
+      });
       return;
     }
 
     this.isLoading = true;
 
-    // Assuming ClientService.addClient doesn’t need partnerId
     this.clientService.addClient(this.client).subscribe({
       next: (response) => {
         this.isLoading = false;
-        this.toastr.success('Client ajouté avec succès', 'Succès');
+        Swal.fire({
+          icon: 'success',
+          title: 'Succès',
+          text: 'Client ajouté avec succès'
+        });
         this.dialogRef.close({
           success: true,
           client: response,
@@ -116,9 +172,13 @@ export class DynamicModalComponent {
     return !!this.client.clientName && !!this.client.clientPhone;
   }
 
+  private isServiceFormValid(): boolean {
+    return !!this.service.ref && !!this.service.serviceName && this.service.serviceQuantity > 0 && this.service.servicePrice > 0;
+  }
+
   private handleError(error: any): void {
     let errorMessage = 'Une erreur est survenue lors de l\'ajout';
-    
+
     if (error.error?.message) {
       errorMessage = error.error.message;
     } else if (error.status === 0) {
@@ -127,6 +187,10 @@ export class DynamicModalComponent {
       errorMessage = 'Données invalides. Vérifiez les informations saisies.';
     }
 
-    this.toastr.error(errorMessage, 'Erreur');
+    Swal.fire({
+      icon: 'error',
+      title: 'Erreur',
+      text: errorMessage
+    });
   }
 }

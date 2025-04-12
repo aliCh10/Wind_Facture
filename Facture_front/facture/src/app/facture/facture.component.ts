@@ -1,14 +1,23 @@
-import { Component } from '@angular/core';
-import { MenuItem } from 'primeng/api';
+import { Component, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
+import { LogoComponent } from '../components/Sections/logo/logo.component';
 
 @Component({
   selector: 'app-facture',
-  standalone: false,
+  standalone:false,
   templateUrl: './facture.component.html',
-  styleUrl: './facture.component.css'
+  styleUrls: ['./facture.component.css']
 })
-export class FactureComponent {
- 
-  
+export class FactureComponent implements AfterViewInit {
+  @ViewChild('mainContent') mainContent!: ElementRef<HTMLDivElement>;
+  @ViewChild(LogoComponent) logoComponent!: LogoComponent;
+  showOptions = false;
 
+  ngAfterViewInit() {
+    this.logoComponent.containerRef = this.mainContent;
+  }
+  toggleOptions() {
+    this.showOptions = !this.showOptions;
+  }
+  
+  
 }

@@ -1,2 +1,51 @@
 
+  /* Hover effect for employee header */
+.employee-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 16px 24px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background-color: #ffffff;
+    color: #ffd700;
+  }
+  
+  .employee-header:hover {
+    background: linear-gradient(to right, #ffd900, #f3d769);
+    transform: scale(1.02);
+  }
+  
+  /* Hover effect for employee title */
+  .employee-title {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    color: #ffd700;
+  }
+  
+  .employee-title:hover {
+    color: white;
+  }
+  
+  /* New hover effect for the new section */
+  .hover-header:hover .employee-title {
+    color: white !important; /* Change the text color of .employee-title on hover */
+  }
+  
+  .hover-header:hover {
+    background: linear-gradient(to right, #ffd900, #f3d769);
+    transform: scale(1.02);
+  }
+  
+  .hover-header .employee-title {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    color: #ffd700;
+  }
   

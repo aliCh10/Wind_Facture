@@ -57,7 +57,7 @@
     "MENU": {
       "HOME": "Accueil",
       "DASHBOARD": "Tableau de bord",
-      "FACTURE": "Facture ",
+      "Modele ": "Modele  ",
       "SERVICE": "Service",
       "LOGOUT": "Se Déconnecter",
       "SETTINGS": "Paramètres",
@@ -65,7 +65,21 @@
       "Employé":"Employé",
       "client":"client",
       "SERVICES": "Services"
+    },
+    "or click to select files": "ou cliquez pour sélectionner les fichiers",
+    "employee":{
+    "List of Employees":"Liste des Employés",
+    "Name":"Nom",
+    "Second Name":"Prénom",
+    "Email":"EMAIL",
+    "Phone":"telephone",
+    "Actions":"Actes",
+    "Add Employee":"Ajouter un Employé",
+    "Department":"Departement",
+    "Job":"Poste"
+
     }
+
   
   
   

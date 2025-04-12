@@ -12,6 +12,8 @@ import { DynamicModalComponent } from '../dynamic-modal/dynamic-modal.component'
 export class ToolbarComponent {
   @Input() partnerId: number | null = null;
   @Output() refreshEmployees = new EventEmitter<void>();
+  @Output() refreshClients = new EventEmitter<void>();
+  @Output() refreshServices = new EventEmitter<void>();
   buttons = [
     { route: 'facture', label: 'Créer Facture', type: 'facture' },
     { route: 'employe', label: 'Créer Employé', type: 'employe' },
@@ -52,12 +54,24 @@ export class ToolbarComponent {
         partnerId: button.type === 'employe' ? this.partnerId : undefined 
       }
     });
-
+  
     dialogRef.afterClosed().subscribe(result => {
       if (result?.success) {
         console.log(`${button.type} ajouté avec succès`);
         this.refreshEmployees.emit(); 
+  
+        // Emission de l'événement pour les clients
+        if (button.type === 'client') {
+          this.refreshClients.emit();
+        }
+  
+        // Emission de l'événement pour les services
+        if (button.type === 'service') {
+          this.refreshServices.emit();  // Ajout de cette ligne pour le service
+        }
       }
     });
   }
+  
+  
 }

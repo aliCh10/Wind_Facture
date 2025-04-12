@@ -1,8 +1,8 @@
 <div class="layout">
-  <app-nav>
+  <app-nav  #navbar [isSidebarCollapsed]="!isSidebarActive">
  </app-nav>
 
-  <app-sidebar [isMobile]="isMobile" [menuItems]="sidebarMenuItems"></app-sidebar>
+  <app-sidebar [isSidebarActive]="navbar.isSidebarActive" [isMobile]="isMobile" [menuItems]="sidebarMenuItems"></app-sidebar>
   <div class="main-content">
     <router-outlet></router-outlet>
   </div>

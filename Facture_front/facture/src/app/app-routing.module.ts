@@ -18,7 +18,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [ 
       { path: 'home', component: HomeComponent,canActivate:[AuthGuard] },
-      { path: 'facture', component: FactureComponent ,canActivate:[AuthGuard] },
+      { path: 'modele', component: FactureComponent ,canActivate:[AuthGuard] },
       { path: 'system', component: SystemComponent ,canActivate:[AuthGuard] },
       { path: 'profile',component: ProfileComponent},
       { path: 'employee/:partnerId', component: EmployeeComponent },

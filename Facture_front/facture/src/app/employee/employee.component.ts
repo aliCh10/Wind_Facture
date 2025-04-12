@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { EmployeeService } from '../services/employee.service';
-import { DynamicModalComponent } from '../components/dynamic-modal/dynamic-modal.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { UpdateEmployeeModalComponent } from '../components/update-employee-modal/update-employee-modal.component';
@@ -14,7 +13,7 @@ import { UpdateEmployeeModalComponent } from '../components/update-employee-moda
 })
 export class EmployeeComponent implements OnInit {
   employees: any[] = [];
-  displayedColumns: string[] = ['name', 'secondName', 'email', 'tel', 'actions'];
+  displayedColumns: string[] = ['name', 'secondName', 'email', 'tel', 'department', 'post', 'actions'];
   partnerId: number | null = null;
 
   constructor(
@@ -57,17 +56,31 @@ export class EmployeeComponent implements OnInit {
     const dialogRef = this.dialog.open(UpdateEmployeeModalComponent, {
       width: '400px',
       data: {
-        employee: employee // Passer les données de l'employé au modal
+        employee: employee // Pass the employee data to the modal
       }
     });
-
+  
     dialogRef.afterClosed().subscribe(result => {
       if (result?.success) {
-        console.log('Employé mis à jour avec succès');
-        this.fetchEmployees(); // Recharger les employés après mise à jour
+        // Show success message using Swal.fire
+        Swal.fire({
+          icon: 'success',
+          title: 'Succès',
+          text: 'Employé mis à jour avec succès'
+        }).then(() => {
+          this.fetchEmployees(); // Reload employees after update
+        });
+      } else {
+        // Show error message if the update was unsuccessful
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Une erreur est survenue lors de la mise à jour de l\'employé'
+        });
       }
     });
   }
+  
 
   deleteEmployee(employeeId: number): void {
     Swal.fire({

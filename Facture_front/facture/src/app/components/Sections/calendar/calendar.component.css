@@ -1,0 +1,38 @@
+.calendar-container {
+    position: absolute;
+    cursor: move;
+    border: 1.8px dashed #cbd5e1;
+    width: 750px;
+    height: 80px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+
+
+.content-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+
+.mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+    color: #3b82f6;
+}
+
+
+/* Style personnalisé pour le datepicker */
+.modern-datepicker-panel {
+    border-radius: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+
+
+.modern-datepicker-panel .mat-calendar-body-selected {
+    background-color: #3b82f6;
+    color: white;
+}
+

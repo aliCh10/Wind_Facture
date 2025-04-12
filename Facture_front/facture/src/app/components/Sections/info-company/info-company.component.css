@@ -1,0 +1,47 @@
+.company-container {
+    position: absolute;
+    width: 300px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    z-index: 100;
+    cursor: move;
+    transition: all 0.3s ease;
+
+  }
+  
+  
+  .company-form {
+    padding: 16px;
+    border: 1.8px dashed #cbd5e1;
+
+  }
+  
+  
+  .position-indicator {
+    position: absolute;
+    bottom: -24px;
+    left: 0;
+    font-size: 11px;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  
+  .cdk-drag-preview {
+    opacity: 0.8;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+ 
+  .position-indicator {
+    position: sticky;
+    top: 0;
+    background: #f0f0f0;
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+    z-index: 1;
+  }

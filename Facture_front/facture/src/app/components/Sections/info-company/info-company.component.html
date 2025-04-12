@@ -1,0 +1,16 @@
+
+<div #companyContainer 
+     class="company-container" 
+     cdkDrag 
+     [cdkDragBoundary]="boundaryElement"
+     (cdkDragEnded)="onDragEnd($event)"
+     [style.left.px]="position.x"
+     [style.top.px]="position.y">
+     
+     <div class="company-form">
+        SCI Wind<br>
+        85 RUE D'AURIASQUE<br>
+        83600 FREJUS<br>
+        FR
+    </div>
+</div>

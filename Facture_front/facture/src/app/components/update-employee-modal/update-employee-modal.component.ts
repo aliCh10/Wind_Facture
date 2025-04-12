@@ -44,15 +44,11 @@ export class UpdateEmployeeModalComponent {
     this.employeeService.updateEmployee(this.employee.id, this.employee).subscribe({
       next: (response) => {
         this.isLoading = false; // Reset loading state
-        this.toastr.success('Employé modifié avec succès', 'Succès');
         this.dialogRef.close({ success: true, employee: response });
       },
       error: (error) => {
         this.isLoading = false; // Reset loading state
-        this.toastr.error(
-          error.error?.message || 'Erreur lors de la mise à jour de l\'employé',
-          'Erreur'
-        );
+   
         console.error('Erreur lors de la mise à jour de l\'employé', error);
         this.dialogRef.close({ success: false });
       }

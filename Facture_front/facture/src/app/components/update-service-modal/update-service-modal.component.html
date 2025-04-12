@@ -1,0 +1,71 @@
+<div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+    <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-2xl w-full mx-auto border-t-4 border-[#FFD700] transform transition-all duration-300 animate-slideUp">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold text-gray-800">Mettre à jour le Service</h2>
+        <button (click)="closeDialog()" class="text-gray-500 hover:text-gray-700 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+  
+      <form [formGroup]="serviceForm" (ngSubmit)="onSave()">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Référence du Service -->
+          <div class="space-y-1">
+            <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Référence du Service *</label>
+            <input matInput formControlName="ref" required
+              class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
+              placeholder="Entrez la référence">
+            <mat-error *ngIf="serviceForm.get('ref')?.hasError('required')">La référence est requise</mat-error>
+          </div>
+  
+          <!-- Nom du Service -->
+          <div class="space-y-1">
+            <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Nom du Service *</label>
+            <input matInput formControlName="serviceName" required
+              class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
+              placeholder="Entrez le nom du service">
+            <mat-error *ngIf="serviceForm.get('serviceName')?.hasError('required')">Le nom du service est requis</mat-error>
+          </div>
+  
+          <!-- Quantité -->
+          <div class="space-y-1">
+            <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Quantité *</label>
+            <input matInput type="number" formControlName="serviceQuantity" min="1" required
+              class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
+              placeholder="Entrez la quantité">
+            <mat-error *ngIf="serviceForm.get('serviceQuantity')?.hasError('required')">La quantité est requise</mat-error>
+            <mat-error *ngIf="serviceForm.get('serviceQuantity')?.hasError('min')">La quantité doit être positive</mat-error>
+          </div>
+  
+          <!-- Prix -->
+          <div class="space-y-1">
+            <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Prix *</label>
+            <input matInput type="number" formControlName="servicePrice" min="0.1" required
+              class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
+              placeholder="Entrez le prix">
+            <mat-error *ngIf="serviceForm.get('servicePrice')?.hasError('required')">Le prix est requis</mat-error>
+            <mat-error *ngIf="serviceForm.get('servicePrice')?.hasError('min')">Le prix doit être supérieur à 0</mat-error>
+          </div>
+        </div>
+  
+        <!-- Boutons -->
+        <div class="flex justify-end space-x-4 mt-8 pt-4 border-t border-gray-100">
+          <button type="button" (click)="closeDialog()" [disabled]="isLoading"
+            class="px-6 py-3 text-gray-600 font-medium rounded-xl hover:bg-gray-100 transition-all duration-200 flex items-center space-x-2 disabled:opacity-50">
+            <span>Annuler</span>
+          </button>
+          <button type="submit" [disabled]="serviceForm.invalid || isLoading"
+            class="save-button px-8 py-3 bg-gradient-to-r from-[#FFD700] to-[#FFB600] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] flex items-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed">
+            <svg *ngIf="!isLoading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+            <span *ngIf="!isLoading">Sauvegarder</span>
+            <span *ngIf="isLoading" class="loading">Sauvegarde...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
