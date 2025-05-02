@@ -21,7 +21,7 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
-    @Value("${jwt.secret}")  // Charger le secret depuis application.properties
+    @Value("${jwt.secret}")  
     private String SECRET_KEY;
 
     public String extractUsername(String token) {

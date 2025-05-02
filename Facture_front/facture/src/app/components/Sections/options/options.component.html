@@ -1,10 +1,141 @@
-<div class="options w-full h-full bg-gray-50 p-3 border border-gray-300 rounded-xl shadow-md">
-    <div class="control-section">
-        <div id="default-control">
-            <div class="row">
-                <h4>Choose a color</h4>
-                <input ejs-colorpicker id='color-picker' type='color' />
-            </div>
+<div class="style-customizer">
+  <div class="customizer-body">
+    <!-- Background Section -->
+    <details class="section-card hover-gold" open>
+      <summary class="section-header">
+        <div class="icon-circle bg-accent">
+          <mat-icon class="custom-icon">format_color_fill</mat-icon>
         </div>
-    </div>
+        <h3>Background</h3>
+        <mat-icon class="toggle-icon">expand_more</mat-icon>
+      </summary>
+      <div class="section-content">
+        <div class="color-grid">
+          <div class="color-option">
+            <label>Background Color</label>
+            <div class="color-picker-wrapper">
+              <input type="color" [(ngModel)]="backgroundColor" (change)="updateStyles()">
+              <span class="color-badge" [style.background]="backgroundColor"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- Text Section -->
+    <details class="section-card hover-gold" open>
+      <summary class="section-header">
+        <div class="icon-circle bg-accent">
+          <mat-icon class="custom-icon">text_fields</mat-icon>
+        </div>
+        <h3>Text</h3>
+        <mat-icon class="toggle-icon">expand_more</mat-icon>
+      </summary>
+      <div class="section-content">
+        <div class="typography-controls">
+          <div class="control-group">
+            <label>Text Color</label>
+            <div class="color-picker-wrapper">
+              <input type="color" [(ngModel)]="textColor" (change)="updateStyles()">
+              <span class="color-badge" [style.background]="textColor"></span>
+            </div>
+          </div>
+          <div class="control-group">
+            <label>Font Family</label>
+            <mat-form-field appearance="outline">
+              <mat-select [(ngModel)]="selectedFont" (ngModelChange)="updateStyles()">
+                <mat-option *ngFor="let font of fontOptions" [value]="font.value">
+                  <span [style.font-family]="font.value">{{font.display}}</span>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="control-group">
+            <label>Font Size</label>
+            <div class="slider-container">
+              <mat-slider
+                class="yellow-slider"
+                min="12"
+                max="24"
+                step="1"
+                [(ngModel)]="fontSize"
+                thumbLabel
+                (input)="updateStyles()"
+              >
+                <input matSliderThumb>
+              </mat-slider>
+              <span class="value-display">{{fontSize}}px</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- Border Section -->
+    <details class="section-card hover-gold" open>
+      <summary class="section-header">
+        <div class="icon-circle bg-accent">
+          <mat-icon class="custom-icon">border_style</mat-icon>
+        </div>
+        <h3>Borders</h3>
+        <mat-icon class="toggle-icon">expand_more</mat-icon>
+      </summary>
+      <div class="section-content">
+        <div class="border-controls">
+          <div class="control-group">
+            <label>Border Color</label>
+            <div class="color-picker-wrapper">
+              <input type="color" [(ngModel)]="borderColor" (change)="updateStyles()">
+              <span class="color-badge" [style.background]="borderColor"></span>
+            </div>
+          </div>
+          <div class="control-group">
+            <label>Border Style</label>
+            <mat-form-field appearance="outline">
+              <mat-select [(ngModel)]="borderStyle" (ngModelChange)="updateStyles()">
+                <mat-option value="dashed">Dashed</mat-option>
+                <mat-option value="solid">Solid</mat-option>
+                <mat-option value="dotted">Dotted</mat-option>
+                <mat-option value="none">None</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="control-group">
+            <label>Border Width</label>
+            <div class="slider-container">
+              <mat-slider
+                class="yellow-slider"
+                min="0"
+                max="10"
+                step="0.1"
+                [(ngModel)]="borderWidth"
+                thumbLabel
+                (input)="updateStyles()"
+              >
+                <input matSliderThumb>
+              </mat-slider>
+              <span class="value-display">{{borderWidth.toFixed(1)}}px</span>
+            </div>
+          </div>
+          <div class="control-group">
+            <label>Border Radius</label>
+            <div class="slider-container">
+              <mat-slider
+                class="yellow-slider"
+                min="0"
+                max="20"
+                step="1"
+                [(ngModel)]="borderRadius"
+                thumbLabel
+                (input)="updateStyles()"
+              >
+                <input matSliderThumb>
+              </mat-slider>
+              <span class="value-display">{{borderRadius}}px</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+  </div>
 </div>

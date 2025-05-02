@@ -1,87 +1,196 @@
-import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { TranslateService } from '@ngx-translate/core';
+import { StyleManagerService } from '../../../services/StyleManagerService';
+import { Subscription } from 'rxjs';
+import { Section } from '../../../models/section.model';
 
 @Component({
   selector: 'app-logo',
   standalone: false,
   templateUrl: './logo.component.html',
-  styleUrl: './logo.component.css'
+  styleUrls: ['./logo.component.css']
 })
-export class LogoComponent {
-  @ViewChild('logoContainer') logoContainer!: ElementRef<HTMLDivElement>;
+export class LogoComponent implements Section, AfterViewInit, OnDestroy {
+  @ViewChild('logoUploadContainer') logoContainer!: ElementRef<HTMLDivElement>;
   @Input() containerRef!: ElementRef<HTMLDivElement>;
+  @Input() boundaryElement?: HTMLElement; // Match InfoClientComponent
+  @Output() openOptions = new EventEmitter<string>();
   @Output() positionChanged = new EventEmitter<{ x: number, y: number }>();
-  
+
+  // Section interface properties
+  id?: number;
+  sectionName: string = 'logo';
+  x: number = 20;
+  y: number = 20;
+  styles: { [key: string]: string } = {};
+
+  // Style properties
+  width = 160;
+  height = 160;
+  backgroundColor = '#ffffff';
+  borderColor = '#cbd5e1';
+  borderStyle = 'dashed';
+  borderWidth = 1.8;
+  borderRadius = 8;
+  textColor = '#000000';
+  fontFamily = 'Inter';
+  fontSize = 16;
+
   imageUrl: string | null = null;
-  position = { x: 20, y: 20 };
-  dragOffset = { x: 0, y: 0 }; // Renommé de currentDrag à dragOffset pour plus de clarté
-  showPosition = false;
+  private stylesSubscription!: Subscription;
+
   constructor(
-    private translate : TranslateService
+    private translate: TranslateService,
+    private styleManager: StyleManagerService
   ) {}
 
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
-      if (!file.type.match('image.*')) {
-        alert('Seules les images sont acceptées');
-        return;
-      }
+  ngAfterViewInit(): void {
+    if (!this.boundaryElement) {
+      console.warn('boundaryElement is not provided');
+    }
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imageUrl = reader.result as string;
-        this.showPosition = true;
-      };
-      reader.readAsDataURL(file);
+    // Subscribe to style updates
+    this.stylesSubscription = this.styleManager.componentStyles$.subscribe(styles => {
+      const componentStyles = styles['logo'] || {};
+      this.loadStyles(componentStyles);
+      this.applyStyles(false); // Apply styles without updating service
+    });
+
+    // Load and apply initial styles
+    const initialStyles = this.styleManager.getStyles('logo') || {};
+    console.log('Initial styles:', initialStyles); // Debug: Verify initial styles
+    this.loadStyles(initialStyles);
+    this.applyStyles(false);
+
+    // Apply initial position
+    this.updateLogoPosition();
+  }
+
+  ngOnDestroy(): void {
+    this.stylesSubscription?.unsubscribe();
+  }
+
+  private loadStyles(styles: { [key: string]: string | undefined }): void {
+    this.width = this.parsePixelValue(styles['width'], this.width);
+    this.height = this.parsePixelValue(styles['height'], this.height);
+    this.backgroundColor = styles['background-color'] || this.backgroundColor;
+    this.borderColor = styles['border-color'] || this.borderColor;
+    this.borderStyle = styles['border-style'] || this.borderStyle;
+    this.borderWidth = this.parsePixelValue(styles['border-width'], this.borderWidth);
+    this.borderRadius = this.parsePixelValue(styles['border-radius'], this.borderRadius);
+    this.textColor = styles['color'] || this.textColor;
+    this.fontFamily = styles['font-family'] || this.fontFamily;
+    this.fontSize = this.parsePixelValue(styles['font-size'], this.fontSize);
+  }
+
+  private parsePixelValue(value: string | undefined, defaultValue: number): number {
+    if (!value) return defaultValue;
+    const num = parseFloat(value.replace(/px|\s/g, ''));
+    return isNaN(num) ? defaultValue : num;
+  }
+
+  public applyStyles(updateService: boolean = true): void {
+    const logoEl = this.logoContainer?.nativeElement;
+    if (!logoEl) {
+      console.warn('Logo container element not available for styling');
+      return;
+    }
+
+    // Apply container styles
+    logoEl.style.width = `${this.width}px`;
+    logoEl.style.height = `${this.height}px`;
+    logoEl.style.backgroundColor = this.backgroundColor;
+    logoEl.style.border = `${this.borderWidth}px ${this.borderStyle} ${this.borderColor}`;
+    logoEl.style.borderRadius = `${this.borderRadius}px`;
+
+    // Apply text styles
+    logoEl.querySelectorAll('.upload-subtitle, .change-image-btn').forEach((element: Element) => {
+      const htmlEl = element as HTMLElement;
+      htmlEl.style.color = this.textColor;
+      htmlEl.style.fontFamily = this.fontFamily;
+      htmlEl.style.fontSize = `${this.fontSize}px`;
+    });
+
+    // Update styles for Section interface
+    this.styles = this.getCurrentStyles();
+
+    // Update StyleManagerService if requested
+    if (updateService) {
+      this.styleManager.updateStyles('logo', this.styles, 'LogoComponent');
     }
   }
 
-  onDragMove(event: CdkDragMove): void {
-    // Capture le déplacement relatif
-    this.dragOffset = event.source.getFreeDragPosition();
+  onFileSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file?.type.match('image.*')) {
+      alert(this.translate.instant('Only images are accepted'));
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imageUrl = reader.result as string;
+      this.updateLogoPosition();
+    };
+    reader.readAsDataURL(file);
   }
 
   onDragEnd(event: CdkDragEnd): void {
+    if (!this.boundaryElement) {
+      console.warn('No boundaryElement available');
+      return;
+    }
+
     const logoElement = this.logoContainer.nativeElement;
-    const containerElement = this.containerRef.nativeElement;
-
-    // Calculer la nouvelle position absolue
-    let newX = this.position.x + this.dragOffset.x;
-    let newY = this.position.y + this.dragOffset.y;
-
-    // Obtenir les dimensions
+    const containerRect = this.boundaryElement.getBoundingClientRect();
     const logoRect = logoElement.getBoundingClientRect();
-    const containerRect = containerElement.getBoundingClientRect();
 
-    // Calculer les limites
+    const newX = this.x + event.distance.x;
+    const newY = this.y + event.distance.y;
+
     const minX = 0;
     const minY = 0;
     const maxX = containerRect.width - logoRect.width;
     const maxY = containerRect.height - logoRect.height;
 
-    // Appliquer les contraintes
-    newX = Math.max(minX, Math.min(newX, maxX));
-    newY = Math.max(minY, Math.min(newY, maxY));
+    this.x = Math.max(minX, Math.min(newX, maxX));
+    this.y = Math.max(minY, Math.min(newY, maxY));
 
-    // Mettre à jour la position
-    this.position = { x: newX, y: newY };
-    this.dragOffset = { x: 0, y: 0 }; // Réinitialiser le déplacement
-
-    // Réinitialiser la transformation de drag
     event.source._dragRef.reset();
     event.source.setFreeDragPosition({ x: 0, y: 0 });
 
-    // Émettre la nouvelle position
-    this.positionChanged.emit(this.position);
+    this.updateLogoPosition();
+    this.positionChanged.emit({ x: this.x, y: this.y });
+
+    // Optional: Persist position
+    // this.styleManager.updatePosition('logo', { x: this.x, y: this.y }, 'LogoComponent');
   }
 
-  getCurrentPosition() {
+  public updateLogoPosition(): void {
+    if (this.logoContainer?.nativeElement) {
+      const element = this.logoContainer.nativeElement;
+      element.style.left = `${this.x}px`;
+      element.style.top = `${this.y}px`;
+    }
+  }
+
+  getCurrentStyles(): { [key: string]: string } {
     return {
-      x: this.position.x + this.dragOffset.x,
-      y: this.position.y + this.dragOffset.y
+      'width': `${this.width}px`,
+      'height': `${this.height}px`,
+      'background-color': this.backgroundColor,
+      'border-color': this.borderColor,
+      'border-style': this.borderStyle,
+      'border-width': `${this.borderWidth}px`,
+      'border-radius': `${this.borderRadius}px`,
+      'color': this.textColor,
+      'font-family': this.fontFamily,
+      'font-size': `${this.fontSize}px`
     };
+  }
+
+  openOptionsPanel(): void {
+    this.openOptions.emit('logo');
   }
 }

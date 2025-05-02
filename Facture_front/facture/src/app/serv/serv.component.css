@@ -48,4 +48,9 @@
     transition: all 0.3s ease;
     color: #ffd700;
   }
-  
+  .yellow-button {
+    background-color: #FFD700 !important;
+  }
+  .yellow-button:hover {
+    background-color: #FFC107 !important;
+  }

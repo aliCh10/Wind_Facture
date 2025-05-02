@@ -1,0 +1,81 @@
+<div class="modal-header bg-light">
+    <h5 class="modal-title">
+      <i class="bi bi-file-earmark-text me-2"></i>
+      Prévisualisation: {{modeleFacture?.nameModel || 'Modèle sans nom'}}
+    </h5>
+    <button type="button" class="btn-close" (click)="close()" aria-label="Close"></button>
+  </div>
+  
+  <div class="modal-body p-0 d-flex justify-content-center">
+    <div class="a4-preview-wrapper" [style.width.px]="originalA4Width * scaleFactor" 
+         [style.height.px]="originalA4Height * scaleFactor">
+      <div class="a4-paper" [style.transform]="'scale(' + scaleFactor + ')'" 
+           [style.transform-origin]="'top left'" 
+           [style.width.px]="originalA4Width" 
+           [style.height.px]="originalA4Height">
+        <div *ngFor="let section of modeleFacture?.sections || []" 
+             [ngStyle]="getOriginalStyles(section)" 
+             class="section-container">
+          <!-- Logo Section -->
+          <div *ngIf="section.sectionName === 'logo'" class="logo-preview">
+            <img *ngIf="section.content" [src]="section.content" alt="Logo" style="width: 100%; height: 100%;" />
+            <div *ngIf="!section.content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+              Logo Placeholder
+            </div>
+          </div>
+  
+          <!-- Company Info Section -->
+          <div *ngIf="section.sectionName === 'infoCompany'" class="company-info">
+            <h6>Company Info</h6>
+            <p *ngIf="section.content">{{ section.content }}</p>
+            <p *ngIf="!section.content">Placeholder Company Info</p>
+          </div>
+  
+          <!-- Table Section -->
+          <div *ngIf="section.sectionName === 'table'" class="table-preview">
+            <table class="table table-bordered" style="width: 100%; height: 100%;">
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th>Quantité</th>
+                  <th>Prix</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngIf="section.content && section.content.items">
+                  <td colspan="3">Tableau avec données (aperçu simplifié)</td>
+                </tr>
+                <tr *ngIf="!section.content">
+                  <td colspan="3">Tableau Placeholder</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+  
+          <!-- Calendar Section -->
+          <div *ngIf="section.sectionName === 'calendar'" class="calendar-preview">
+            Calendar Section
+          </div>
+  
+          <!-- Footer Section -->
+          <div *ngIf="section.sectionName === 'footer'" class="footer-preview">
+            Footer Section
+          </div>
+  
+          <!-- Default Section -->
+          <div *ngIf="!['logo', 'infoCompany', 'table', 'calendar', 'footer'].includes(section.sectionName)">
+            {{ section.sectionName }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="close()">
+      <i class="bi bi-x-circle me-1"></i> Fermer
+    </button>
+    <button type="button" class="btn btn-primary" (click)="useTemplate()">
+      <i class="bi bi-check-circle me-1"></i> Utiliser ce modèle
+    </button>
+  </div>

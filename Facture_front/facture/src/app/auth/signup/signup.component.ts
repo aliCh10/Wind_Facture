@@ -14,6 +14,9 @@ export class SignupComponent {
   signupForm: FormGroup;
   errorMessage: string = '';
   hidePassword: boolean = true;
+  passwordVisible = false;
+  isLoading: boolean = false; // Add loading state
+
 
 
   constructor(
@@ -53,7 +56,9 @@ export class SignupComponent {
 
   onSubmit() {
     if (this.signupForm.valid) {
+      this.isLoading = true; // Show spinner
       const formData = new FormData();
+      
       Object.keys(this.personalInfo.controls).forEach(key => {
         formData.append(key, this.personalInfo.get(key)?.value);
       });
@@ -71,21 +76,25 @@ export class SignupComponent {
       this.authService.register(formData).subscribe(
         (response) => {
           this.toastr.success('Registration successful!', 'Success');
-                    setTimeout(() => {
+          setTimeout(() => {
             this.router.navigate(['/verify'], {
               queryParams: { email: this.personalInfo.get('email')?.value },
             });
-          }, 2000); 
+          }, 2000);
         },
         (error) => {
           console.error('Registration failed', error);
           this.toastr.error('Something went wrong during registration. Please try again.', 'Error');
+          this.isLoading = false; // Hide spinner on error
+        },
+        () => {
+          this.isLoading = false; // Hide spinner when complete (success or error)
         }
       );
     } else {
       this.toastr.error('Please fill all required fields correctly.', 'Error');
     }
-}
+  }
 
 
   onFileChange(event: any) {

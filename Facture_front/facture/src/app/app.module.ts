@@ -26,6 +26,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatChipsModule } from '@angular/material/chips';
+
 
 // Modules PrimeNG
 import { TableModule } from 'primeng/table';
@@ -69,6 +71,17 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { TableComponent } from './components/Sections/table/table.component';
 import { FooterComponent } from './components/Sections/footer/footer.component';
+import { NewFactureComponent } from './new-facture/new-facture.component';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { NgxMatColorPickerModule } from 'ngx-mat-color-picker';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { FacturePreviewModalComponent } from './components/facture-preview-modal/facture-preview-modal.component';
+
+
+
+
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -103,9 +116,11 @@ export function HttpLoaderFactory(http: HttpClient) {
     CalendarComponent,
     TableComponent,
     FooterComponent,
+    NewFactureComponent,
+    FacturePreviewModalComponent,
   ],
   imports: [
-    MatInputModule,        
+    MatInputModule,   
     ReactiveFormsModule,
     AuthModule,
     BrowserModule,
@@ -113,6 +128,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
+    MatChipsModule,
     MatButtonModule,
     MatListModule,
     MatTooltipModule,
@@ -123,6 +139,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatFormFieldModule,
     MatNativeDateModule,
     MatIconModule,
+    MatButtonToggleModule,
     MatCardModule,
     MatTableModule,
     MatToolbarModule,
@@ -134,6 +151,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     ToolbarModule,
     SplitButtonModule,
     MatSelectModule,
+    MatSliderModule,
+    MatSlideToggleModule,
+    MatExpansionModule,
+    NgxMatColorPickerModule,
     DrawerModule,
     FontAwesomeModule,
     FormsModule,

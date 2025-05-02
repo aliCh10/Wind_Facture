@@ -1,0 +1,48 @@
+<div class="container mt-4">
+    <h2>Modèles de facture</h2>
+    
+    <div class="search-container">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Rechercher un modèle</mat-label>
+        <input matInput [(ngModel)]="searchTerm" placeholder="Tapez pour filtrer...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+  
+    <button mat-raised-button color="primary" (click)="createNewModele()" class="mb-3">
+      <mat-icon>add</mat-icon> Créer un nouveau modèle
+    </button>
+  
+    <div *ngIf="loading" class="text-center">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+  
+    <div *ngIf="!loading && filteredModeles.length === 0" class="alert alert-info">
+      Aucun modèle disponible. Créez votre premier modèle !
+    </div>
+  
+    <div class="grid-container">
+      <mat-card *ngFor="let modele of filteredModeles" class="modele-card">
+        <mat-card-header>
+          <mat-card-title>{{ modele.nameModel || 'Modèle sans nom' }}</mat-card-title>
+          <mat-card-subtitle>
+            Créé le: {{ modele.createdAt | date:'dd/MM/yyyy' }}
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            <mat-card-content>
+                <button class="btn btn-sm btn-outline-primary rounded-pill">
+                  {{ modele.sections.length }} sections
+                </button>
+              </mat-card-content>
+          </p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button color="primary" (click)="openModelePreview(modele)">
+            <mat-icon>visibility</mat-icon> PRÉVISUALISER
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>

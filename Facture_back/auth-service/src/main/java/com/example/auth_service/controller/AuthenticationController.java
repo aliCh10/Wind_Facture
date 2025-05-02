@@ -8,6 +8,9 @@ import com.example.auth_service.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -58,16 +61,21 @@ public ResponseEntity<?> authenticate(@RequestBody AuthentificationRequest authe
     public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileRequest request, @RequestParam Long userId) {
         return authenticationService.updateProfile(userId, request);
     }
-    @GetMapping("/validate")
-    public ResponseEntity<String> validateToken(@RequestParam String token) {
+   @GetMapping("/validate")
+    public ResponseEntity<?> validateToken(@RequestParam String token) {
         try {
-            String email = jwtService.extractUsername(token);  // Extraire l'email de l'utilisateur depuis le token
-            UserDetails userDetails = userDetailsService.loadUserByUsername(email);  // Charger les détails de l'utilisateur
-            if (jwtService.isTokenValid(token, userDetails)) {  // Vérifier que le token est valide
-                // Vérifier que l'utilisateur a le rôle ROLE_PARTNER
+            String email = jwtService.extractUsername(token);
+            Long tenantId = jwtService.extractTenantId(token);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+
+            if (jwtService.isTokenValid(token, userDetails)) {
                 if (userDetails.getAuthorities().stream()
-                    .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_PARTNER"))) {
-                    return ResponseEntity.ok("Token is valid and role is correct");
+                        .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_PARTNER"))) {
+                    // Return a JSON object without DTO
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("message", "Token is valid");
+                    response.put("tenantId", tenantId);
+                    return ResponseEntity.ok(response);
                 } else {
                     return ResponseEntity.status(403).body("User does not have the required role");
                 }

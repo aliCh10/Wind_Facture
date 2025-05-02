@@ -1,16 +1,21 @@
 package com.example.services_ser.security;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +26,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private RestTemplate restTemplate;
 
-    private static final String AUTH_SERVICE_URL = "http://localhost:8090/public/validate"; 
+    @Value("${auth.service.url:http://localhost:8090/public/validate}")
+    private String authServiceUrl;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -29,35 +35,50 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String header = request.getHeader("Authorization");
         if (header == null || !header.startsWith("Bearer ")) {
+            logger.debug("No Bearer token found in Authorization header");
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = header.substring(7); // Extraction du token
+        String token = header.substring(7);
         logger.info("Validating token: {}", token);
 
         try {
             ResponseEntity<String> authResponse = restTemplate.getForEntity(
-                AUTH_SERVICE_URL + "?token=" + token, String.class);
+                    authServiceUrl + "?token=" + token, String.class);
 
             if (authResponse.getStatusCode() == HttpStatus.OK) {
-                logger.info("Token validated successfully.");
-                // Assurez-vous que l'email de l'utilisateur est présent dans la réponse si vous avez besoin de l'utiliser
-                SecurityContextHolder.getContext().setAuthentication(new JwtAuthentication(token));
+                // Parse the response to extract tenantId
+                ObjectMapper mapper = new ObjectMapper();
+                Map<String, Object> responseMap = mapper.readValue(authResponse.getBody(), Map.class);
+                String message = (String) responseMap.get("message");
+                Long tenantId = responseMap.get("tenantId") instanceof Number
+                        ? ((Number) responseMap.get("tenantId")).longValue()
+                        : Long.parseLong((String) responseMap.get("tenantId"));
+
+                if (!"Token is valid".equals(message)) {
+                    throw new IllegalStateException("Unexpected validation message: " + message);
+                }
+
+                // Create authentication with tenantId
+                JwtAuthentication authentication = new JwtAuthentication(token);
+                authentication.setTenantId(tenantId);
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                logger.info("Token validated successfully for tenant: {}", tenantId);
             } else {
-                logger.warn("Invalid token response from Auth service.");
+                logger.warn("Invalid token response from Auth service: {}", authResponse.getStatusCode());
                 SecurityContextHolder.clearContext();
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
                 return;
             }
-
         } catch (Exception e) {
-            logger.error("Error during token validation: {}", e.getMessage());
+            logger.error("Error during token validation: {}", e.getMessage(), e);
             SecurityContextHolder.clearContext();
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token validation failed: " + e.getMessage());
             return;
         }
 
-        filterChain.doFilter(request, response); // Prochaine étape du filtre
+        filterChain.doFilter(request, response);
     }
 }

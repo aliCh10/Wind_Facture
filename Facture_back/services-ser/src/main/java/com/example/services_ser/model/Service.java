@@ -34,4 +34,8 @@ public class Service {
     @Column(nullable = false)
     @DecimalMin(value = "0.0", message = "Price cannot be negative")
     private BigDecimal servicePrice;
+
+    @Column(nullable = false)
+    private Long tenantId; // Ajout du tenantId
+  
 }

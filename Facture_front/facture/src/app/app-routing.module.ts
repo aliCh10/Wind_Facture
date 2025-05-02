@@ -10,27 +10,32 @@ import { ProfileComponent } from './profile/profile.component';
 import { EmployeeComponent } from './employee/employee.component';
 import { ClientsComponent } from './clients/clients.component';
 import { ServComponent } from './serv/serv.component';
+import { NewFactureComponent } from './new-facture/new-facture.component';
 
 const routes: Routes = [
   {
     path: '',
     component: LayoutComponent,
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard], // Correction: 'canActivate' au lieu de 'canActivate'
     children: [ 
-      { path: 'home', component: HomeComponent,canActivate:[AuthGuard] },
-      { path: 'modele', component: FactureComponent ,canActivate:[AuthGuard] },
-      { path: 'system', component: SystemComponent ,canActivate:[AuthGuard] },
-      { path: 'profile',component: ProfileComponent},
+      { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+      { 
+        path: 'modele', 
+        component: FactureComponent,
+        canActivate: [AuthGuard],
+      },
+      { path: 'system', component: SystemComponent, canActivate: [AuthGuard] },
+      { path: 'profile', component: ProfileComponent },
       { path: 'employee/:partnerId', component: EmployeeComponent },
-      {path: 'clients' ,component: ClientsComponent,canActivate:[AuthGuard]},
-      {path: 'services' ,component: ServComponent,canActivate:[AuthGuard]},
-
-
+      { path: 'clients', component: ClientsComponent, canActivate: [AuthGuard] },
+      { path: 'services', component: ServComponent, canActivate: [AuthGuard] },
+      { path: 'new-facture', component: NewFactureComponent, canActivate: [AuthGuard] },
     ]
   },
   { path: '404', component: PageNotFoundComponent }, 
   { path: '**', redirectTo: '/404' } 
 ];
+
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]

@@ -58,21 +58,21 @@
         <mat-cell *matCellDef="let service" class="px-8 py-4">
           <div class="flex space-x-4">
             <!-- Edit button -->
-            <button mat-mini-fab color="primary" 
-                    class="bg-blue-100 hover:bg-blue-200 text-blue-600 transition-all transform hover:scale-110"
-                    [matTooltip]="'Modifier'"
-                    (click)="openUpdateServiceDialog(service)"
-                    >
-              <mat-icon>edit</mat-icon>
-            </button>
-            
-            <!-- Delete button -->
-            <button mat-mini-fab color="warn" 
-                    class="bg-red-100 hover:bg-red-200 text-red-600 transition-all transform hover:scale-110"
-                    [matTooltip]="'Supprimer'"
-                    (click)="delete(service.id)">
-              <mat-icon>delete</mat-icon>
-            </button>
+           <!-- Edit button -->
+           <button mat-mini-fab color="primary" 
+           class="yellow-button transition-all transform hover:scale-110"
+           [matTooltip]="'Modifier'"
+           (click)="openUpdateServiceDialog(service)">
+     <mat-icon>edit</mat-icon>
+   </button>
+
+<!-- Delete button -->
+<button mat-mini-fab color="warn" 
+class="yellow-button transition-all transform hover:scale-110"
+[matTooltip]="'Supprimer'"
+(click)="delete(service.id)">
+<mat-icon>delete</mat-icon>
+</button>
           </div>
         </mat-cell>
       </ng-container>

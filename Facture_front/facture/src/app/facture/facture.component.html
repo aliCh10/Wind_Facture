@@ -1,29 +1,35 @@
-<div class="container flex w-full min-h-[150vh] mx-auto my-5 gap-4">
-  <div #mainContent class="main-content w-3/4 bg-white p-6 border border-gray-200 rounded-xl shadow-md relative overflow-y-auto">
-    <app-logo></app-logo>
-    <app-info-client [boundaryElement]="mainContent"></app-info-client>
-    <app-info-company [boundaryElement]="mainContent"></app-info-company>
-    <app-calendar [boundaryElement]="mainContent"></app-calendar>
-    <div class="mt-8">
-      <app-table [boundaryElement]="mainContent"></app-table>
-    </div>
-    <app-footer></app-footer>
-  </div>
+<!-- parent.component.html -->
+<div class="a4-layout">
+  
+  <div #a4Page class="a4-page">
+    <div class="page-content">
+      <app-logo [containerRef]="mainContent" [boundaryElement]="a4Page" (openOptions)="onOpenOptions($event)" ></app-logo>
 
-  <div class="options-wrapper w-1/4" [class.open]="showOptions" [class.closed]="!showOptions">
-    <div class="options-container overflow-y-auto h-full">
-      <app-options></app-options>
+      <app-table [containerRef]="mainContent" [boundaryElement]="a4Page" (openOptions)="onOpenOptions($event)"></app-table>
+      <app-calendar [boundaryElement]="a4Page" (openOptions)="onOpenOptions($event)"></app-calendar>
+      <app-info-company [boundaryElement]="a4Page" (openOptions)="onOpenOptions($event)"></app-info-company>
+      <app-info-client [boundaryElement]="a4Page" (openOptions)="onOpenOptions($event)"></app-info-client>
+      <app-footer [containerRef]="mainContent" [boundaryElement]="a4Page" (openOptions)="onOpenOptions($event)"></app-footer>
     </div>
   </div>
 
-  <button
-  class="toggle-options-btn"
-  (click)="toggleOptions()"
-  matTooltip="Afficher/Masquer les options"
-  matTooltipPosition="left"
-  aria-label="Toggle options panel"
->
-  <mat-icon>settings</mat-icon>
-  <span class="btn-text">Options</span>
-</button>
-</div>
+  <div class="options-wrapper" [class.open]="showOptions">
+    <app-options 
+      [activeComponent]="activeComponent"
+      (stylesUpdated)="onStylesUpdated($event)">
+    </app-options>  </div>
+
+  <button class="save-btn bg-amber-300 text-white py-2 px-4 rounded-sm" matTooltip="Sauvegarder le modèle"
+    aria-label="Save model"
+    (click)="saveModeleFacture()" >
+    <mat-icon>save</mat-icon>
+    <span class="btn-text">Sauvegarder</span>
+    
+  </button>
+
+  <button class="toggle-options-btn" (click)="toggleOptions()" matTooltip="Afficher/Masquer les options"
+    matTooltipPosition="left" aria-label="Toggle options panel">
+    <mat-icon>settings</mat-icon>
+    <span class="btn-text">Options</span>
+  </button>
+</div>  

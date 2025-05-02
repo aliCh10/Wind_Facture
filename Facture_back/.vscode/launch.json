@@ -93,6 +93,16 @@
             "projectName": "services-ser",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-FactureApplication<facture>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.example.facture.FactureApplication",
+            "projectName": "facture",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

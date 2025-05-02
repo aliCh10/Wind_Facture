@@ -5,6 +5,8 @@ import org.springframework.security.core.Authentication;
 
 public class JwtAuthentication implements Authentication {
     private final String token;
+    private Long tenantId;
+
     private boolean authenticated = true;
 
     public JwtAuthentication(String token) {
@@ -44,5 +46,12 @@ public class JwtAuthentication implements Authentication {
     @Override
     public String getName() {
         return null; // Vous pouvez retourner un identifiant unique ou un nom si nécessaire
+    }
+    public Long getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
     }
 }

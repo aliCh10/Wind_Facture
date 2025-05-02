@@ -38,4 +38,5 @@ public class CloudinaryService {
         return (String) uploadResult.get("url");  
     }
     
+    
 }

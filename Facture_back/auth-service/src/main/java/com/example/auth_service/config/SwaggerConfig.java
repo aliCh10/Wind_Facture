@@ -21,7 +21,7 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("API Facture")
+                        .title("API authentification")
                         .version("1.0")
                         .description("Documentation de l'API de gestion des factures"))
                 .addSecurityItem(new SecurityRequirement().addList("BearerAuth")) // Ajout de la sécurité
@@ -30,7 +30,7 @@ public class SwaggerConfig {
                                 .name("BearerAuth")
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
-                                .bearerFormat("JWT"))) // Définition du schéma JWT
+                                .bearerFormat("JWT"))) 
                 .path("/register", new PathItem()
                         .post(new Operation()
                                 .requestBody(new RequestBody()

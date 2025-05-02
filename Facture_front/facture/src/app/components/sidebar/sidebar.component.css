@@ -1,7 +1,8 @@
+/* --- Sidebar container --- */
 .sidebar {
   width: 200px;
   height: 100vh;
-  background:#252437;
+  background: #252437;
   color: #FFD700;
   padding: 20px;
   position: fixed;
@@ -11,24 +12,27 @@
   flex-direction: column;
   align-items: flex-start;
   box-shadow: 4px 0 15px rgba(0, 0, 0, 0.6);
-  transition: width 0.3s ease-in-out, transform 0.3s ease-in-out;
-  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+  overflow-y: auto;
+  z-index: 1000;
 }
 
+/* Collapsed state */
 .sidebar.collapsed {
   width: 60px;
   padding: 10px;
 }
 
+/* Logo styling */
 .logo img {
   width: 100%;
-  height: auto;
   max-height: 120px;
   object-fit: contain;
   margin-bottom: 30px;
   transition: transform 0.3s ease-in-out;
 }
 
+/* --- Menu styling --- */
 .menu {
   list-style-type: none;
   padding: 0;
@@ -43,24 +47,12 @@
   padding: 12px 15px;
   cursor: pointer;
   border-radius: 8px;
-  transition: all 0.3s ease-in-out;
   color: white;
   font-weight: 500;
-  position: relative;
   margin-bottom: 10px;
-  background: rgba(255, 215, 0, 0.1);
-}
-
-.menu-item.active {
-  background: linear-gradient(90deg, #FFD700, #ffcc00);
-  color: black !important;
-  font-weight: bold;
-  border-radius: 5px;
-}
-
-.sidebar.collapsed .menu-item {
-  justify-content: center;
-  padding: 10px;
+  background: rgba(255, 215, 0, 0.08);
+  transition: all 0.3s ease-in-out;
+  position: relative;
 }
 
 .menu-item:hover {
@@ -70,10 +62,24 @@
   box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
 }
 
+.menu-item.active {
+  background: linear-gradient(90deg, #FFD700, #ffcc00);
+  color: #000 !important;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+/* Collapsed menu items */
+.sidebar.collapsed .menu-item {
+  justify-content: center;
+  padding: 10px;
+}
+
 .sidebar.collapsed .menu-item:hover {
   transform: none;
 }
 
+/* --- Icons --- */
 mat-icon {
   font-size: 20px;
   margin-right: 15px;
@@ -85,86 +91,72 @@ mat-icon {
   margin-right: 0;
 }
 
-.sidebar {
-  transition: transform 0.3s ease;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  z-index: 1000;
-}
-
-/* Styles pour les sous-items */
+/* --- Submenu styling --- */
 .submenu-items {
   width: 100%;
-  padding-left: 20px;
-  overflow: hidden;
-  transition: all 0.3s ease;
+  padding-left: 20px; /* Indentation for submenu items */
   background: rgba(37, 36, 55, 0.9);
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease-in-out;
+  list-style-type: none;
+  padding: 0;
 }
 
+/* --- Submenu item styling --- */
 .submenu-item {
-  padding: 10px 15px;
-  color: white;
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  border-left: 2px solid transparent;
+  border-radius: 8px;
+  color: white;
+  font-weight: 500;
+  margin-bottom: 10px;
+  background: rgba(255, 215, 0, 0.08);
+  transition: all 0.3s ease-in-out;
 }
 
 .submenu-item:hover {
-  background: rgba(255, 215, 0, 0.2);
-  border-left: 2px solid #FFD700;
-  transform: translateX(5px);
+  background: linear-gradient(90deg, #FFD700, #ffcc00);
+  color: #1a1a1a;
+  transform: translateX(10px);
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
 }
 
 .submenu-item.active {
-  background: rgba(255, 215, 0, 0.3);
-  border-left: 2px solid #FFD700;
-  color: #FFD700;
+  background: linear-gradient(90deg, #FFD700, #ffcc00);
+  color: #000 !important;
   font-weight: bold;
+  border-radius: 5px;
 }
 
-.dropdown-icon {
-  margin-left: auto;
-  font-size: 20px;
-  transition: transform 0.3s ease;
+/* --- Submenu item icon styling --- */
+.submenu-item mat-icon {
+  font-size: 18px;
+  margin-right: 10px;
+  color: inherit;
 }
 
-/* Pour les écrans larges */
-@media (min-width: 769px) {
-  .submenu-items {
-    max-height: 0;
-  }
-  
-  .menu-item:hover + .submenu-items,
-  .submenu-items:hover {
-    max-height: 200px;
-  }
+/* --- Show submenu when active --- */
+.menu-item.active .submenu-items,
+.submenu-items.show {
+  max-height: 500px;
 }
 
-/* Pour mobile */
+/* --- Responsive design for submenu items --- */
 @media (max-width: 768px) {
+  /* Adjust submenu items to align with the parent items */
+  .submenu-item {
+    padding: 10px;
+  }
+
   .submenu-items {
-    max-height: 0;
-    padding-left: 30px;
+    padding-left: 15px; /* Align submenu items with the parent */
   }
-  
-  .isSidebarActive .submenu-items {
-    max-height: 200px;
-  }
-}
 
-@media (max-width: 768px) {
-  .sidebar:not(.active) {
-    transform: translateX(-100%);
-  }
-  .sidebar.active {
-    transform: translateX(0);
-  }
-}
-
-@media (min-width: 769px) {
-  .sidebar {
-    transform: translateX(0) !important;
+  .submenu-item:hover {
+    background: rgba(255, 215, 0, 0.2);
+    transform: translateX(5px);
   }
 }

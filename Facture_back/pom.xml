@@ -16,6 +16,7 @@
         <module>auth-service</module>
         <module>Client-service</module>
         <module>services-ser</module>
+        <module>facture</module>
     </modules>
 
     <dependencyManagement>

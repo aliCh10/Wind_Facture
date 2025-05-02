@@ -1,33 +1,38 @@
-<div class="sidebar" [class.active]="isSidebarActive" [class.collapsed]="isMobile">
+<div class="sidebar" [class.active]="isSidebarActive" [class.collapsed]="isMobile && !isSidebarActive">
   <div class="logo">
     <img src="assets/images/LOGO-svg.webp" alt="Logo" />
   </div>
   <ul class="menu">
     <ng-container *ngFor="let item of menuItems">
-      <div class="menu-item" 
-           [routerLink]="item.route" 
-           routerLinkActive="active" 
-           (click)="selectMenuItem(item)"
-           (mouseenter)="showChildren = item.label === 'MENU.FACTURE' ? true : showChildren"
-           (mouseleave)="showChildren = false">
-        <mat-icon>{{ item.icon }}</mat-icon>
-        <span>{{ getTranslation(item.label) }}</span>
-        <mat-icon *ngIf="item.children && item.children.length > 0" class="dropdown-icon">
-          {{showChildren && item.label === 'MENU.FACTURE' ? 'expand_less' : 'expand_more'}}
-        </mat-icon>
-      </div>
-      
-      <!-- Sous-items pour Facture -->
-      <div *ngIf="item.label === 'MENU.FACTURE' && ((isMobile && isSidebarActive) || showChildren)"
-           class="submenu-items">
-        <div *ngFor="let child of item.children" 
-             class="submenu-item"
-             [routerLink]="child.route"
+      <li class="menu-item-container">
+        <div class="menu-item"
+             [routerLink]="item.route"
              routerLinkActive="active"
-             (click)="selectMenuItem(child)">
-          {{ getTranslation(child.label) }}
+             [routerLinkActiveOptions]="{ exact: false }"
+             (click)="toggleSubmenu(item.label)">
+             
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span class="menu-label">{{ getTranslation(item.label) }}</span>
+      
+          <mat-icon *ngIf="hasChildren(item)" class="dropdown-icon">
+            {{ isSubmenuOpen(item.label) ? 'expand_more' : 'expand_less' }}
+          </mat-icon>
         </div>
-      </div>
+      
+        <div *ngIf="hasChildren(item) && isSubmenuOpen(item.label)"
+             class="submenu-items"
+             [ngClass]="{ 'show': isSubmenuOpen(item.label) }">
+          <div *ngFor="let child of item.children"
+               class="submenu-item"
+               [routerLink]="child.route"
+               routerLinkActive="active"
+               (click)="handleMenuItemClick($event, child)">
+               
+            <mat-icon *ngIf="child.icon">{{ child.icon }}</mat-icon>
+            <span>{{ getTranslation(child.label) }}</span>
+          </div>
+        </div>
+      </li>
     </ng-container>
   </ul>
 </div>

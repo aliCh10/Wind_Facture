@@ -1,42 +1,69 @@
 <div class="h-100 bg-light">
     <div class="d-flex h-100 justify-content-center align-items-center">
-        <div class="mx-auto app-login-box col-md-6">
-            <div class="modal-dialog w-100">
-                <div class="modal-content border-0 shadow-lg">
-                    <div class="modal-header bg-white border-0">
-                        <div class="h5 modal-title text-center w-100">
-                            <h3 class="mb-2">Vérification de l'Email</h3>
-                            <p class="text-muted mb-0">Entrez le code reçu par e-mail pour activer votre compte.</p>
-                        </div>
-                    </div>
-                    <div class="modal-body bg-white">
-                        <div>
-                            <form (ngSubmit)="verifyCode()">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <fieldset class="mb-4">
-                                            <div tabindex="-1" role="group">
-                                                <label for="verificationCode" class="form-label">Code de vérification</label>
-                                                <input id="verificationCode" name="code" type="text" placeholder="Entrez votre code ici..." class="form-control form-control-lg" [(ngModel)]="verificationCode" required>
-                                            </div>
-                                        </fieldset>
-                                    </div>
-                                </div>
-                                <div class="divider"></div>
-                                <div class="text-center mt-3">
-                                    <a [routerLink]="" class="text-decoration-none text-primary">Renvoyer le code</a>
-                                </div>
-                                <!-- Bouton à l'intérieur du formulaire, de type submit -->
-                                <div class="modal-footer bg-white border-0">
-                                    <div class="w-100 text-center">
-                                        <button type="submit" class="btn btn-primary btn-lg w-100" [disabled]="!verificationCode">Vérifier le Code</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+      <div class="mx-auto app-login-box col-md-6">
+        <div class="modal-dialog w-100">
+          <div class="modal-content custom-card">
+            <div class="modal-header bg-white border-0" style="display: block;">
+              <div class="d-flex justify-content-center align-items-center w-100">
+                <!-- Logo Image -->
+                <img src="assets/images/LOGO-svg.webp" alt="Logo" class="custom-logo">
+              </div>
+              <div class="h5 modal-title text-center w-100">
+                <h3 class="mb-2 custom-title">Vérification de l'Email</h3>
+                <p class="text-muted mb-0 custom-subtitle">Entrez le code reçu par e-mail pour activer votre compte.</p>
+              </div>
             </div>
+            <div class="modal-body bg-white">
+              <form [formGroup]="verifyForm" (ngSubmit)="verifyCode()">
+                <div class="row">
+                  <div class="col-md-12">
+                    <fieldset class="mb-4">
+                      <div role="group">
+                        <label for="verificationCode" class="form-label custom-label">Code de vérification</label>
+                        <input
+                          id="verificationCode"
+                          formControlName="verificationCode"
+                          type="text"
+                          placeholder="Entrez votre code ici..."
+                          class="form-control custom-input"
+                          [ngClass]="{
+                            'is-invalid': verifyForm.get('verificationCode')?.invalid && verifyForm.get('verificationCode')?.touched
+                          }"
+                        />
+                        <div
+                          *ngIf="verifyForm.get('verificationCode')?.invalid && verifyForm.get('verificationCode')?.touched"
+                          class="invalid-feedback"
+                        >
+                          <div *ngIf="verifyForm.get('verificationCode')?.errors?.['required']">
+                            Le code est requis.
+                          </div>
+                          <div *ngIf="verifyForm.get('verificationCode')?.errors?.['minlength']">
+                            Le code doit contenir au moins 6 caractères.
+                          </div>
+                        </div>
+                      </div>
+                    </fieldset>
+                  </div>
+                </div>
+                <div class="divider"></div>
+                <div class="text-center mt-3">
+                  <a [routerLink]="" class="text-decoration-none custom-link">Renvoyer le code</a>
+                </div>
+                <div class="modal-footer bg-white border-0 mt-4">
+                  <div class="w-100 text-center">
+                    <button
+                      type="submit"
+                      class="btn btn-lg w-100"
+                      [disabled]="verifyForm.invalid"
+                    >
+                      Vérifier le Code
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-</div>
+  </div>

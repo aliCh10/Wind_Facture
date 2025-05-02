@@ -1,61 +1,117 @@
-<div #tableContainer class="absolute bg-white rounded-xl shadow-md p-4 cursor-move z-10 w-[750px]"
-     cdkDrag 
-     [cdkDragBoundary]="'.main-content'"
-     (cdkDragMoved)="onDragMove($event)"
-     (cdkDragEnded)="onDragEnd($event)"
-     [style.left.px]="position.x" 
-     [style.top.px]="position.y"
-      style="border: 1.8px dashed #cbd5e1;">
-  
+<div
+  #tableContainer
+  class="table-container"
+  cdkDrag
+  [cdkDragBoundary]="boundaryElement || '.page-content'"
+  (cdkDragEnded)="onDragEnd($event)"
+  (click)="openOptionsPanel()"
+    [style.left.px]="x"
+  [style.top.px]="y"
+>
   <div class="relative">
     <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-[#FFD700]"> 
+      <table class="min-w-full divide-y">
+        <thead class="table-header">
           <tr>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">Réf</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">TVA (%)</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">Remise (%)</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">Quantité</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">Prix Unitaire</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">Total</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"></th>
+            <th
+              class="px-4 py-3 text-left font-medium text-gray-800 tracking-wider"
+            >
+              Réf
+            </th>
+            <th
+              class="px-4 py-3 text-left font-medium text-gray-800 tracking-wider"
+            >
+              TVA (%)
+            </th>
+            <th
+              class="px-4 py-3 text-left font-medium text-gray-800 tracking-wider"
+            >
+              Remise (%)
+            </th>
+            <th
+              class="px-4 py-3 text-left font-medium text-gray-800 tracking-wider"
+            >
+              Quantité
+            </th>
+            <th
+              class="px-4 py-3 text-left font-medium text-gray-800 tracking-wider"
+            >
+              Prix Unitaire
+            </th>
+            <th
+              class="px-4 py-3 text-left font-medium text-gray-800 tracking-wider"
+            >
+              Total
+            </th>
+            <th
+              class="px-4 py-3 text-left font-medium text-gray-800 tracking-wider"
+            ></th>
           </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          <tr *ngFor="let item of items; let i = index" 
-              class="hover:bg-gray-50 transition-colors duration-150"
-              (mouseenter)="hoveredIndex = i" 
-              (mouseleave)="hoveredIndex = null">
+        <tbody class="divide-y divide-gray-200">
+          <tr
+            *ngFor="let item of items; let i = index"
+            class="hover:bg-gray-50 transition-colors duration-150"
+            (mouseenter)="hoveredIndex = i"
+            (mouseleave)="hoveredIndex = null"
+          >
             <td class="px-4 py-3 whitespace-nowrap">
-              <input type="text" [(ngModel)]="item.ref" placeholder="Référence"
-                     class="w-full px-2 py-1 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none">
-            </td>
-            <td class="px-4 py-3 whitespace-nowrap">
-              <input type="number" [(ngModel)]="item.tva" min="0" step="0.1"
-                     class="w-full px-2 py-1 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none">
-            </td>
-            <td class="px-4 py-3 whitespace-nowrap">
-              <input type="number" [(ngModel)]="item.remise" min="0" max="100" step="0.1"
-                     class="w-full px-2 py-1 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none">
+              <input
+                type="text"
+                [(ngModel)]="item.ref"
+                placeholder="Référence"
+                class="w-full px-2 py-1 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none"
+              />
             </td>
             <td class="px-4 py-3 whitespace-nowrap">
-              <input type="number" [(ngModel)]="item.quantity" min="1" step="1"
-                     class="w-full px-2 py-1 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none">
+              <input
+                type="number"
+                [(ngModel)]="item.tva"
+                min="0"
+                step="0.1"
+                class="w-full px-2 py-1 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none"
+              />
             </td>
             <td class="px-4 py-3 whitespace-nowrap">
-              <input type="number" [(ngModel)]="item.price" min="0" step="0.01"
-                     class="w-full px-2 py-1 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none">
+              <input
+                type="number"
+                [(ngModel)]="item.remise"
+                min="0"
+                max="100"
+                step="0.1"
+                class="w-full px-2 py-1 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none"
+              />
             </td>
-            <td class="px-4 py-3 whitespace-nowrap font-medium text-gray-900 text-sm">
-              {{ calculateLineTotal(item) | number:'1.2-2' }}
+            <td class="px-4 py-3 whitespace-nowrap">
+              <input
+                type="number"
+                [(ngModel)]="item.quantity"
+                min="1"
+                step="1"
+                class="w-full px-2 py-1 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none"
+              />
             </td>
-            <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium w-12">
-              <button *ngIf="hoveredIndex === i && items.length > 1" 
-                      (click)="removeItem(i)" 
-                      class="text-red-600 hover:text-red-900 transition-colors duration-150">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
+            <td class="px-4 py-3 whitespace-nowrap">
+              <input
+                type="number"
+                [(ngModel)]="item.price"
+                min="0"
+                step="0.01"
+                class="w-full px-2 py-1 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none"
+              />
+            </td>
+            <td
+              class="px-4 py-3 whitespace-nowrap font-medium text-gray-900 text-sm line-total"
+            >
+              {{ (item.quantity * item.price * (1 - item.remise / 100) * (1 + item.tva / 100)).toFixed(2) }} dt
+            </td>
+            <td class="px-4 py-3 whitespace-nowrap">
+              <button
+                *ngIf="hoveredIndex === i && items.length > 1"
+                (click)="removeItem(i)"
+                class="text-red-600 hover:text-red-800"
+              >
+                Remove
               </button>
             </td>
           </tr>
@@ -64,16 +120,26 @@
     </div>
 
     <div class="mt-4 flex justify-between items-center">
-      <button (click)="addItem()"
-              class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-black bg-[#FFD700] hover:bg-amber-400 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+      <button
+        (click)="addItem()"
+        class="inline-flex items-center px-3 py-1.5 border border-transparent font-medium rounded-md shadow-sm text-black bg-[#FFD700] hover:bg-amber-400 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-4 w-4 mr-1"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+            clip-rule="evenodd"
+          />
         </svg>
         Ajouter une ligne
       </button>
-      
+
       <div class="text-base font-semibold text-gray-900">
-        Total: {{ calculateTotal() | number:'1.2-2' }}
       </div>
     </div>
   </div>

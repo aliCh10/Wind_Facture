@@ -32,7 +32,7 @@ public class JwtauthenticationFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String email;
-        final Long tenantId; // Ajout du tenantId
+        final Long tenantId; 
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
@@ -48,13 +48,10 @@ public class JwtauthenticationFilter extends OncePerRequestFilter {
             logger.info("UserDetails found: {}");
 
             if (jwtService.isTokenValid(jwt, userDetails)) {
-                // Créer un objet d'authentification avec le tenantId
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities()
                 );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                // Ajouter le tenantId au contexte de sécurité
                 SecurityContextHolder.getContext().setAuthentication(authToken);
                 request.setAttribute("tenantId", tenantId); 
                 System.out.println("Authorities: " + userDetails.getAuthorities());

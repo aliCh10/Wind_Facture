@@ -1,50 +1,115 @@
+/* Background */
 .bg-light {
     background-color: #f8f9fa;
-}
-
-.shadow-lg {
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-}
-
-.form-control-lg {
+  }
+  
+  /* Card styling */
+  .custom-card {
+    max-width: 700px;
+    border-radius: 15px;
+    padding: 3.5rem;
+    background-color: #fff;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+  }
+  
+  /* Title and subtitle styling */
+  .custom-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #333;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+  }
+  
+  .custom-subtitle {
+    font-size: 1rem;
+    color: #777;
+    font-weight: 400;
+    margin-bottom: 2rem;
+  }
+  
+  /* Custom label */
+  .custom-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Input field styling */
+  .custom-input {
+    border-radius: 0.5rem;
+    border: 2px solid #FFD700;
     padding: 1rem;
-    font-size: 1.1rem;
-    border-radius: 0.5rem;
-    border: 1px solid #ced4da;
+    font-size: 1.2rem;
     transition: border-color 0.3s ease;
-}
-
-.form-control-lg:focus {
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-
-.btn-primary {
-    background-color: #007bff;
+  }
+  
+  .custom-input:focus {
+    border-color: #ffcc00;
+    box-shadow: 0 0 5px rgba(255, 204, 0, 0.5);
+  }
+  
+  /* Invalid input feedback */
+  .is-invalid {
+    border-color: #dc3545;
+  }
+  
+  .invalid-feedback {
+    color: #dc3545;
+    font-size: 0.875rem;
+  }
+  
+  /* Logo styling */
+  .custom-logo {
+    width: 250px;
+    height: auto;
+    margin-bottom: 2rem;
+  }
+  
+  /* Button styling */
+  .btn {
+    background-color: #FFD700;
     border: none;
-    padding: 0.75rem 1.5rem;
-    font-size: 1.1rem;
+    padding: 1rem 2rem;
+    font-size: 1rem;
     border-radius: 0.5rem;
-    transition: background-color 0.3s ease;
-}
-
-.btn-primary:hover {
-    background-color: #0056b3;
-}
-
-.btn-primary:disabled {
-    background-color: #a0c8f5;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .btn:hover {
+    background-color: #e6b800;
+    transform: scale(1.05);
+  }
+  
+  .btn:disabled {
+    background-color: #fbf70c;
     cursor: not-allowed;
-}
-
-.text-primary {
-    color: #007bff !important;
-}
-
-.text-muted {
-    color: #6c757d !important;
-}
-
-.border-0 {
+  }
+  
+  /* Link styling */
+  .custom-link {
+    color: #FFD700;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+  
+  .custom-link:hover {
+    color: #e6b800;
+  }
+  
+  /* Modal body */
+  .modal-body {
+    padding: 2rem;
+  }
+  
+  /* Divider */
+  .divider {
+    margin: 1.5rem 0;
+  }
+  
+  /* Border reset */
+  .border-0 {
     border: none !important;
-}
+  }

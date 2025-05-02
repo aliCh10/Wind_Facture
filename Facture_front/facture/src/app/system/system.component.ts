@@ -59,6 +59,11 @@ sidebarMenuItems = [
   }
   
 
+  isPartnerValidated(partner: any): boolean {
+    return partner.validated;
+  }
+  
+  // Modifiez la méthode validatePartner pour rafraîchir correctement les données
   validatePartner(id: number): void {
     Swal.fire({
       title: 'Are you sure?',
@@ -72,7 +77,13 @@ sidebarMenuItems = [
         this.systemService.validatePartner(id).subscribe(
           (response) => {
             this.toastr.success(response.message, 'Success');
-            this.getPartners(); // Rafraîchir la liste après validation
+            // Mettre à jour localement le partenaire validé
+            const partnerIndex = this.partners.findIndex(p => p.id === id);
+            if (partnerIndex !== -1) {
+              this.partners[partnerIndex].validated = true;
+              this.partners[partnerIndex].status = true;
+              this.dataSource.data = [...this.partners]; // Forcer la mise à jour
+            }
           },
           (error) => {
             this.toastr.error('Validation failed.', 'Error');

@@ -52,18 +52,20 @@
  "Transform your management with ease":"Transform your management with ease",
  "New Invoice":"New Invoice",
  "No partner to validate":"No partner to validate",
+ "Customize your invoice":"Customize your invoice",
   
     "MENU": {
       "HOME": "Home",
       "DASHBOARD": "Dashboard",
-      "Modele ": " Invoice Model",
+      "Modele": " Invoice Model",
       "SERVICE": "Service",
       "LOGOUT": "Logout",
      "SETTINGS": "Settings",
      "Partners":"Partners",
      "Employé":"Employee",
-     "client":"client",
-     "SERVICES": "Services"
+     "Client":"Client",
+     "SERVICES": "Services",
+     "NEW_Invoice":"New Invoice"
 
 
     },

@@ -1,47 +1,180 @@
 import { CdkDragEnd } from '@angular/cdk/drag-drop';
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { StyleManagerService } from '../../../services/StyleManagerService';
+import { Section } from '../../../models/section.model';
 
 @Component({
   selector: 'app-calendar',
   standalone: false,
   templateUrl: './calendar.component.html',
-  styleUrl: './calendar.component.css'
+  styleUrls: ['./calendar.component.css'],
 })
-export class CalendarComponent {
-
+export class CalendarComponent implements Section, AfterViewInit, OnDestroy {
   @ViewChild('calendarContainer') calendarContainer!: ElementRef<HTMLDivElement>;
+  @Input() containerRef?: ElementRef<HTMLDivElement>;
   @Input() boundaryElement?: HTMLElement;
+  @Output() openOptions = new EventEmitter<string>();
+  @Output() positionChanged = new EventEmitter<{ x: number; y: number }>();
 
-  selectedDate1: Date | null = new Date(2025, 3, 10); // Default to 10/04/2025 (month is 0-based in JS)
-  selectedOption: string = 'Facture'; // Default value for the first dropdown
-  selectedPayment: string = 'à réception'; // Default value for the Règlement dropdown
-  options: string[] = ['Facture', 'Devis', 'Bon de commande']; // Example options for Facture
-  paymentOptions: string[] = ['à réception', '30 jours', '60 jours']; // Example opt
-  position = { x: 20, y: 440 };
+  selectedDate1: Date | null = new Date(2025, 3, 10);
+  selectedOption = 'Facture';
+  selectedPayment = 'à réception';
+  options = ['Facture', 'Devis', 'Bon de commande'];
+  paymentOptions = ['à réception', '30 jours', '60 jours'];
+
+  // Section interface properties
+  id?: number;
+  sectionName: string = 'calendar';
+  x: number = 20;
+  y: number = 440;
+  styles: { [key: string]: string } = {};
+
+  // Style properties
+  backgroundColor = '#ffffff';
+  borderColor = '#cbd5e1';
+  borderStyle = 'dashed';
+  borderWidth = 1.8;
+  borderRadius = 12;
+  textColor = '#000000';
+  fontFamily = 'Inter';
+  fontSize = 14;
+  width = 750; // Consistent with FooterComponent
+  height = 80; // Provided default
+
+  private stylesSubscription!: Subscription;
+
+  constructor(private styleManager: StyleManagerService) {}
+
+  ngAfterViewInit() {
+    if (!this.boundaryElement) {
+      console.warn('boundaryElement is not provided, using containerRef');
+      this.boundaryElement = this.containerRef?.nativeElement;
+    }
+
+    // Subscribe to style updates
+    this.stylesSubscription = this.styleManager.componentStyles$.subscribe(styles => {
+      const componentStyles = styles['calendar'] || {};
+      this.loadStyles(componentStyles);
+      this.applyStyles(false); // Apply styles without updating service
+    });
+
+    // Load and apply initial styles
+    const initialStyles = this.styleManager.getStyles('calendar') || {};
+    console.log('Initial styles:', initialStyles); // Debug: Verify initial styles
+    this.loadStyles(initialStyles);
+    this.applyStyles(false);
+
+    // Apply initial position
+    this.updateCalendarPosition();
+  }
+
+  ngOnDestroy() {
+    this.stylesSubscription?.unsubscribe();
+  }
+
+  private loadStyles(styles: { [key: string]: string | undefined }) {
+    this.backgroundColor = styles['background-color'] || this.backgroundColor;
+    this.borderColor = styles['border-color'] || this.borderColor;
+    this.borderStyle = styles['border-style'] || this.borderStyle;
+    this.borderWidth = this.parsePixelValue(styles['border-width'], this.borderWidth);
+    this.borderRadius = this.parsePixelValue(styles['border-radius'], this.borderRadius);
+    this.textColor = styles['color'] || this.textColor;
+    this.fontFamily = styles['font-family'] || this.fontFamily;
+    this.fontSize = this.parsePixelValue(styles['font-size'], this.fontSize);
+    this.width = this.parsePixelValue(styles['width'], this.width);
+    this.height = this.parsePixelValue(styles['height'], this.height);
+  }
+
+  private parsePixelValue(value: string | undefined, defaultValue: number): number {
+    if (!value) return defaultValue;
+    const num = parseFloat(value.replace(/px|\s/g, ''));
+    return isNaN(num) ? defaultValue : num;
+  }
+
+  public applyStyles(updateService: boolean = true) {
+    const el = this.calendarContainer?.nativeElement;
+    if (!el) {
+      console.warn('Calendar container element not available for styling');
+      return;
+    }
+
+    // Apply container styles
+    el.style.backgroundColor = this.backgroundColor;
+    el.style.border = `${this.borderWidth}px ${this.borderStyle} ${this.borderColor}`;
+    el.style.borderRadius = `${this.borderRadius}px`;
+    el.style.width = `${this.width}px`;
+    el.style.height = `${this.height}px`;
+
+    // Apply text styles
+    el.querySelectorAll('mat-label, mat-select, input, mat-option, .mat-select-value, .mat-select-arrow').forEach(
+      (element: Element) => {
+        const htmlEl = element as HTMLElement;
+        htmlEl.style.color = this.textColor;
+        htmlEl.style.fontFamily = this.fontFamily;
+        htmlEl.style.fontSize = `${this.fontSize}px`;
+      }
+    );
+
+    // Update styles for Section interface
+    this.styles = this.getCurrentStyles();
+
+    // Update StyleManagerService if requested
+    if (updateService) {
+      this.styleManager.updateStyles('calendar', this.styles, 'CalendarComponent');
+    }
+  }
 
   onDragEnd(event: CdkDragEnd): void {
-    if (!this.boundaryElement) return;
+    if (!this.boundaryElement) {
+      console.warn('No boundaryElement available');
+      return;
+    }
 
-    const calendarElement = this.calendarContainer.nativeElement;
+    const el = this.calendarContainer.nativeElement;
     const containerRect = this.boundaryElement.getBoundingClientRect();
-    const calendarRect = calendarElement.getBoundingClientRect();
+    const elementRect = el.getBoundingClientRect();
 
-    // Calculate new position
-    const newX = this.position.x + event.distance.x;
-    const newY = this.position.y + event.distance.y;
+    const newX = this.x + event.distance.x;
+    const newY = this.y + event.distance.y;
 
-    // Calculate boundaries
-    const minX = 0;
-    const minY = 0;
-    const maxX = containerRect.width - calendarRect.width;
-    const maxY = containerRect.height - calendarRect.height;
+    this.x = Math.max(0, Math.min(newX, containerRect.width - elementRect.width));
+    this.y = Math.max(0, Math.min(newY, containerRect.height - elementRect.height));
 
-    // Apply constraints
-    this.position.x = Math.max(minX, Math.min(newX, maxX));
-    this.position.y = Math.max(minY, Math.min(newY, maxY));
-
-    // Reset drag position
     event.source._dragRef.reset();
     event.source.setFreeDragPosition({ x: 0, y: 0 });
+
+    this.updateCalendarPosition();
+    this.positionChanged.emit({ x: this.x, y: this.y });
+
+    // Optional: Persist position
+    // this.styleManager.updatePosition('calendar', { x: this.x, y: this.y }, 'CalendarComponent');
+  }
+
+  public updateCalendarPosition(): void {
+    if (this.calendarContainer?.nativeElement) {
+      const calendarElement = this.calendarContainer.nativeElement;
+      calendarElement.style.left = `${this.x}px`;
+      calendarElement.style.top = `${this.y}px`;
+    }
+  }
+
+  getCurrentStyles(): { [key: string]: string } {
+    return {
+      'background-color': this.backgroundColor,
+      'border-color': this.borderColor,
+      'border-style': this.borderStyle,
+      'border-width': `${this.borderWidth}px`,
+      'border-radius': `${this.borderRadius}px`,
+      'color': this.textColor,
+      'font-family': this.fontFamily,
+      'font-size': `${this.fontSize}px`,
+      'width': `${this.width}px`,
+      'height': `${this.height}px`
+    };
+  }
+
+  openOptionsPanel() {
+    this.openOptions.emit('calendar');
   }
 }

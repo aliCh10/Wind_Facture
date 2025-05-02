@@ -1,14 +1,25 @@
 .calendar-container {
     position: absolute;
     cursor: move;
-    border: 1.8px dashed #cbd5e1;
     width: 750px;
     height: 80px;
-    border-radius: 12px;
     transition: all 0.3s ease;
+    /* Style par défaut */
+    border: 1.8px dashed #cbd5e1;
+    border-radius: 12px;
 }
 
+/* Classe pour modification de couleur seulement */
+.calendar-container.border-color-changed {
+    border-color: var(--border-color, #cbd5e1);
+}
 
+/* Classe pour modification complète */
+.calendar-container.border-style-changed {
+    border-width: var(--border-width, 1.8px);
+    border-style: var(--border-style, dashed);
+    border-color: var(--border-color, #cbd5e1);
+}
 
 .content-row {
     display: flex;

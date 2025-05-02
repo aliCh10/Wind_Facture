@@ -1,10 +1,12 @@
 package com.example.auth_service.service;
 
 import com.example.auth_service.Repository.UserRepository;
+import com.example.auth_service.config.JwtService;
 import com.example.auth_service.dto.EmployeeRegisterRequest;
 import com.example.auth_service.model.Employee;
 import com.example.auth_service.model.Role;
 import com.example.auth_service.model.User;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +15,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,11 +28,30 @@ public class EmployeeService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private final JwtService jwtService;
     private static final Logger logger = LoggerFactory.getLogger(EmployeeService.class);
-    private static final int PASSWORD_LENGTH = 8; // Configurable
+    private static final int PASSWORD_LENGTH = 8;
 
-    public ResponseEntity<?> addEmployee(Long partnerId, EmployeeRegisterRequest request) {
-        logger.info("Starting employee registration process...");
+    // Helper method to extract tenantId from JWT
+    private Long getAuthenticatedTenantId(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            logger.error("No Bearer token found in Authorization header");
+            throw new IllegalStateException("No Bearer token found in Authorization header");
+        }
+        String token = authHeader.substring(7);
+        Long tenantId = jwtService.extractTenantId(token);
+        if (tenantId == null) {
+            logger.error("No tenantId found in JWT");
+            throw new IllegalStateException("No tenantId found in JWT");
+        }
+        return tenantId;
+    }
+
+    public ResponseEntity<?> addEmployee(Long partnerId, EmployeeRegisterRequest request, HttpServletRequest httpRequest) {
+        logger.info("Starting employee registration process for partnerId: {}", partnerId);
+
+        Long authenticatedTenantId = getAuthenticatedTenantId(httpRequest);
 
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             logger.warn("Email {} is already in use", request.getEmail());
@@ -35,8 +59,9 @@ public class EmployeeService {
         }
 
         User partnerUser = findPartnerUser(partnerId);
-        if (partnerUser == null) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Partner not found with ID " + partnerId));
+        if (!partnerUser.getTenantId().equals(authenticatedTenantId)) {
+            logger.warn("PartnerId {} does not belong to authenticated tenant {}", partnerId, authenticatedTenantId);
+            return ResponseEntity.status(403).body(Map.of("message", "Unauthorized: Partner does not belong to your tenant"));
         }
 
         String generatedPassword = generateSecurePassword();
@@ -106,109 +131,111 @@ public class EmployeeService {
         logger.debug("Generated password: {}", generatedPassword);
         return generatedPassword;
     }
-    public ResponseEntity<?> getEmployeeById(Long employeeId) {
+
+    public ResponseEntity<?> getEmployeeById(Long employeeId, HttpServletRequest httpRequest) {
         logger.info("Fetching employee with ID: {}", employeeId);
-    
-        // Chercher l'employé dans la base de données
+
+        Long authenticatedTenantId = getAuthenticatedTenantId(httpRequest);
+
         Employee employee = (Employee) userRepository.findById(employeeId)
-                .filter(user -> user.getRole() == Role.EMPLOYE)
+                .filter(user -> user.getRole() == Role.EMPLOYE && user.getTenantId().equals(authenticatedTenantId))
                 .orElse(null);
-    
-        // Vérifier si l'employé existe
+
         if (employee == null) {
-            logger.warn("Employee with ID {} not found", employeeId);
-            return ResponseEntity.badRequest().body(Map.of("message", "Employee not found"));
+            logger.warn("Employee with ID {} not found for tenant {}", employeeId, authenticatedTenantId);
+            return ResponseEntity.badRequest().body(Map.of("message", "Employee not found or not in your tenant"));
         }
-    
-        logger.info("Employee with ID {} found", employeeId);
+
+        logger.info("Employee with ID {} found for tenant {}", employeeId, authenticatedTenantId);
         return ResponseEntity.ok(employee);
     }
-    public ResponseEntity<?> getAllEmployees() {
-        logger.info("Fetching all employees...");
-    
-        // Récupérer tous les utilisateurs
-        List<User> users = userRepository.findAll();
-    
-        // Filtrer les employés et les convertir en Employee
-        List<Employee> employees = users.stream()
-                .filter(user -> user.getRole() == Role.EMPLOYE)
-                .map(user -> (Employee) user)  // Caster l'utilisateur en Employee
+
+    public ResponseEntity<?> getAllEmployees(HttpServletRequest httpRequest) {
+        logger.info("Fetching all employees for tenant...");
+
+        Long authenticatedTenantId = getAuthenticatedTenantId(httpRequest);
+
+        List<Employee> employees = userRepository.findAll().stream()
+                .filter(user -> user.getRole() == Role.EMPLOYE && user.getTenantId().equals(authenticatedTenantId))
+                .map(user -> (Employee) user)
                 .collect(Collectors.toList());
-    
-        // Vérifier s'il y a des employés
+
         if (employees.isEmpty()) {
-            logger.warn("No employees found");
-            return ResponseEntity.status(404).body(Map.of("message", "No employees found"));
+            logger.warn("No employees found for tenant {}", authenticatedTenantId);
+            return ResponseEntity.status(404).body(Map.of("message", "No employees found in your tenant"));
         }
-    
-        logger.info("Successfully fetched all employees");
+
+        logger.info("Successfully fetched {} employees for tenant {}", employees.size(), authenticatedTenantId);
         return ResponseEntity.ok(employees);
     }
-    
-public ResponseEntity<?> updateEmployee(Long employeeId, EmployeeRegisterRequest request) {
-    logger.info("Updating employee with ID: {}", employeeId);
 
-    // Chercher l'employé dans la base de données
-    Employee employee = (Employee) userRepository.findById(employeeId)
-            .filter(user -> user.getRole() == Role.EMPLOYE)
-            .orElse(null);
+    public ResponseEntity<?> updateEmployee(Long employeeId, EmployeeRegisterRequest request, HttpServletRequest httpRequest) {
+        logger.info("Updating employee with ID: {}", employeeId);
 
-    if (employee == null) {
-        logger.warn("Employee with ID {} not found", employeeId);
-        return ResponseEntity.badRequest().body(Map.of("message", "Employee not found"));
+        Long authenticatedTenantId = getAuthenticatedTenantId(httpRequest);
+
+        Employee employee = (Employee) userRepository.findById(employeeId)
+                .filter(user -> user.getRole() == Role.EMPLOYE && user.getTenantId().equals(authenticatedTenantId))
+                .orElse(null);
+
+        if (employee == null) {
+            logger.warn("Employee with ID {} not found for tenant {}", employeeId, authenticatedTenantId);
+            return ResponseEntity.badRequest().body(Map.of("message", "Employee not found or not in your tenant"));
+        }
+
+        employee.setName(request.getName());
+        employee.setSecondName(request.getSecondName());
+        employee.setTel(request.getTel());
+        employee.setEmail(request.getEmail());
+        employee.setPost(request.getPost());
+        employee.setDepartment(request.getDepartment());
+
+        userRepository.save(employee);
+        logger.info("Employee with ID {} updated successfully for tenant {}", employeeId, authenticatedTenantId);
+
+        return ResponseEntity.ok(Map.of("message", "Employee updated successfully"));
     }
 
-    // Mettre à jour les informations de l'employé
-    employee.setName(request.getName());
-    employee.setSecondName(request.getSecondName());
-    employee.setTel(request.getTel());
-    employee.setEmail(request.getEmail());
-    employee.setPost(request.getPost());
-    employee.setDepartment(request.getDepartment());
+    public ResponseEntity<?> deleteEmployee(Long employeeId, HttpServletRequest httpRequest) {
+        logger.info("Deleting employee with ID: {}", employeeId);
 
-    userRepository.save(employee);
-    logger.info("Employee with ID {} updated successfully", employeeId);
+        Long authenticatedTenantId = getAuthenticatedTenantId(httpRequest);
 
-    return ResponseEntity.ok(Map.of("message", "Employee updated successfully"));
-}
-public ResponseEntity<?> deleteEmployee(Long employeeId) {
-    logger.info("Deleting employee with ID: {}", employeeId);
+        Employee employee = (Employee) userRepository.findById(employeeId)
+                .filter(user -> user.getRole() == Role.EMPLOYE && user.getTenantId().equals(authenticatedTenantId))
+                .orElse(null);
 
-    Employee employee = (Employee) userRepository.findById(employeeId)
-            .filter(user -> user.getRole() == Role.EMPLOYE)
-            .orElse(null);
+        if (employee == null) {
+            logger.warn("Employee with ID {} not found for tenant {}", employeeId, authenticatedTenantId);
+            return ResponseEntity.badRequest().body(Map.of("message", "Employee not found or not in your tenant"));
+        }
 
-    if (employee == null) {
-        logger.warn("Employee with ID {} not found", employeeId);
-        return ResponseEntity.badRequest().body(Map.of("message", "Employee not found"));
+        userRepository.delete(employee);
+        logger.info("Employee with ID {} deleted successfully for tenant {}", employeeId, authenticatedTenantId);
+
+        return ResponseEntity.ok(Map.of("message", "Employee deleted successfully"));
     }
 
-    userRepository.delete(employee);
-    logger.info("Employee with ID {} deleted successfully", employeeId);
+    public ResponseEntity<?> changePassword(Long employeeId, String newPassword, HttpServletRequest httpRequest) {
+        logger.info("Changing password for employee with ID: {}", employeeId);
 
-    return ResponseEntity.ok(Map.of("message", "Employee deleted successfully"));
-}
-public ResponseEntity<?> changePassword(Long employeeId, String newPassword) {
-    logger.info("Changing password for employee with ID: {}", employeeId);
+        Long authenticatedTenantId = getAuthenticatedTenantId(httpRequest);
 
-    Employee employee = (Employee) userRepository.findById(employeeId)
-            .filter(user -> user.getRole() == Role.EMPLOYE)
-            .orElse(null);
+        Employee employee = (Employee) userRepository.findById(employeeId)
+                .filter(user -> user.getRole() == Role.EMPLOYE && user.getTenantId().equals(authenticatedTenantId))
+                .orElse(null);
 
-    if (employee == null) {
-        logger.warn("Employee with ID {} not found", employeeId);
-        return ResponseEntity.badRequest().body(Map.of("message", "Employee not found"));
+        if (employee == null) {
+            logger.warn("Employee with ID {} not found for tenant {}", employeeId, authenticatedTenantId);
+            return ResponseEntity.badRequest().body(Map.of("message", "Employee not found or not in your tenant"));
+        }
+
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        employee.setPassword(encodedPassword);
+
+        userRepository.save(employee);
+        logger.info("Password for employee with ID {} successfully updated for tenant {}", employeeId, authenticatedTenantId);
+
+        return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
     }
-
-    String encodedPassword = passwordEncoder.encode(newPassword);
-
-    employee.setPassword(encodedPassword);
-
-    userRepository.save(employee);
-    logger.info("Password for employee with ID {} successfully updated", employeeId);
-
-    return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
-}
-    
-    
 }

@@ -22,4 +22,7 @@ public class Client {
 
     @Column(nullable = false, unique = true)
     private String rib;
+
+    @Column(nullable = false)
+    private Long tenantId; // Ajout du tenantId
 }

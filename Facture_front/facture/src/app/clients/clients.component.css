@@ -35,4 +35,9 @@
   .hover-header:hover .employee-title {
     color: white !important; /* Change text color on hover */
   }
-  
+  .yellow-button {
+    background-color: #FFD700 !important;
+  }
+  .yellow-button:hover {
+    background-color: #FFC107 !important;
+  }

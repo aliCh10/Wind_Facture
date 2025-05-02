@@ -12,7 +12,7 @@ public class OpenAPIConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
-                .info(new Info().title("Client API").version("1.0"))
+                .info(new Info().title("service API").version("1.0"))
                 .addSecurityItem(new SecurityRequirement().addList("BearerAuth"))
                 .schemaRequirement("BearerAuth", new SecurityScheme()
                         .name("Authorization")

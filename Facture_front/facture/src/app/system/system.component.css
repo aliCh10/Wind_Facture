@@ -5,6 +5,27 @@
   box-sizing: border-box;
 }
 
+/* Status icons */
+mat-icon[color="primary"] {
+  color: #4CAF50 !important; /* Vert pour validé */
+  transform: scale(1.2);
+}
+
+mat-icon[color="warn"] {
+  color: #F44336 !important; /* Rouge pour en attente */
+}
+
+/* Animation pour l'icône de statut */
+mat-icon {
+  transition: all 0.3s ease;
+}
+
+/* Disable validate button for already validated partners */
+button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .sidebar.collapsed ~ .content {
   margin-left: 60px;
   width: calc(100% - 60px);

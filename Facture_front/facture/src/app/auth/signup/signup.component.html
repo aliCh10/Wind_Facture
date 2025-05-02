@@ -1,10 +1,10 @@
-<div class="h-100 bg-gradient">
-  <div class="d-flex h-100 justify-content-center align-items-center">
+<div class=" bg-gradient ">
+  <div class="d-flex h-100 justify-content-center align-items-center py-3">
     <div class="mx-auto app-login-box col-md-8">
       <!-- Card Container -->
       <div class="modal-dialog w-100">
-        <div class="modal-content shadow-lg rounded-lg bg-white p-4"
-             style="border-radius: 20px; box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);">
+        <div class="modal-content shadow-lg rounded-lg bg-white p-5"
+        style="border-radius: 20px; box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);">
           <div class="modal-body text-center">
             <h4 class="font-weight-bold mb-2"
             style="font-size: 2rem; color: #2c3e50; font-family: 'cursive', sans-serif;">
@@ -14,7 +14,7 @@
         
           
             <!-- Image Responsive -->
-            <img src="assets/images/LOGO-svg.webp" alt="Logo" style="max-width: 80%; height: auto;">
+            <img src="assets/images/LOGO-svg.webp" alt="Logo" style="max-width: 80%; height: auto; margin-left: 18rem; ">
 
 
             <!-- Stepper -->
@@ -28,7 +28,7 @@
                 <form [formGroup]="personalInfo">
                   <div class="row">
                     <div class="col-md-6 mb-3">
-                      <mat-form-field appearance="outline" class="w-100">
+                      <mat-form-field  class="w-100">
                         <mat-label>{{ 'firstName' | translate }}</mat-label>
                         <input matInput placeholder="{{ 'firstName' | translate }}" formControlName="name">
                         <mat-icon matSuffix>person</mat-icon>
@@ -38,7 +38,7 @@
                       </mat-form-field>
                     </div>
                     <div class="col-md-6 mb-3">
-                      <mat-form-field appearance="outline" class="w-100">
+                      <mat-form-field  class="w-100">
                         <mat-label>{{ 'lastName' | translate }}</mat-label>
                         <input matInput placeholder="{{ 'lastName' | translate }}" formControlName="secondName">
                         <mat-icon matSuffix>person_outline</mat-icon>
@@ -51,7 +51,7 @@
 
                   <!-- Email -->
                   <div class="mb-3">
-                    <mat-form-field appearance="outline" class="w-100">
+                    <mat-form-field  class="w-100">
                       <mat-label>{{ 'email' | translate }}</mat-label>
                       <input matInput type="email" placeholder="{{ 'email' | translate }}" formControlName="email">
                       <mat-icon matSuffix>email</mat-icon>
@@ -63,7 +63,7 @@
 
                   <!-- Phone -->
                   <div class="mb-3">
-                    <mat-form-field appearance="outline" class="w-100">
+                    <mat-form-field  class="w-100">
                       <mat-label>{{ 'phone' | translate }}</mat-label>
                       <input matInput type="tel" placeholder="{{ 'phone' | translate }}" formControlName="tel">
                       <mat-icon matSuffix>phone</mat-icon>
@@ -75,7 +75,7 @@
 
                   <!-- Password -->
                   <div class="mb-3">
-                    <mat-form-field appearance="outline" class="w-100">
+                    <mat-form-field  class="w-100">
                       <mat-label>{{ 'password' | translate }}</mat-label>
                       <input matInput type="password" placeholder="{{ 'password' | translate }}" formControlName="password">
                       <mat-icon matSuffix>lock</mat-icon>
@@ -111,7 +111,7 @@
                 <form [formGroup]="companyInfo">
                   <!-- Company Name -->
                   <div class="mb-3">
-                    <mat-form-field appearance="outline" class="w-100">
+                    <mat-form-field  class="w-100">
                       <mat-label>{{ 'companyName' | translate }}</mat-label>
                       <input matInput placeholder="{{ 'companyName' | translate }}" formControlName="companyName">
                       <mat-icon matSuffix>business</mat-icon>
@@ -123,7 +123,7 @@
 
                   <!-- Company Address -->
                   <div class="mb-3">
-                    <mat-form-field appearance="outline" class="w-100">
+                    <mat-form-field  class="w-100">
                       <mat-label>{{ 'companyAddress' | translate }}</mat-label>
                       <input matInput placeholder="{{ 'companyAddress' | translate }}" formControlName="address">
                       <mat-icon matSuffix>location_on</mat-icon>
@@ -135,7 +135,7 @@
 
                   <!-- Company Type -->
                   <div class="mb-3">
-                    <mat-form-field appearance="outline" class="w-100">
+                    <mat-form-field  class="w-100">
                       <mat-label>{{ 'companyType' | translate }}</mat-label>
                       <mat-select formControlName="companytype">
                         <mat-option value="SARL">{{ 'companyTypeOptions.sarl' | translate }}</mat-option>

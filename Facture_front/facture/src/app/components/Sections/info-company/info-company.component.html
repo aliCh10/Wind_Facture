@@ -1,16 +1,17 @@
-
-<div #companyContainer 
-     class="company-container" 
-     cdkDrag 
-     [cdkDragBoundary]="boundaryElement"
-     (cdkDragEnded)="onDragEnd($event)"
-     [style.left.px]="position.x"
-     [style.top.px]="position.y">
-     
-     <div class="company-form">
-        SCI Wind<br>
-        85 RUE D'AURIASQUE<br>
-        83600 FREJUS<br>
-        FR
-    </div>
+<div
+  #companyContainer
+  class="company-container"
+  cdkDrag
+  (cdkDragEnded)="onDragEnd($event)"
+  (click)="openOptionsPanel()"
+    [style.left.px]="x"
+  [style.top.px]="y"
+>
+  <div #companyForm class="company-form">
+    {{ companyInfo.name }}<br />
+    {{ companyInfo.address }}<br />
+    {{ companyInfo.phone }}<br />
+    {{ companyInfo.email }}<br />
+    {{ companyInfo.siret }}
+  </div>
 </div>

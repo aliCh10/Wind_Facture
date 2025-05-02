@@ -1,0 +1,163 @@
+/* Conteneur principal du panneau */
+.style-customizer {
+    width: 100%;
+    max-width: 350px; /* Limite la largeur pour une meilleure lisibilité */
+    padding: 12px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    box-sizing: border-box;
+    margin: 0 auto;
+  }
+  
+  .customizer-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+  
+  .section-card {
+    background: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+    width: 100%;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  /* Effet de survol doré */
+  .section-card.hover-gold:hover {
+    border: 2px solid #FFD700; /* Bordure dorée au survol */
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3); /* Ombre dorée subtile */
+  }
+  
+  .section-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    background: #fafafa;
+    cursor: pointer;
+    gap: 10px;
+    justify-content: center;
+  }
+  
+  .section-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    flex-grow: 1;
+    text-align: center;
+  }
+  
+  .icon-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Couleurs vibrantes pour les icônes */
+  .bg-accent { background: #FFD700; color: #fff; } /* Vert émeraude */
+  
+  .custom-icon {
+    font-size: 20px;
+    height: 20px;
+    width: 20px;
+    line-height: 20px;
+  }
+  
+  .section-content {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .color-grid, .typography-controls, .border-controls {
+    display: grid;
+    gap: 12px;
+    width: 100%;
+  }
+  
+  .color-option, .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+  }
+  
+  .color-picker-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: center;
+  }
+  
+  .color-badge {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+  }
+  
+  .slider-container {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .value-display {
+    font-size: 12px;
+    color: #555;
+  }
+  
+  mat-form-field {
+    width: 100%;
+    text-align: center;
+  }
+  
+  mat-slider {
+    flex-grow: 1;
+    width: 100%;
+  }
+  
+  /* Défilement stylisé */
+  .style-customizer {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f5f5f5;
+  }
+  
+  .style-customizer::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .style-customizer::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+  }
+  
+  .style-customizer::-webkit-scrollbar-track {
+    background: #f5f5f5;
+  }
+  mat-slider.yellow-slider {
+    /* Piste active (partie remplie) */
+    --mdc-slider-active-track-color: #FFD700;
+    /* Piste inactive (partie non remplie) */
+    --mdc-slider-inactive-track-color: #FFD70066; /* Jaune avec opacité */
+    /* Curseur (thumb) */
+    --mdc-slider-handle-color: #FFD700;
+    /* Étiquette (thumbLabel) */
+    --mdc-slider-label-container-color: #FFD700;
+    --mdc-slider-label-label-text-color: #000; /* Texte noir pour contraste */
+    /* Bordure du curseur au focus */
+    --mdc-slider-focus-handle-color: #FFD700;
+  }

@@ -1,43 +1,46 @@
-<div #calendarContainer
-     class="calendar-container rounded-xl bg-white p-2 shadow-sm cursor-move "
-     cdkDrag 
-     (cdkDragEnded)="onDragEnd($event)"
-     [style.left.px]="position.x"
-     [style.top.px]="position.y">
-  
+<div
+  #calendarContainer
+  class="calendar-container rounded-xl p-2 shadow-sm cursor-move"
+  cdkDrag
+  (cdkDragEnded)="onDragEnd($event)"
+  (click)="openOptionsPanel()"
+  [style.left.px]="x"
+  [style.top.px]="y"
+>
   <div class="content-row flex space-x-4 items-center">
     <!-- Facture Dropdown -->
-    <mat-form-field  class="w-30 " style="margin-right: 13rem;">
-      <mat-label class="text-sm text-gray-600 font-medium">Facture</mat-label>
-      <mat-select [(value)]="selectedOption" class="text-sm text-gray-800">
+    <mat-form-field class="w-30" style="margin-right: 13rem;">
+      <mat-label class="text-sm font-medium">Facture</mat-label>
+      <mat-select [(ngModel)]="selectedOption" class="text-sm">
         <mat-option *ngFor="let option of options" [value]="option" class="text-sm flex items-center">
-          <span class="material-icons-outlined text-base mr-2 text-blue-500"></span>
+          <span class="material-icons-outlined text-base mr-2"></span>
           {{ option }}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
-    <!-- Date d'émission - Version moderne -->
-    <mat-form-field class="w-40 ">
-      <mat-label class="text-sm text-gray-600 font-medium">Date d'émission</mat-label>
-      <input matInput [matDatepicker]="picker1" [(ngModel)]="selectedDate1" class="text-sm text-gray-800">
-      <mat-datepicker-toggle matSuffix [for]="picker1" class="text-gray-500">
-        <mat-icon class="text-blue-500">calendar_today</mat-icon>
+    <!-- Date d'émission -->
+    <mat-form-field class="w-40">
+      <mat-label class="text-sm font-medium">Date d'émission</mat-label>
+      <input matInput [matDatepicker]="picker1" [(ngModel)]="selectedDate1" class="text-sm">
+      <mat-datepicker-toggle matSuffix [for]="picker1" class="">
+        <mat-icon class="">calendar_today</mat-icon>
       </mat-datepicker-toggle>
-      <mat-datepicker #picker1 class="modern-datepicker" 
-                     panelClass="modern-datepicker-panel">
-      </mat-datepicker>
+      <mat-datepicker
+        #picker1
+        class="modern-datepicker"
+        panelClass="modern-datepicker-panel"
+      ></mat-datepicker>
     </mat-form-field>
 
     <!-- Règlement Dropdown -->
-    <mat-form-field class="w-40 ">
-        <mat-label class="text-sm text-gray-600 font-medium">Date d'émission</mat-label>
-        <input matInput [matDatepicker]="picker1" [(ngModel)]="selectedDate1" class="text-sm text-gray-800">
-        <mat-datepicker-toggle matSuffix [for]="picker1" class="text-gray-500">
-          <mat-icon class="text-blue-500">calendar_today</mat-icon>
-        </mat-datepicker-toggle>
-        <mat-datepicker #picker1 class="modern-datepicker" 
-                       panelClass="modern-datepicker-panel">
-        </mat-datepicker>
-      </mat-form-field>
+    <mat-form-field class="w-40">
+      <mat-label class="text-sm font-medium">Règlement</mat-label>
+      <mat-select [(ngModel)]="selectedPayment" class="text-sm">
+        <mat-option *ngFor="let payment of paymentOptions" [value]="payment" class="text-sm">
+          {{ payment }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
 </div>

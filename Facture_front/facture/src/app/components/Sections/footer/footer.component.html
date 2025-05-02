@@ -1,12 +1,16 @@
-<div #footerContainer
-     class="footer-container"
-     cdkDrag
-     [cdkDragBoundary]="'.main-content'"
-     (cdkDragEnded)="onDragEnd($event)"
-     [style.left.px]="position.x"
-     [style.top.px]="position.y">
-  
-  <textarea class="footer-input"
-            placeholder="Enter footer content here..."
-            rows="6"></textarea>
+<div
+  #footerContainer
+  class="footer-container"
+  cdkDrag
+  [cdkDragBoundary]="boundaryElement || '.page-content'"
+  (cdkDragEnded)="onDragEnd($event)"
+  (click)="openOptionsPanel()"
+>
+  <div class="footer-section company-details">
+    <h3 class="footer-title">Acme Corporation</h3>
+    <p class="footer-text">123 Business Avenue, Suite 456</p>
+    <p class="footer-text">Cityville, ST 12345, USA</p>
+    <p class="footer-text">Email: contactacme.com</p>
+    <p class="footer-text">Phone: (123) 456-7890</p>
+  </div>
 </div>

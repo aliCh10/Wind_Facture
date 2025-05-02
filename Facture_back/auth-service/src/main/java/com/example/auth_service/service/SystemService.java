@@ -11,6 +11,7 @@ import com.example.auth_service.model.Partner;
 import com.example.auth_service.model.Role;
 import com.example.auth_service.model.User;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -22,39 +23,41 @@ public class SystemService {
         return partnerRepository.findByRole(Role.PARTNER); 
     }
 
+
+    @Transactional
     public String validatePartner(Integer partnerId) {
-        Optional<Partner> partnerOpt = partnerRepository.findById(partnerId);
-        if (partnerOpt.isEmpty()) {
-            return "Partenaire non trouvé";  
-        }
+        // 1. Trouver le partenaire
+        Partner partner = partnerRepository.findById(partnerId)
+            .orElseThrow(() -> new IllegalArgumentException("Partenaire non trouvé"));
     
-        Partner partner = partnerOpt.get();
-    
+        // 2. Vérifier s'il est déjà validé
         if (partner.isValidated()) {
-            return "Partenaire déjà validé"; 
+            return "Partenaire déjà validé";
         }
     
+        // 3. Mettre à jour le statut du partenaire
         partner.setValidated(true);
-        partnerRepository.save(partner); 
+        partner.setEnabled(true);
+        partnerRepository.save(partner);
     
-        User newUser = User.builder()
-            .name(partner.getName())
-            .secondName(partner.getSecondName())
-            .email(partner.getEmail())
-            .password(partner.getPassword())
-            .role(Role.PARTNER) 
-            .tel(partner.getTel())
-            .enabled(true) 
-            .validated(true)
-            .tenantId(partner.getTenantId()) 
-            .build();
+        // 4. Créer ou METTRE À JOUR l'utilisateur (IGNORER la vérification d'email)
+        // User user = new User();        
+        // Copier toutes les données du Partner vers le User
+        // user.setName(partner.getName());
+        // user.setSecondName(partner.getSecondName());
+        // user.setEmail(partner.getEmail());
+        // user.setPassword(partner.getPassword()); // ⚠️ Doit être crypté (utilisez passwordEncoder!)
+        // user.setRole(Role.PARTNER);
+        // user.setTel(partner.getTel());
+        // user.setEnabled(true);
+        // user.setValidated(true);
+        // user.setTenantId(partner.getTenantId());
     
-        userRepository.save(newUser);
+        // userRepository.save(user); // Sauvegarde (insert ou update)
     
-        partnerRepository.delete(partner);
-    
-        return "Partenaire validé et déplacé vers la table Users avec succès"; 
-    }    public String deletePartner(Integer partnerId) {
+        return "Partenaire validé et utilisateur synchronisé";
+    }
+    public String deletePartner(Integer partnerId) {
         Optional<Partner> partnerOpt = partnerRepository.findById(partnerId);
         if (partnerOpt.isEmpty()) {
             return "Partenaire non trouvé";  
@@ -62,14 +65,17 @@ public class SystemService {
 
         Partner partner = partnerOpt.get();
         
-    
+        // Vérifier si le partenaire est validé
         if (partner.isValidated()) { 
-            return "Ce partenaire a déjà été validé et transféré vers la table Users. Il ne peut pas être supprimé.";
+            // Supprimer également l'utilisateur correspondant
+            userRepository.findByEmail(partner.getEmail()).ifPresent(user -> {
+                userRepository.delete(user);
+            });
         }
+        
         partnerRepository.delete(partner);
         return "Partenaire supprimé avec succès";
     }
-    
     
 
 }

@@ -1,13 +1,14 @@
 .footer-container {
     position: absolute;
     width: 750px;
-    background-color: #f8f9fa;
     border: 1.8px dashed #cbd5e1;
     border-radius: 8px;
     cursor: move;
     z-index: 10;
     padding: 10px;
     box-sizing: border-box;
+    transition: all 0.3s ease;
+
   }
   
   .footer-input {
@@ -33,4 +34,22 @@
   .footer-container.cdk-drag-placeholder {
     opacity: 0.3;
   }
+
   
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  
+
+  .footer-section h3 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+  .footer-section p {
+    margin: 4px 0;
+    font-size: 16px;
+  }

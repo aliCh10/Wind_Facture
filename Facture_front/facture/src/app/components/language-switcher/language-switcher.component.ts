@@ -8,8 +8,8 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./language-switcher.component.css']
 })
 export class LanguageSwitcherComponent {
-  currentLanguage: string = 'fr';  // Default language
-  showLanguageMenu: boolean = false; // Track if the language menu is visible
+  currentLanguage: string = 'fr';  
+  showLanguageMenu: boolean = false; 
 
   constructor(private translate: TranslateService) {
     this.translate.setDefaultLang('fr');  // Set default language to French

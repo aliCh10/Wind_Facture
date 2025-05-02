@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../services/AuthService';
 import { ToastrService } from 'ngx-toastr';
@@ -10,52 +11,55 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./verify-code.component.css'],
 })
 export class VerifyCodeComponent implements OnInit {
-  verificationCode: string = ''; 
-  userEmail: string | null = null; 
+  verifyForm: FormGroup;
+  userEmail: string | null = null;
 
   constructor(
+    private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
-    private toastr: ToastrService 
-  ) {}
+    private toastr: ToastrService
+  ) {
+    this.verifyForm = this.fb.group({
+      verificationCode: ['', [Validators.required, Validators.minLength(6)]]
+    });
+  }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       this.userEmail = params['email'];
       console.log('Email récupéré:', this.userEmail);
+      // if (!this.userEmail) {
+      //   this.toastr.error('No email provided for verification.', 'Error');
+      //   this.router.navigate(['/signup']);
+      // }
     });
   }
 
   verifyCode(): void {
-    if (this.userEmail && this.verificationCode) {
-      console.log('Envoyer le code de vérification:', this.verificationCode);
+    if (this.verifyForm.valid && this.userEmail) {
+      const code = this.verifyForm.get('verificationCode')?.value.trim(); // Trim whitespace
+      console.log('Envoyer le code de vérification:', code);
       console.log('Email utilisé:', this.userEmail);
-  
-      this.authService.verifyCode(this.userEmail, this.verificationCode).subscribe({
+
+      this.authService.verifyCode(this.userEmail, code).subscribe({
         next: (response) => {
           console.log("Réponse de l'API de vérification:", response);
-          
-          if (response && response.token) {
-            localStorage.setItem('authToken', response.token);
-            console.log('Token enregistré dans localStorage:', response.token);
-
-            this.toastr.success('Code correct! Redirection vers la connexion.', 'Succès');
-
+          this.toastr.success('Verification successful! Redirecting to sign-in.', 'Success');
+          setTimeout(() => {
             this.router.navigate(['/signin']);
-          } else {
-            console.error('Code de vérification invalide');
-            this.toastr.error('Code incorrect, veuillez réessayer.', 'Erreur');
-          }
+          }, 2000);
         },
         error: (err) => {
-          console.error("Erreur lors de la vérification:", err);
-          this.toastr.error('Erreur de connexion au serveur.', 'Erreur');
-        },
+          console.error('Erreur lors de la vérification:', err);
+          const errorMessage = err.error?.message || 'Invalid verification code. Please try again.';
+          this.toastr.error(errorMessage, 'Error');
+        }
       });
     } else {
-      console.log('Email ou code de vérification manquant');
-      this.toastr.warning('Veuillez entrer un code de vérification.', 'Attention');
+      console.log('Formulaire invalide ou email manquant');
+      this.toastr.warning('Please enter a valid verification code.', 'Warning');
     }
   }
 }

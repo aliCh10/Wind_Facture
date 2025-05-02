@@ -1,38 +1,43 @@
-    <div #tableContainer 
-         class="example-box" 
-         cdkDrag 
-         (cdkDragEnded)="onDragEnd($event)"
-         [style.left.px]="position.x"
-         [style.top.px]="position.y">
-     
-      <table class="data-table">
-        <tbody cdkDropList (cdkDropListDropped)="drop($event)">
-          <tr *ngFor="let client of clients; let i = index" cdkDrag class="table-row">
-            <td class="input-cell">
-              <div class="input-container">
-                <input type="text" [(ngModel)]="client.nom" placeholder="Nom du client" class="input-field">
-                <span class="input-icon">👤</span>
-              </div>
-            </td>
-            <td class="input-cell">
-              <div class="input-container">
-                <input type="text" [(ngModel)]="client.telephone" placeholder="Téléphone" class="input-field">
-                <span class="input-icon">📱</span>
-              </div>
-            </td>
-            <td class="input-cell">
-              <div class="input-container">
-                <input type="text" [(ngModel)]="client.adresse" placeholder="Adresse" class="input-field">
-                <span class="input-icon">🏠</span>
-              </div>
-            </td>
-            <td class="input-cell">
-              <div class="input-container">
-                <input type="text" [(ngModel)]="client.rib" placeholder="RIB" class="input-field">
-                <span class="input-icon">💳</span>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+<div
+  #tableContainer
+  class="example-box"
+  cdkDrag
+  (cdkDragEnded)="onDragEnd($event)"
+  (click)="openOptionsPanel()"
+  [style.left.px]="x"
+  [style.top.px]="y"
+>
+  <table class="data-table">
+    <tbody cdkDropList (cdkDropListDropped)="drop($event)">
+      <tr *ngFor="let client of clients; let i = index" cdkDrag class="table-row">
+        <td class="input-cell">
+          <div class="input-container">
+            <span class="input-field">Nom du client</span>
+            <span class="input-icon">👤</span>
+          </div>
+        </td>
+        <td class="input-cell">
+          <div class="input-container">
+            <span class="input-field">Téléphone</span>
+            <span class="input-icon">📱</span>
+          </div>
+        </td>
+        <td class="input-cell">
+          <div class="input-container">
+            <span class="input-field">Adresse</span>
+            <span class="input-icon">🏠</span>
+          </div>
+        </td>
+        <td class="input-cell">
+          <div class="input-container">
+            <span class="input-field">RIB</span>
+            <span class="input-icon">💳</span>
+          </div>
+        </td>
+        <td class="action-cell">
+          <button (click)="removeClient(i)" *ngIf="clients.length > 1">Remove</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,12 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AuthService } from '../../services/AuthService';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-layout',
-  standalone:false,
+  standalone: false,
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.css']
 })
@@ -18,7 +17,6 @@ export class LayoutComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   constructor(
-    private authService: AuthService,
     private router: Router
   ) {}
 
@@ -62,10 +60,10 @@ export class LayoutComponent implements OnInit, OnDestroy {
         { icon: 'home', label: 'MENU.HOME', route: '/home' },
         { 
           icon: 'receipt_long', 
-          label: 'MENU.Modele ', 
+          label: 'MENU.Modele', 
           route: '/modele',
           children: [
-            { label: 'MENU.NEW_FACTURE', route: '/facture/new' },
+            { icon: 'receipt_long', label: 'MENU.NEW_Invoice', route: 'new-facture' }
           ]
         },  
         { 
@@ -74,11 +72,10 @@ export class LayoutComponent implements OnInit, OnDestroy {
           route: this.partnerId ? `/employee/${this.partnerId}` : '/employees' 
         },  
         { icon: 'description', label: 'MENU.SERVICES', route: '/services' },
-        { icon: 'person', label: 'MENU.client', route: '/clients' },  
+        { icon: 'person', label: 'MENU.Client', route: '/clients' },  
       ];
     }
   }
-  
 
   toggleSidebar(): void {
     this.isSidebarActive = !this.isSidebarActive;

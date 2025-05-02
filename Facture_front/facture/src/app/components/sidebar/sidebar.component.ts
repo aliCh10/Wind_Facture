@@ -12,17 +12,37 @@ export class SidebarComponent {
   @Input() isMobile: boolean = false;
   @Input() menuItems: any[] = [];
   @Input() isSidebarActive: boolean = false;
-  showChildren: boolean = false;
+  
+  private openSubmenuLabel: string | null = null;
 
-  constructor(private translate: TranslateService, private router: Router) {}
+  constructor(
+    private translate: TranslateService,
+    private router: Router
+  ) {}
 
-  selectMenuItem(item: any) {
+  // Helper methods
+  hasChildren(item: any): boolean {
+    return item.children && item.children.length > 0;
+  }
+
+  isSubmenuOpen(label: string): boolean {
+    return this.openSubmenuLabel === label;
+  }
+
+  isChildActive(item: any): boolean {
+    return item.children?.some((child: any) => this.router.isActive(child.route, false));
+  }
+
+  // Event handlers
+  handleMenuItemClick(event: Event, item: any): void {
+    event.stopPropagation();
+    
     if (item.route) {
       this.router.navigate([item.route]);
     }
+    
     if (this.isMobile) {
       this.isSidebarActive = false;
-      this.showChildren = false;
     }
   }
 
@@ -30,4 +50,11 @@ export class SidebarComponent {
     return this.translate.instant(key);
   }
 
+  toggleSubmenu(label: string): void {
+    if (this.openSubmenuLabel === label) {
+      this.openSubmenuLabel = null;
+    } else {
+      this.openSubmenuLabel = label;
+    }
+  }
 }

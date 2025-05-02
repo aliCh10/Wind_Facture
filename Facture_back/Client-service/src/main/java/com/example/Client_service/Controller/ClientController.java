@@ -26,13 +26,13 @@ public class ClientController {
         this.clientService = clientService;
     }
 
-    @Operation(summary = "Récupérer tous les clients")
+    @Operation(summary = "Récupérer tous les clients du tenant authentifié")
     @GetMapping
     public ResponseEntity<List<Client>> getAllClients() {
         return ResponseEntity.ok(clientService.getAllClients());
     }
 
-    @Operation(summary = "Récupérer un client par ID")
+    @Operation(summary = "Récupérer un client par ID pour le tenant authentifié")
     @GetMapping("/{id}")
     public ResponseEntity<Client> getClientById(@PathVariable Long id) {
         return clientService.getClientById(id)
@@ -40,21 +40,21 @@ public class ClientController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Créer un nouveau client")
+    @Operation(summary = "Créer un nouveau client pour le tenant authentifié")
     @PostMapping
     public ResponseEntity<Client> createClient(@RequestBody Client client) {
         Client savedClient = clientService.createClient(client);
         return ResponseEntity.ok(savedClient);
     }
 
-    @Operation(summary = "Mettre à jour un client")
+    @Operation(summary = "Mettre à jour un client pour le tenant authentifié")
     @PutMapping("/{id}")
     public ResponseEntity<Client> updateClient(@PathVariable Long id, @RequestBody Client clientDetails) {
         Client updatedClient = clientService.updateClient(id, clientDetails);
         return ResponseEntity.ok(updatedClient);
     }
 
-    @Operation(summary = "Supprimer un client")
+    @Operation(summary = "Supprimer un client pour le tenant authentifié")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteClient(@PathVariable Long id) {
         clientService.deleteClient(id);

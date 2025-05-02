@@ -52,19 +52,21 @@
   "Transform your management with ease":"Transformez votre gestion avec facilité",
   "New Invoice":"Nouvelle facture",
   "No partner to validate":"Aucun partenaire pour valider",
+  "Customize your invoice":"Personnalisez votre facture",
  
   
     "MENU": {
       "HOME": "Accueil",
       "DASHBOARD": "Tableau de bord",
-      "Modele ": "Modele  ",
+      "Modele": "Modele  ",
       "SERVICE": "Service",
       "LOGOUT": "Se Déconnecter",
       "SETTINGS": "Paramètres",
       "Partners":"Partenaires",
       "Employé":"Employé",
-      "client":"client",
-      "SERVICES": "Services"
+      "Client":"Client",
+      "SERVICES": "Services",
+      "NEW_Invoice":"Nouvelle facture"
     },
     "or click to select files": "ou cliquez pour sélectionner les fichiers",
     "employee":{
