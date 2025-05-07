@@ -1,3 +1,4 @@
+
 .mat-raised-button {
   border-radius: 20px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -128,4 +129,20 @@ p {
 .mat-stepper-horizontal-line {
   background-color: #f0f0f0;
   height: 2px;
+}
+/* Styles pour les boutons */
+.disabled-button {
+  background: linear-gradient(180deg, #acadae, #ecf0f1) !important;
+  color: #7f8c8d !important;
+  cursor: not-allowed;
+}
+
+.enabled-button {
+  background: linear-gradient(180deg, #2c3e50, #34495e) !important;
+  color: #FFD700 !important;
+  cursor: pointer;
+}
+
+.transition-all {
+  transition: all 0.3s ease;
 }

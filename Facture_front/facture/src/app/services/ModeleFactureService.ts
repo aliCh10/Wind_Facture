@@ -58,4 +58,21 @@ getAllModelesFacture(): Observable<ModeleFacture[]> {
       })
   );
 }
+deleteModeleFacture(id: number): Observable<void> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers }).pipe(
+      catchError((error) => {
+        console.error('Error deleting modele facture:', error);
+        return throwError(() => new Error('Failed to delete invoice template'));
+      })
+    );
+  }
+  getModelePdf(id: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${id}/pdf`, {
+      responseType: 'blob'
+    });
+}
 }

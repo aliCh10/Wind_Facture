@@ -135,9 +135,9 @@ sidebarMenuItems = [
     this.isNavCollapsed = !this.isNavCollapsed;
   }
 
-  onNavCollapsedMob() {
-    console.log('Mobile collapse clicked');
-  }
+  // onNavCollapsedMob() {
+  //   console.log('Mobile collapse clicked');
+  // }
 
 
 }

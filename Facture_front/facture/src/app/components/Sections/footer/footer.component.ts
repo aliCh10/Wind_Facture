@@ -2,7 +2,7 @@ import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, AfterVie
 import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { StyleManagerService } from '../../../services/StyleManagerService';
 import { Subscription } from 'rxjs';
-import { Section } from '../../../models/section.model';
+import { Section, SectionContent } from '../../../models/section.model';
 
 @Component({
   selector: 'app-footer',
@@ -57,11 +57,6 @@ export class FooterComponent implements Section, AfterViewInit, OnDestroy {
       this.applyStyles(false); // Apply styles without updating service
     });
 
-    // Load and apply initial styles
-    const initialStyles = this.styleManager.getStyles(this.componentId) || {};
-    console.log('Initial styles:', initialStyles); // Debug: Verify initial styles
-    this.loadStyles(initialStyles);
-    this.applyStyles(false);
 
     // Apply initial position
     this.updateFooterPosition();
@@ -175,4 +170,14 @@ export class FooterComponent implements Section, AfterViewInit, OnDestroy {
   openOptionsPanel(): void {
     this.openOptions.emit(this.componentId);
   }
+  public getSectionContent(): SectionContent {
+    const tableEl = this.footerContainer?.nativeElement;
+    if (!tableEl) {
+        return { contentData: '' };
+    }
+    let htmlContent = tableEl.innerHTML;
+    // Nettoyer les attributs Angular si nécessaire
+    htmlContent = htmlContent.replace(/(_ngcontent-[a-zA-Z0-9-]+="")/g, '');
+    return { contentData: htmlContent };
+}
 }

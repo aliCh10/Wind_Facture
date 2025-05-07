@@ -71,7 +71,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { TableComponent } from './components/Sections/table/table.component';
 import { FooterComponent } from './components/Sections/footer/footer.component';
-import { NewFactureComponent } from './new-facture/new-facture.component';
+import { NewFactureComponent } from './list-models/new-facture.component';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatExpansionModule } from '@angular/material/expansion';

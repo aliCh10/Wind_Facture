@@ -2,7 +2,7 @@ import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, Renderer2, AfterViewInit, OnDestroy } from '@angular/core';
 import { StyleManagerService } from '../../../services/StyleManagerService';
 import { Subscription } from 'rxjs';
-import { Section } from '../../../models/section.model';
+import { Section, SectionContent } from '../../../models/section.model';
 
 interface TableItem {
   ref: string;
@@ -30,7 +30,7 @@ export class TableComponent implements Section, AfterViewInit, OnDestroy {
 
   // Section interface properties
   id?: number;
-  sectionName: string = 'table';
+  sectionName: string = 'tableContainer';
   x: number = 20;
   y: number = 550;
   styles: { [key: string]: string } = {};
@@ -53,6 +53,7 @@ export class TableComponent implements Section, AfterViewInit, OnDestroy {
     private styleManager: StyleManagerService,
     private renderer: Renderer2
   ) {}
+  
 
   ngAfterViewInit() {
     if (!this.boundaryElement) {
@@ -68,10 +69,6 @@ export class TableComponent implements Section, AfterViewInit, OnDestroy {
     });
 
     // Load and apply initial styles
-    const initialStyles = this.styleManager.getStyles('table') || {};
-    console.log('Initial styles:', initialStyles); // Debug: Verify initial styles
-    this.loadStyles(initialStyles);
-    this.applyStyles(false);
 
     // Apply initial position
     this.updateTablePosition();
@@ -223,7 +220,30 @@ export class TableComponent implements Section, AfterViewInit, OnDestroy {
       'height': `${this.height}px`
     };
   }
+  public getSectionContent(): SectionContent {
+    const contentEl = this.tableContainer?.nativeElement;
+    if (!contentEl) {
+        return { contentData: '' };
+    }
 
+    // Clone the table container
+    const clonedEl = contentEl.cloneNode(true) as HTMLElement;
+
+    // Remove all <button> elements
+    const buttons = clonedEl.querySelectorAll('button');
+    buttons.forEach(button => {
+        const parent = button.closest('td') || button.closest('div');
+        if (parent) {
+            parent.remove();
+        }
+    });
+
+    // Get the cleaned HTML content
+    let htmlContent = clonedEl.innerHTML;
+    htmlContent = htmlContent.replace(/(_ngcontent-[a-zA-Z0-9-]+="")/g, '');
+
+    return { contentData: htmlContent };
+}
   openOptionsPanel() {
     this.openOptions.emit('table');
   }

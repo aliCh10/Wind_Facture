@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { EmployeeService } from '../services/employee.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { UpdateEmployeeModalComponent } from '../components/update-employee-modal/update-employee-modal.component';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-employee',
@@ -15,6 +17,10 @@ export class EmployeeComponent implements OnInit {
   employees: any[] = [];
   displayedColumns: string[] = ['name', 'secondName', 'email', 'tel', 'department', 'post', 'actions'];
   partnerId: number | null = null;
+    dataSource: MatTableDataSource<any> = new MatTableDataSource();
+      @ViewChild(MatPaginator) paginator!: MatPaginator;  
+    
+  
 
   constructor(
     private route: ActivatedRoute,
@@ -41,7 +47,11 @@ export class EmployeeComponent implements OnInit {
     this.employeeService.getAllEmployees().subscribe(
       (response) => {
         this.employees = response;
+        this.dataSource.data = this.employees; +
         console.log('List of employees:', this.employees);
+        if (this.paginator) {
+          this.dataSource.paginator = this.paginator;
+        }
       },
       (error) => {
         console.error('Error fetching employees', error);

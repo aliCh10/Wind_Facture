@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UpdateClientModalComponent } from '../components/update-client-modal/update-client-modal.component';
 import Swal from 'sweetalert2';
 import { DynamicModalComponent } from '../components/dynamic-modal/dynamic-modal.component';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-clients',
@@ -15,11 +16,13 @@ export class ClientsComponent implements OnInit {
   clients: any[] = [];
   displayedColumns: string[] = ['clientName', 'clientPhone', 'clientAddress', 'rib', 'actions'];
   isLoading = false;
+    dataSource: MatTableDataSource<any> = new MatTableDataSource();
+  
 
   constructor(
     private clientService: ClientService,
     private dialog: MatDialog,
-    private cdRef: ChangeDetectorRef // Injecter ChangeDetectorRef
+    private cdRef: ChangeDetectorRef 
 
   ) {}
 
@@ -32,6 +35,7 @@ export class ClientsComponent implements OnInit {
     this.clientService.getAllClients().subscribe(
       (response) => {
         this.clients = response;
+        this.dataSource.data = this.clients;
         this.isLoading = false;
         this.cdRef.detectChanges(); // Forcer la détection des changements
       },

@@ -3,7 +3,7 @@ import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { TranslateService } from '@ngx-translate/core';
 import { StyleManagerService } from '../../../services/StyleManagerService';
 import { Subscription } from 'rxjs';
-import { Section } from '../../../models/section.model';
+import { Section, SectionContent } from '../../../models/section.model';
 
 @Component({
   selector: 'app-logo',
@@ -56,12 +56,6 @@ export class LogoComponent implements Section, AfterViewInit, OnDestroy {
       this.loadStyles(componentStyles);
       this.applyStyles(false); // Apply styles without updating service
     });
-
-    // Load and apply initial styles
-    const initialStyles = this.styleManager.getStyles('logo') || {};
-    console.log('Initial styles:', initialStyles); // Debug: Verify initial styles
-    this.loadStyles(initialStyles);
-    this.applyStyles(false);
 
     // Apply initial position
     this.updateLogoPosition();
@@ -189,6 +183,16 @@ export class LogoComponent implements Section, AfterViewInit, OnDestroy {
       'font-size': `${this.fontSize}px`
     };
   }
+//   public getSectionContent(): SectionContent {
+//     const tableEl = this.logoContainer?.nativeElement;
+//     if (!tableEl) {
+//         return { contentData: '' };
+//     }
+//     let htmlContent = tableEl.innerHTML;
+//     // Nettoyer les attributs Angular si nécessaire
+//     htmlContent = htmlContent.replace(/(_ngcontent-[a-zA-Z0-9-]+="")/g, '');
+//     return { contentData: htmlContent };
+// }
 
   openOptionsPanel(): void {
     this.openOptions.emit('logo');

@@ -1,21 +1,16 @@
 package com.example.facture.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "section_content")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class SectionContent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,9 +18,9 @@ public class SectionContent {
 
     @OneToOne
     @JoinColumn(name = "section_id", nullable = false)
+    @JsonBackReference
     private Section section;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String contentData;
-    
 }

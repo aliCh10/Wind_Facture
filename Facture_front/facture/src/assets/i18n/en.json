@@ -29,6 +29,8 @@
     "sas": "SAS",
     "eirl": "EIRL"
   },
+
+  
   "companyLogo": "Company Logo",
   "previous": "Previous",
   "createAccount": "Create Account",
@@ -53,7 +55,6 @@
  "New Invoice":"New Invoice",
  "No partner to validate":"No partner to validate",
  "Customize your invoice":"Customize your invoice",
-  
     "MENU": {
       "HOME": "Home",
       "DASHBOARD": "Dashboard",
@@ -65,9 +66,7 @@
      "Employé":"Employee",
      "Client":"Client",
      "SERVICES": "Services",
-     "NEW_Invoice":"New Invoice"
-
-
+     "models_list":"Models List"
     },
     
       "or click to select files": "or click to select files",
@@ -80,10 +79,59 @@
       "Actions":"Actions",
       "Add Employee":"Add Employee",
       "Department":"Department",
-      "Job":"Job"
+      "Job":"Job"   
+     },
+     "SERVICES_PAGE": {
+      "TITLE": "Services List",
+      "create_service": "Add Service",
+      "REFERENCE": "Reference",
+      "SERVICE_NAME": "Service Name",
+      "QUANTITY": "Quantity",
+      "PRICE": "Price",
+      "ACTIONS": "Actions",
+      "EDIT_TOOLTIP": "Edit",
+      "DELETE_TOOLTIP": "Delete",
+      "NO_SERVICES": "No services found"
+
+    },
+    "TOOLBAR": {
+      "SEARCH_PLACEHOLDER": "Search...",
+      "CREATE_INVOICE": "Create Invoice",
+      "CREATE_EMPLOYEE": "Create Employee",
+      "CREATE_CLIENT": "Create Client",
+      "CREATE_SERVICE": "Create Service",
+      "CREATE_TEMPLATE": "Create Template"
+    },
+    "CLIENTS_PAGE": {
+      "TITLE": "Clients List",
+      "CLIENT_NAME": "Client Name",
+      "PHONE": "Phone",
+      "ADDRESS": "Address",
+      "RIB": "RIB",
+      "ACTIONS": "Actions",
+      "EDIT_TOOLTIP": "Edit",
+      "DELETE_TOOLTIP": "Delete",
+      "NO_CLIENTS": "No clients found",
+      "PAGINATOR_LABEL": "Select page of clients"
+    },
     
-      
-     }
+    "INVOICE_TEMPLATES": {
+      "TITLE": "Invoice Templates",
+      "NO_TEMPLATES": {
+        "TITLE": "No templates available",
+        "DESCRIPTION": "Get started by creating your first template!",
+        "BUTTON": "Get Started"
+      },
+      "CARD": {
+        "UNTITLED": "Untitled template",
+        "CREATED_ON": "Created on:",
+        "SECTIONS": "sections",
+        "PREVIEW": "Preview",
+        "DELETE": "Remove template"
+
+
+      }
+    }   
   
 
 }

@@ -1,0 +1,70 @@
+<div class="container mt-5" style="max-width: 1280px; font-family: 'Inter', sans-serif; padding: 0 24px;">
+    <div class="header-container" style="padding-bottom: 24px; border-bottom: 1px solid #e5e7eb;">
+        <div class="invoice-header transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:color-white mt-2">
+            <h2 class="Invoice-title">
+                {{ 'INVOICE_TEMPLATES.TITLE' | translate }}
+            </h2>
+        </div>
+    <app-toolbar></app-toolbar>
+
+    <div *ngIf="loading" class="text-center" style="padding: 60px 0;">
+        <mat-spinner diameter="70" style="margin: 0 auto; color: #FFD700;"></mat-spinner>
+    </div>
+
+    <div *ngIf="!loading && filteredModeles.length === 0" 
+        style="text-align: center; padding: 40px; background: #fffbeb; border-radius: 12px; margin: 32px 0; box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);">
+        <mat-icon style="font-size: 64px; color: #FFD700; margin-bottom: 16px;">description</mat-icon>
+        <h3 style="color: #1f2937; font-size: 1.75rem; font-weight: 600; margin-bottom: 10px;">
+            {{ 'INVOICE_TEMPLATES.NO_TEMPLATES.TITLE' | translate }}
+        </h3>
+        <p style="color: #6b7280; font-size: 1.125rem; margin-bottom: 20px;">
+            {{ 'INVOICE_TEMPLATES.NO_TEMPLATES.DESCRIPTION' | translate }}
+        </p>
+        <button mat-raised-button (click)="createNewModele()" 
+                style="background: #FFD700; color: #1f2937; font-weight: 600; padding: 0 24px; height: 48px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15); transition: transform 0.2s, background 0.2s;"
+                onmouseover="this.style.transform='scale(1.03)'; this.style.background='#FFC107';"
+                onmouseout="this.style.transform='scale(1)'; this.style.background='#FFD700';">
+            <mat-icon style="margin-right: 8px; font-size: 20px;">add</mat-icon> 
+            {{ 'INVOICE_TEMPLATES.NO_TEMPLATES.BUTTON' | translate }}
+        </button>
+    </div>
+
+    <div class="grid-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 28px; margin-top: 32px;">
+        <mat-card *ngFor="let modele of filteredModeles" 
+                style="border-radius: 12px; background: #ffffff; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08); transition: transform 0.3s, box-shadow 0.3s; overflow: hidden;"
+                onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 10px 20px rgba(0, 0, 0, 0.12)';"
+                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(0, 0, 0, 0.08)';">
+            <mat-card-header style="padding: 20px 24px;">
+                <mat-card-title style="font-weight: 600; font-size: 1.375rem; color: #1f2937;">
+                    {{ modele.nameModel || ('INVOICE_TEMPLATES.CARD.UNTITLED' | translate) }}
+                </mat-card-title>
+                <mat-card-subtitle style="color: #6b7280; font-size: 0.9375rem; display: flex; align-items: center; margin-top: 6px;">
+                    <mat-icon style="vertical-align: middle; font-size: 18px; color: #FFD700; margin-right: 8px;">event</mat-icon>
+                    {{ 'INVOICE_TEMPLATES.CARD.CREATED_ON' | translate }} {{ modele.createdAt | date:'dd/MM/yyyy' }}
+                </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content style="padding: 0 24px 20px;">
+                <button style="background: #fffbeb; color: #854d0e; border: none; padding: 8px 20px; border-radius: 9999px; font-size: 0.9375rem; font-weight: 500; margin: 12px 0; transition: background 0.2s;"
+                        onmouseover="this.style.background='#fefce8';"
+                        onmouseout="this.style.background='#fffbeb';">
+                    {{ modele.sections.length }} {{ 'INVOICE_TEMPLATES.CARD.SECTIONS' | translate }}
+                </button>
+            </mat-card-content>
+            <mat-card-actions style="padding: 16px 24px; border-top: 1px solid #f3f4f6; display: flex; justify-content: flex-end;">
+                <button mat-button (click)="openModelePreview(modele)"
+                style="color: #FFD700; font-weight: 600; font-size: 0.9375rem; text-transform: uppercase; transition: color 0.2s;"
+                onmouseover="this.style.color='#FFC107';"
+                onmouseout="this.style.color='#FFD700';">
+            <mat-icon style="margin-right: 8px; font-size: 20px;">visibility</mat-icon>
+            {{ 'INVOICE_TEMPLATES.CARD.PREVIEW' | translate }}
+        </button>
+                <!-- Dans la partie mat-card-actions, ajoutez avant le bouton de preview -->
+                <button mat-icon-button (click)="deleteModele(modele, $event)" 
+                class="delete-btn"
+                matTooltip="{{ 'INVOICE_TEMPLATES.CARD.DELETE' | translate }}">
+          <mat-icon class="delete-icon">delete</mat-icon>
+        </button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</div>

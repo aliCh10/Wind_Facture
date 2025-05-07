@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { DynamicModalComponent } from '../components/dynamic-modal/dynamic-modal.component';
 import Swal from 'sweetalert2';
 import { UpdateServiceModalComponent } from '../components/update-service-modal/update-service-modal.component';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-serv',
@@ -15,7 +16,9 @@ import { UpdateServiceModalComponent } from '../components/update-service-modal/
 })
 export class ServComponent implements OnInit {
   services: Service[] = [];
-  displayedColumns: string[] = ['ref', 'serviceName', 'serviceQuantity', 'servicePrice', 'actions'];
+  displayedColumns: string[] = ['ref', 'serviceName',  'servicePrice', 'actions'];
+      dataSource: MatTableDataSource<any> = new MatTableDataSource();
+  
 
   constructor(
     private serservice: SerService,
@@ -27,12 +30,15 @@ export class ServComponent implements OnInit {
     this.loadServices();
   }
 
-  loadServices(): void {
-    this.serservice.getAllServices().subscribe({
-      next: (data) => this.services = data,
-      error: (err) => console.error('Erreur lors du chargement des services', err)
-    });
-  }
+loadServices(): void {
+  this.serservice.getAllServices().subscribe({
+    next: (data) => {
+      this.services = data;
+      this.dataSource.data = this.services;
+    },
+    error: (err) => console.error('Erreur lors du chargement des services', err)
+  });
+}
   refreshServices(): void {
     this.loadServices();
   }

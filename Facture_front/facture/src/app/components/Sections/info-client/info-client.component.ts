@@ -2,7 +2,7 @@ import { CdkDragDrop, CdkDragEnd, moveItemInArray } from '@angular/cdk/drag-drop
 import { Component, ElementRef, ViewChild, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { StyleManagerService } from '../../../services/StyleManagerService';
 import { Subscription } from 'rxjs';
-import { Section } from '../../../models/section.model';
+import { Section, SectionContent } from '../../../models/section.model';
 
 @Component({
   selector: 'app-info-client',
@@ -20,9 +20,6 @@ export class InfoClientComponent implements Section, OnInit, OnDestroy {
   clients: { nom: string; telephone: string; adresse: string; rib: string }[] = [
     { nom: '', telephone: '', adresse: '', rib: '' },
   ];
-
-
-  // Style properties
   backgroundColor = '#ffffff';
   borderColor = '#cbd5e1';
   borderStyle = 'dashed';
@@ -45,15 +42,18 @@ export class InfoClientComponent implements Section, OnInit, OnDestroy {
 
   ngOnInit() {
     this.stylesSubscription = this.styleManager.componentStyles$.subscribe(styles => {
-      const componentStyles = styles['info-client'] || {};
-      this.loadStyles(componentStyles);
-      this.applyStyles(false); // Apply styles without updating service
+        const componentStyles = styles['info-client'] || {};
+        this.loadStyles(componentStyles);
+        this.applyStyles(false);
     });
 
     const initialStyles = this.styleManager.getStyles('info-client');
     this.loadStyles(initialStyles);
     this.applyStyles(false);
-  }
+    
+    // Initialisez this.styles avec les valeurs par défaut/modifiées
+    this.styles = this.getCurrentStyles();
+}
 
   ngOnDestroy() {
     this.stylesSubscription?.unsubscribe();
@@ -103,16 +103,6 @@ export class InfoClientComponent implements Section, OnInit, OnDestroy {
     // Update StyleManagerService if requested
     if (updateService) {
       this.styleManager.updateStyles('info-client', this.styles, 'InfoClientComponent');
-    }
-  }
-
-  addClient() {
-    this.clients.push({ nom: '', telephone: '', adresse: '', rib: '' });
-  }
-
-  removeClient(index: number) {
-    if (this.clients.length > 1) {
-      this.clients.splice(index, 1);
     }
   }
 
@@ -170,4 +160,27 @@ export class InfoClientComponent implements Section, OnInit, OnDestroy {
       height: `${this.height}px`,
     };
   }
+  public getSectionContent(): SectionContent {
+    const tableEl = this.tableContainer?.nativeElement;
+    if (!tableEl) {
+        return { contentData: '' };
+    }
+    let htmlContent = tableEl.innerHTML;
+
+    // Appliquer display: block aux <td> pour forcer le retour à la ligne
+    htmlContent = htmlContent.replace(/<td/g, '<td style="display: block;"');
+
+    // Nettoyer les attributs Angular
+    htmlContent = htmlContent.replace(/(_ngcontent-[a-zA-Z0-9-]+="")/g, '');
+
+    return { contentData: htmlContent };
+}
+public applyContent(htmlContent: string): void {
+  const tableEl = this.tableContainer?.nativeElement;
+  if (tableEl) {
+      tableEl.innerHTML = htmlContent;
+      // Réappliquer les styles après avoir défini le contenu
+      this.applyStyles(false);
+  }
+}
 }

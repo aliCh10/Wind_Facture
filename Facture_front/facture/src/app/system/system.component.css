@@ -55,12 +55,7 @@ button[disabled] {
 }
 
 /* Hover effect for the title */
-.table-title:hover {
-  transform: scale(1.05);
-  background: linear-gradient(to right, #ffd900, #f3d769);
-  color: #fff !important;
 
-}
 
 /* Table container */
 .table-container {
@@ -224,4 +219,24 @@ mat-paginator {
   .container {
     width: 100%;
   }
+}
+.partners-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 16px 24px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background-color: #ffffff;
+  color: #ffd700;
+}
+
+.partners-title {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  color: #ffd700;
 }

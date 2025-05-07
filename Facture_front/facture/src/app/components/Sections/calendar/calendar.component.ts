@@ -2,7 +2,7 @@ import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { StyleManagerService } from '../../../services/StyleManagerService';
-import { Section } from '../../../models/section.model';
+import { Section, SectionContent } from '../../../models/section.model';
 
 @Component({
   selector: 'app-calendar',
@@ -58,12 +58,6 @@ export class CalendarComponent implements Section, AfterViewInit, OnDestroy {
       this.loadStyles(componentStyles);
       this.applyStyles(false); // Apply styles without updating service
     });
-
-    // Load and apply initial styles
-    const initialStyles = this.styleManager.getStyles('calendar') || {};
-    console.log('Initial styles:', initialStyles); // Debug: Verify initial styles
-    this.loadStyles(initialStyles);
-    this.applyStyles(false);
 
     // Apply initial position
     this.updateCalendarPosition();
@@ -173,6 +167,16 @@ export class CalendarComponent implements Section, AfterViewInit, OnDestroy {
       'height': `${this.height}px`
     };
   }
+//   public getSectionContent(): SectionContent {
+//     const contentEl = this.calendarContainer?.nativeElement;
+//     if (!contentEl) {
+//         return { contentData: '' };
+//     }
+//     let htmlContent = contentEl.innerHTML;
+//     htmlContent = htmlContent.replace(/(_ngcontent-[a-zA-Z0-9-]+="")/g, '');
+//     return { contentData: htmlContent };
+// }
+
 
   openOptionsPanel() {
     this.openOptions.emit('calendar');

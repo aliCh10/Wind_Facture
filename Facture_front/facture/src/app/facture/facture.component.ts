@@ -11,6 +11,7 @@ import { ModeleFactureService } from '../services/ModeleFactureService';
 import { Section } from '../models/section.model';
 import { SectionDataCollectorService } from '../services/section-data-collector.service';
 import { CreateModeleFactureRequest } from '../models/create-modele-facture-request.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-facture',
@@ -38,11 +39,11 @@ export class FactureComponent implements AfterViewInit {
   constructor(
     private styleManager: StyleManagerService,
     private modeleFactureService: ModeleFactureService,
-    private sectionDataCollector: SectionDataCollectorService
+    private sectionDataCollector: SectionDataCollectorService,
+    private toastr: ToastrService
   ) {}
 
   ngAfterViewInit() {
-    // Register all section components
     this.sectionRegistry = [
       this.logoComponent,
       this.tableComponent,
@@ -81,56 +82,82 @@ export class FactureComponent implements AfterViewInit {
   }
 
   saveModeleFacture() {
+    // Assurez-vous que les positions sont bien capturées avant la sauvegarde
+    this.sectionRegistry.forEach(section => {
+        if (section && (section as any).getCurrentPosition) {
+            const pos = (section as any).getCurrentPosition();
+            section.x = pos.x;
+            section.y = pos.y;
+        }
+
+    });
+
     const sections = this.sectionDataCollector.collectSectionData(this.sectionRegistry);
-    
     const request: CreateModeleFactureRequest = {
         name: this.templateName,
-        sections: sections
+        sections: sections.map(section => ({
+            ...section,
+            // Assurez-vous que les styles sont bien formatés
+            styles: this.formatStylesForBackend(section.styles)
+        }))
     };
 
     this.modeleFactureService.createModeleFacture(request).subscribe({
         next: (response) => {
-            console.log('Template saved successfully', response);
             this.modeleFactureId = response.id ?? null;
-            
-            // Mettre à jour les IDs des sections si nécessaire
-            if (response.sections) {
-                response.sections.forEach((savedSection, index) => {
-                    if (this.sectionRegistry[index]) {
-                        this.sectionRegistry[index].id = savedSection.id;
-                    }
-                });
-            }
+            this.toastr.success('Modèle sauvegardé avec succès', 'Succès');
+            console.log('Saved modele facture:', response);
         },
-        error: (error) => console.error('Error saving template', error)
+        error: (error) => {
+            this.toastr.error('Erreur lors de la sauvegarde', 'Erreur');
+        }
     });
 }
 
-loadModeleFacture(id: number) {
+private formatStylesForBackend(styles: {[key: string]: string}): {[key: string]: string} {
+    const formattedStyles: {[key: string]: string} = {};
+    for (const key in styles) {
+        if (styles.hasOwnProperty(key)) {
+            // Convertit les valeurs numériques sans unité en px
+            if (/^\d+$/.test(styles[key])) {
+                formattedStyles[key] = styles[key] + 'px';
+            } else {
+                formattedStyles[key] = styles[key];
+            }
+        }
+    }
+    return formattedStyles;
+}
+
+  loadModeleFacture(id: number) {
     this.modeleFactureService.getModeleFacture(id).subscribe({
         next: (modeleFacture) => {
             this.templateName = modeleFacture.nameModel;
-            
+            console.log('Loaded modele facture:', modeleFacture);
+
             modeleFacture.sections.forEach(section => {
                 const component = this.sectionRegistry.find(c => c.sectionName === section.sectionName);
                 if (component) {
-                    // Mise à jour des propriétés
                     component.id = section.id;
                     component.x = section.x;
                     component.y = section.y;
                     component.styles = section.styles || {};
+                    component.content = section.content || { contentData: '' };
                     component.modeleFactureId = section.modeleFactureId;
-                                     
-                    
+
                     this.styleManager.updateStyles(
-                        section.sectionName, 
-                        section.styles || {}, 
+                        section.sectionName,
+                        section.styles || {},
                         'FactureComponent.loadModeleFacture'
                     );
+
+                    if (typeof (component as any).applyContent === 'function' && section.content?.contentData) {
+                        (component as any).applyContent(section.content.contentData);
+                    }
                 }
             });
         },
-        error: (error) => console.error('Error loading template', error)
+        error: (error) => console.error('Error loading template:', error)
     });
-}
+  }
 }

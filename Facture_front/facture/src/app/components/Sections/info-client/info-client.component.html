@@ -12,30 +12,27 @@
       <tr *ngFor="let client of clients; let i = index" cdkDrag class="table-row">
         <td class="input-cell">
           <div class="input-container">
-            <span class="input-field">Nom du client</span>
+            <span class="input-field" data-placeholder="#nom">Nom du client</span>
             <span class="input-icon">👤</span>
           </div>
         </td>
         <td class="input-cell">
           <div class="input-container">
-            <span class="input-field">Téléphone</span>
+            <span class="input-field" data-placeholder="#telephone">Téléphone</span>
             <span class="input-icon">📱</span>
           </div>
         </td>
         <td class="input-cell">
           <div class="input-container">
-            <span class="input-field">Adresse</span>
+            <span class="input-field" data-placeholder="#adresse">Adresse</span>
             <span class="input-icon">🏠</span>
           </div>
         </td>
         <td class="input-cell">
           <div class="input-container">
-            <span class="input-field">RIB</span>
+            <span class="input-field" data-placeholder="#rib">RIB</span>
             <span class="input-icon">💳</span>
           </div>
-        </td>
-        <td class="action-cell">
-          <button (click)="removeClient(i)" *ngIf="clients.length > 1">Remove</button>
         </td>
       </tr>
     </tbody>

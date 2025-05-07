@@ -5,43 +5,43 @@
       <div class="modal-content shadow-lg rounded-lg bg-white p-5" style="border-radius: 15px;">
         <div class="modal-body text-center">
           <h4 class="font-weight-bold" style="font-size: 2rem; color: #2c3e50; font-family: 'Montserrat', sans-serif;">
-            {{ 'WELCOME' | translate }}
+            Bienvenue à
           </h4>
           <img src="assets/images/LOGO-svg.webp" alt="Logo" style="max-width: 80%; height: auto;">
           
           <p class="text-muted" style="font-size: 1rem; color: #7f8c8d;">
-            {{ 'LOGIN_PROMPT' | translate }}
+            Connectez-vous pour accéder à votre compte
           </p>
 
           <hr class="my-4" style="border-color: #ecf0f1;">
           <form #loginForm="ngForm" (ngSubmit)="onLogin(loginForm)">
             <div class="mb-4">
-              <input type="email" placeholder="{{ 'EMAIL' | translate }}" [(ngModel)]="email" name="email" required
+              <input type="email" placeholder="Adresse email" [(ngModel)]="email" name="email" required
                      class="form-control rounded-pill border-secondary shadow-sm p-3">
             </div>
             <div class="mb-4 position-relative">
-              <input [type]="passwordVisible ? 'text' : 'password'" placeholder="{{ 'PASSWORD' | translate }}" [(ngModel)]="password" name="password" required
+              <input [type]="passwordVisible ? 'text' : 'password'" placeholder="Mot de passe" [(ngModel)]="password" name="password" required
                      class="form-control rounded-pill border-secondary shadow-sm p-3">
               <span (click)="passwordVisible = !passwordVisible" class="position-absolute" style="right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;">
                 <mat-icon>{{ !passwordVisible ? 'visibility_off' : 'visibility' }}</mat-icon>
               </span>
             </div>
             <div class="text-right mb-3">
-              <a routerLink="/forgot-password" style="font-weight: bold; color: #2c3e50; ">{{ 'FORGOT_PASSWORD' | translate }}</a>
+              <a routerLink="/forgot-password" style="font-weight: bold; color: #2c3e50; ">Mot de passe oublié ?</a>
             </div>
             <div *ngIf="errorMessage" class="text-danger mb-3">
-              {{ 'ERROR_MESSAGE' | translate }}
+              Une erreur s'est produite. Veuillez réessayer.
             </div>
             <div class="modal-footer d-block text-center">
               <button type="submit" class="btn btn-lg btn-pill w-100"
                       style="background: linear-gradient(180deg, #2c3e50, #34495e); color: #FFD700; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);"
                       [disabled]="!email || !password || loading">
-                {{ 'LOGIN' | translate }}
+                Se connecter
               </button>
             </div>
           </form>
           <p class="text-center mt-3">
-            <a routerLink="/signup" style="font-weight: bold; color: #2c3e50;text-decoration: none; ">{{ 'SIGN_UP' | translate }}</a>
+            <a routerLink="/signup" style="font-weight: bold; color: #2c3e50;text-decoration: none; ">Pas encore de compte ? S'inscrire</a>
           </p>
         </div>
       </div>

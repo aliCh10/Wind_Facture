@@ -5,47 +5,21 @@
   [cdkDragBoundary]="boundaryElement || '.page-content'"
   (cdkDragEnded)="onDragEnd($event)"
   (click)="openOptionsPanel()"
-    [style.left.px]="x"
+  [style.left.px]="x"
   [style.top.px]="y"
 >
   <div class="relative">
     <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
       <table class="min-w-full divide-y">
-        <thead class="table-header">
+        <thead class="table-header" [style.background-color]="backgroundColor">
           <tr>
-            <th
-              class="px-4 py-3 text-left font-medium text-gray-800 tracking-wider"
-            >
-              Réf
-            </th>
-            <th
-              class="px-4 py-3 text-left font-medium text-gray-800 tracking-wider"
-            >
-              TVA (%)
-            </th>
-            <th
-              class="px-4 py-3 text-left font-medium text-gray-800 tracking-wider"
-            >
-              Remise (%)
-            </th>
-            <th
-              class="px-4 py-3 text-left font-medium text-gray-800 tracking-wider"
-            >
-              Quantité
-            </th>
-            <th
-              class="px-4 py-3 text-left font-medium text-gray-800 tracking-wider"
-            >
-              Prix Unitaire
-            </th>
-            <th
-              class="px-4 py-3 text-left font-medium text-gray-800 tracking-wider"
-            >
-              Total
-            </th>
-            <th
-              class="px-4 py-3 text-left font-medium text-gray-800 tracking-wider"
-            ></th>
+            <th class="px-4 py-3 text-left font-medium text-gray-800 tracking-wider">Réf</th>
+            <th class="px-4 py-3 text-left font-medium text-gray-800 tracking-wider">TVA (%)</th>
+            <th class="px-4 py-3 text-left font-medium text-gray-800 tracking-wider">Remise (%)</th>
+            <th class="px-4 py-3 text-left font-medium text-gray-800 tracking-wider">Quantité</th>
+            <th class="px-4 py-3 text-left font-medium text-gray-800 tracking-wider">Prix Unitaire</th>
+            <th class="px-4 py-3 text-left font-medium text-gray-800 tracking-wider">Total</th>
+            <th class="px-4 py-3 text-left font-medium text-gray-800 tracking-wider"></th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200">
@@ -100,16 +74,14 @@
                 class="w-full px-2 py-1 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none"
               />
             </td>
-            <td
-              class="px-4 py-3 whitespace-nowrap font-medium text-gray-900 text-sm line-total"
-            >
+            <td class="px-4 py-3 whitespace-nowrap font-medium text-gray-900 text-sm line-total">
               {{ (item.quantity * item.price * (1 - item.remise / 100) * (1 + item.tva / 100)).toFixed(2) }} dt
             </td>
             <td class="px-4 py-3 whitespace-nowrap">
               <button
                 *ngIf="hoveredIndex === i && items.length > 1"
                 (click)="removeItem(i)"
-                class="text-red-600 hover:text-red-800"
+                class="text-red-600 hover:text-red-800 remove-item-button"
               >
                 Remove
               </button>
@@ -122,7 +94,7 @@
     <div class="mt-4 flex justify-between items-center">
       <button
         (click)="addItem()"
-        class="inline-flex items-center px-3 py-1.5 border border-transparent font-medium rounded-md shadow-sm text-black bg-[#FFD700] hover:bg-amber-400 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
+        class="inline-flex items-center px-3 py-1.5 border border-transparent font-medium rounded-md shadow-sm text-black bg-[#FFD700] hover:bg-amber-400 transition-colors duration-150 add-item-button"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -139,8 +111,7 @@
         Ajouter une ligne
       </button>
 
-      <div class="text-base font-semibold text-gray-900">
-      </div>
+      <div class="text-base font-semibold text-gray-900"></div>
     </div>
   </div>
 </div>

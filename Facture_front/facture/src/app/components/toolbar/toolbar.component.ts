@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { DynamicModalComponent } from '../dynamic-modal/dynamic-modal.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-toolbar',
@@ -15,13 +16,20 @@ export class ToolbarComponent {
   @Output() refreshClients = new EventEmitter<void>();
   @Output() refreshServices = new EventEmitter<void>();
   buttons = [
-    { route: 'facture', label: 'Créer Facture', type: 'facture' },
-    { route: 'employe', label: 'Créer Employé', type: 'employe' },
-    { route: 'clients', label: 'Créer Client', type: 'client' },
-    {route: 'services', label: 'Créer Service', type: 'service'}
+    { route: 'facture', label: 'TOOLBAR.CREATE_INVOICE', type: 'facture' },
+    { route: 'employe', label: 'TOOLBAR.CREATE_EMPLOYEE', type: 'employe' },
+    { route: 'clients', label: 'TOOLBAR.CREATE_CLIENT', type: 'client' },
+    { route: 'services', label: 'TOOLBAR.CREATE_SERVICE', type: 'service' },
+    { route: 'models', label: 'TOOLBAR.CREATE_TEMPLATE', type: 'modele' }
   ];
+  
   currentButtons: { route: string, label: string, type: string }[] = [];
-  constructor(private router: Router, private dialog: MatDialog) {}
+
+  constructor(
+    private router: Router, 
+    private dialog: MatDialog,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit() {
     this.updateButtons();
@@ -29,15 +37,14 @@ export class ToolbarComponent {
       this.updateButtons();
     });
   }
+
   updateButtons() {
     const url = this.router.url;
-    console.log('Current URL:', url);
     if (url.includes('/partners')) {
       this.currentButtons = this.buttons; 
     } else {
       this.currentButtons = this.buttons.filter(button => url.includes(`/${button.route}`));
     }
-    console.log('Filtered Buttons:', this.currentButtons);
   }
 
   openModal(button: { type: string, label: string }) {

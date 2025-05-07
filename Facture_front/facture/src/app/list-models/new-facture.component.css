@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Réactivité optimisée */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 16px;
+  }
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+  .header-container h2 {
+    font-size: 1.75rem;
+  }
+  .header-container p {
+    font-size: 1rem;
+  }
+}
+
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 16px 24px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background-color: #ffffff;
+  color: #ffd700;
+}
+
+.Invoice-title {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  color: #ffd700;
+}
+/* Animation fluide pour le spinner */
+mat-spinner {
+  animation: spin 1s linear infinite;
+}
+
+.delete-btn {
+  margin-right: auto;
+  transition: all 0.3s ease;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 50%;
+}
+
+.delete-btn:hover {
+  background: rgba(220, 38, 38, 0.2);
+  transform: scale(1.1);
+}
+
+.delete-icon {
+  color: #ef4444;
+  transition: all 0.3s ease;
+}
+
+.delete-btn:hover .delete-icon {
+  color: #dc2626;
+  transform: scale(1.1);
+}
+
+/* Suppression des bordures inutiles */
+mat-card {
+  border: none !important;
+}
+
+/* Animation de survol pour les éléments interactifs */
+button:hover, mat-card:hover {
+  transition: all 0.3s ease;
+}

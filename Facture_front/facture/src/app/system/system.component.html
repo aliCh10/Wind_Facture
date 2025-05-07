@@ -1,65 +1,108 @@
 <app-sidebar [menuItems]="sidebarMenuItems"></app-sidebar>
+
 <div class="container">
-  <div class="table-container">
-    <h2 class="table-title">{{ 'Partners List' | translate }}</h2>
+  <!-- Title Section -->
+  <div class="partners-header transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:color-white mt-2">
+    <h2 class="partners-title">
+      {{ 'Partners List' | translate }}
+    </h2>
+  </div>
 
-    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 full-width-table">
-      <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "Name" | translate }}</th>
-        <td mat-cell *matCellDef="let element">{{ element.name }}</td>
-      </ng-container>
+  <!-- Toolbar -->
+  <app-toolbar></app-toolbar>
 
-      <!-- Email Column -->
-      <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "Email" | translate }}</th>
-        <td mat-cell *matCellDef="let element">{{ element.email }}</td>
-      </ng-container>
+  <!-- Table Container -->
+  <div class="table-container mt-4">
+    <div class="rounded-xl shadow-lg overflow-hidden border border-gray-100">
+      <mat-table [dataSource]="dataSource" class="w-full" matSort>
 
-      <!-- Company Name Column -->
-      <ng-container matColumnDef="companyName">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ "Company Name" | translate }}</th>
-        <td mat-cell *matCellDef="let element">{{ element.companyName }}</td>
-      </ng-container>
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <mat-header-cell *matHeaderCellDef mat-sort-header
+            class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
+            {{ "Name" | translate }}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element" class="px-6 py-4 text-gray-800 font-medium">
+            {{ element.name }}
+          </mat-cell>
+        </ng-container>
 
-      <!-- Status Column -->
-     <!-- Status Column -->
-<!-- Status Column -->
-<ng-container matColumnDef="status">
-  <th mat-header-cell *matHeaderCellDef>{{ "Status" | translate }}</th>
-  <td mat-cell *matCellDef="let element">
-    <mat-icon [color]="element.validated ? 'primary' : 'warn'">
-      {{ element.validated ? 'check_circle' : 'cancel' }}
-    </mat-icon>
-  </td>
-</ng-container>
+        <!-- Email Column -->
+        <ng-container matColumnDef="email">
+          <mat-header-cell *matHeaderCellDef mat-sort-header
+            class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
+            {{ "Email" | translate }}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element" class="px-6 py-4 text-gray-600">
+            <a href="mailto:{{element.email}}" class="hover:text-amber-600 transition-colors">
+              {{ element.email }}
+            </a>
+          </mat-cell>
+        </ng-container>
 
-<!-- Actions Column -->
-<ng-container matColumnDef="actions">
-  <th mat-header-cell *matHeaderCellDef>{{ "Actions" | translate }}</th>
-  <td mat-cell *matCellDef="let element" class="action-buttons">
-    <button *ngIf="!element.validated" mat-icon-button color="primary" 
-            (click)="validatePartner(element.id)" matTooltip="Validate">
-      <mat-icon>check_circle</mat-icon>
-    </button>
-    <button mat-icon-button color="warn" (click)="deletePartner(element.id)" matTooltip="Delete">
-      <mat-icon>delete</mat-icon>
-    </button>
-  </td>
-</ng-container>
-      <!-- Table Rows -->
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
+        <!-- Company Name Column -->
+        <ng-container matColumnDef="companyName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header
+            class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
+            {{ "Company Name" | translate }}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element" class="px-6 py-4 text-gray-600">
+            {{ element.companyName }}
+          </mat-cell>
+        </ng-container>
 
-    <!-- Empty Table Message -->
-    <div *ngIf="isTableEmpty" class="empty-table-message">
-      {{ 'No partner to validate' | translate }}
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <mat-header-cell *matHeaderCellDef
+            class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
+            {{ "Status" | translate }}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element" class="px-6 py-4 text-gray-600">
+            <mat-icon [color]="element.validated ? 'primary' : 'warn'">
+              {{ element.validated ? 'check_circle' : 'cancel' }}
+            </mat-icon>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef
+            class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
+            {{ "Actions" | translate }}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element" class="px-8 py-4">
+            <div class="flex space-x-4">
+              <button *ngIf="!element.validated" mat-mini-fab color="primary" 
+                      class="transition-all transform hover:scale-110"
+                      (click)="validatePartner(element.id)" [matTooltip]="'Validate'">
+                <mat-icon>check_circle</mat-icon>
+              </button>
+              <button mat-mini-fab color="warn" 
+                      class="transition-all transform hover:scale-110"
+                      (click)="deletePartner(element.id)" [matTooltip]="'Delete'">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Header and Row Definitions -->
+        <mat-header-row *matHeaderRowDef="displayedColumns" class="border-b border-gray-200"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"
+          class="transition-all hover:bg-gray-50 border-b border-gray-100 last:border-0"></mat-row>
+      </mat-table>
+
+      <!-- Empty State -->
+      <div *ngIf="isTableEmpty" class="p-12 text-center text-gray-500">
+        <mat-icon class="text-4xl mb-4 text-gray-300">group_work_outline</mat-icon>
+        <p class="text-lg">{{ 'No partner to validate' | translate }}</p>
+      </div>
+
+      <!-- Paginator -->
+      <mat-paginator [length]="dataSource.data.length" [pageSize]="5" 
+        [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons
+        class="bg-gray-50 rounded-b-xl border-t border-gray-200">
+      </mat-paginator>
     </div>
-
-    <!-- Paginator -->
-    <mat-paginator [length]="dataSource.data.length" [pageSize]="5" 
-      [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons>
-    </mat-paginator>
   </div>
 </div>

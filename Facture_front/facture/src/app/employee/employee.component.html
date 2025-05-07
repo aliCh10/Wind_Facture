@@ -1,16 +1,14 @@
 <div class="container">
-  <app-toolbar [partnerId]="partnerId" (refreshEmployees)="refreshEmployees()">
-  </app-toolbar>
   <div class="employee-header transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:color-white mt-2">
     <h2 class="employee-title">
       {{ 'employee.List of Employees' | translate }}
     </h2>
   </div>
+  <app-toolbar [partnerId]="partnerId" (refreshEmployees)="refreshEmployees()">
+  </app-toolbar>
 
-
-
-  <div class=" rounded-xl shadow-lg overflow-hidden border border-gray-100">
-    <mat-table [dataSource]="employees" class="w-full" matSort>
+  <div class=" rounded-xl shadow-lg overflow-hidden border border-gray-100 mt-4">
+    <mat-table [dataSource]="dataSource" class="w-full" matSort>
 
       <!-- Nom Column -->
       <ng-container matColumnDef="name">
@@ -80,10 +78,6 @@
           {{ employee.post }}
         </mat-cell>
       </ng-container>
-
-
-
-      <!-- Actions Column -->
       <!-- Actions Column -->
       <ng-container matColumnDef="actions">
         <mat-header-cell *matHeaderCellDef
@@ -91,7 +85,7 @@
           {{'employee.Actions'|translate}}
         </mat-header-cell>
         <mat-cell *matCellDef="let employee" class="px-8 py-4">
-          <div class="flex space-x-4">
+          <div class="flex gap-2">
             <!-- Edit button -->
             <!-- Edit button -->
             <button mat-mini-fab color="primary" class="yellow-button transition-all transform hover:scale-110"
@@ -121,8 +115,9 @@
       <p class="text-lg">Aucun employé trouvé</p>
     </div>
     <!-- Paginator -->
-    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
-      class="bg-gray-50 rounded-b-xl border-t border-gray-200" aria-label="Select page of employees">
-    </mat-paginator>
+    <mat-paginator [length]="dataSource.data.length" [pageSize]="5" 
+    [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons
+    class="bg-gray-50 rounded-b-xl border-t border-gray-200">
+  </mat-paginator>
   </div>
 </div>

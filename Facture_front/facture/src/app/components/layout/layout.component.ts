@@ -63,7 +63,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
           label: 'MENU.Modele', 
           route: '/modele',
           children: [
-            { icon: 'receipt_long', label: 'MENU.NEW_Invoice', route: 'new-facture' }
+            { icon: 'receipt_long', label: 'MENU.models_list', route: 'models' }
           ]
         },  
         { 

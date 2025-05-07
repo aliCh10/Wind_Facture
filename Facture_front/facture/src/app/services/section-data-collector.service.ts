@@ -1,22 +1,26 @@
-// section-data-collector.service.ts
 import { Injectable } from '@angular/core';
-import { Section } from '../models/section.model';
+import { Section, SectionContent } from '../models/section.model';
 
 @Injectable({
     providedIn: 'root'
 })
 export class SectionDataCollectorService {
-    collectSectionData(components: Section[]): Section[] {
-        return components.map(component => ({
-            id: component.id,
-            sectionName: component.sectionName,
-            x: component.x,
-            y: component.y,
-            styles: component.styles || {},
-            content: component.content || null,
-            modeleFactureId: component.modeleFactureId
-        }));
-    
+    collectSectionData(components: any[]): Section[] {
+        return components.map(component => {
+            // Collecter le contenu HTML si la méthode existe
+            const content: SectionContent = component.getSectionContent
+                ? component.getSectionContent()
+                : { contentData: '' };
+
+            return {
+                id: component.id,
+                sectionName: component.sectionName,
+                x: component.x,
+                y: component.y,
+                styles: component.styles ,
+                content: content,
+                modeleFactureId: component.modeleFactureId
+            };
+        });
     }
-    
 }

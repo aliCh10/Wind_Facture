@@ -66,7 +66,7 @@
       "Employé":"Employé",
       "Client":"Client",
       "SERVICES": "Services",
-      "NEW_Invoice":"Nouvelle facture"
+      "models_list":"Liste des Modeles"
     },
     "or click to select files": "ou cliquez pour sélectionner les fichiers",
     "employee":{
@@ -80,8 +80,55 @@
     "Department":"Departement",
     "Job":"Poste"
 
-    }
+    },
+    "SERVICES_PAGE": {
+      "TITLE": "Liste des Services",
+      "create_service": "Ajouter un Service",
+      "REFERENCE": "Référence",
+      "SERVICE_NAME": "Nom du Service",
+      "QUANTITY": "Quantité",
+      "PRICE": "Prix",
+      "ACTIONS": "Actions",
+      "EDIT_TOOLTIP": "Modifier",
+      "DELETE_TOOLTIP": "Supprimer",
+      "NO_SERVICES": "Aucun service trouvé"
+    },
+    "TOOLBAR": {
+      "SEARCH_PLACEHOLDER": "Rechercher...",
+      "CREATE_INVOICE": "Créer Facture",
+      "CREATE_EMPLOYEE": "Créer Employé",
+      "CREATE_CLIENT": "Créer Client",
+      "CREATE_SERVICE": "Créer Service",
+      "CREATE_TEMPLATE": "Créer Modèle"
+    },
+    "CLIENTS_PAGE": {
+      "TITLE": "Liste des Clients",
+      "CLIENT_NAME": "Nom du Client",
+      "PHONE": "Téléphone",
+      "ADDRESS": "Adresse",
+      "RIB": "RIB",
+      "ACTIONS": "Actions",
+      "EDIT_TOOLTIP": "Modifier",
+      "DELETE_TOOLTIP": "Supprimer",
+      "NO_CLIENTS": "Aucun client trouvé",
+      "PAGINATOR_LABEL": "Sélectionner la page des clients"
+    },
+    "INVOICE_TEMPLATES": {
+      "TITLE": "Modèles de facture",
+      "NO_TEMPLATES": {
+        "TITLE": "Aucun modèle disponible",
+        "DESCRIPTION": "Commencez dès maintenant en créant votre premier modèle !",
+        "BUTTON": "Commencer"
+      },
+      "CARD": {
+        "UNTITLED": "Modèle sans nom",
+        "CREATED_ON": "Créé le:",
+        "SECTIONS": "sections",
+        "PREVIEW": "Prévisualiser",
+        "DELETE": "Effacer ce modèle"
 
+      }
+    } 
   
   
   

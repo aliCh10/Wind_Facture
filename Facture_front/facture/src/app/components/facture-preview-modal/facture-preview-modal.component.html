@@ -1,81 +1,116 @@
-<div class="modal-header bg-light">
-    <h5 class="modal-title">
-      <i class="bi bi-file-earmark-text me-2"></i>
-      Prévisualisation: {{modeleFacture?.nameModel || 'Modèle sans nom'}}
-    </h5>
-    <button type="button" class="btn-close" (click)="close()" aria-label="Close"></button>
+<div class="modal-header bg-gradient-gold">
+  <h5 class="modal-title text-white">
+    <i class="bi bi-file-earmark-text me-2"></i>
+    Prévisualisation: {{ modeleFacture?.nameModel || 'Modèle sans nom' }}
+  </h5>
+  <button type="button" class="btn-close btn-close-white" (click)="close()" aria-label="Close"></button>
+</div>
+
+<div class="modal-body p-4 d-flex flex-column align-items-center">
+  <div class="zoom-controls mb-3">
+    <button class="btn btn-sm btn-outline-gold" (click)="zoomOut()">
+      <i class="bi bi-dash-lg"></i>
+    </button>
+    <span class="mx-2">{{ (scaleFactor * 100).toFixed(0) }}%</span>
+    <button class="btn btn-sm btn-outline-gold" (click)="zoomIn()">
+      <i class="bi bi-plus-lg"></i>
+    </button>
   </div>
-  
-  <div class="modal-body p-0 d-flex justify-content-center">
-    <div class="a4-preview-wrapper" [style.width.px]="originalA4Width * scaleFactor" 
-         [style.height.px]="originalA4Height * scaleFactor">
-      <div class="a4-paper" [style.transform]="'scale(' + scaleFactor + ')'" 
-           [style.transform-origin]="'top left'" 
-           [style.width.px]="originalA4Width" 
-           [style.height.px]="originalA4Height">
-        <div *ngFor="let section of modeleFacture?.sections || []" 
-             [ngStyle]="getOriginalStyles(section)" 
-             class="section-container">
-          <!-- Logo Section -->
-          <div *ngIf="section.sectionName === 'logo'" class="logo-preview">
-            <img *ngIf="section.content" [src]="section.content" alt="Logo" style="width: 100%; height: 100%;" />
-            <div *ngIf="!section.content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
-              Logo Placeholder
+
+  <div class="a4-preview-wrapper shadow-lg"
+       [style.width.px]="originalA4Width * scaleFactor"
+       [style.height.px]="originalA4Height * scaleFactor">
+    <div class="a4-paper bg-white"
+         [style.transform]="'scale(' + scaleFactor + ')'"
+         [style.transform-origin]="'top left'"
+         [style.width.px]="originalA4Width"
+         [style.height.px]="originalA4Height">
+      <div *ngFor="let section of modeleFacture?.sections || []"
+           [ngStyle]="getStyles(section)"
+           class="section-container position-absolute">
+        <!-- Logo Section -->
+        <div *ngIf="section.sectionName === 'logo'" class="logo-preview border-gold">
+          <ng-container *ngIf="section.content?.contentData; else noLogoContent">
+<img [src]="section.content?.contentData" alt="Logo" class="img-contain" />          </ng-container>
+          <ng-template #noLogoContent>
+            <div class="placeholder-gold d-flex align-items-center justify-content-center">
+              <i class="bi bi-image text-gold" style="font-size: 2rem;"></i>
             </div>
-          </div>
-  
-          <!-- Company Info Section -->
-          <div *ngIf="section.sectionName === 'infoCompany'" class="company-info">
-            <h6>Company Info</h6>
-            <p *ngIf="section.content">{{ section.content }}</p>
-            <p *ngIf="!section.content">Placeholder Company Info</p>
-          </div>
-  
-          <!-- Table Section -->
-          <div *ngIf="section.sectionName === 'table'" class="table-preview">
-            <table class="table table-bordered" style="width: 100%; height: 100%;">
-              <thead>
-                <tr>
-                  <th>Description</th>
-                  <th>Quantité</th>
-                  <th>Prix</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngIf="section.content && section.content.items">
-                  <td colspan="3">Tableau avec données (aperçu simplifié)</td>
-                </tr>
-                <tr *ngIf="!section.content">
-                  <td colspan="3">Tableau Placeholder</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-  
-          <!-- Calendar Section -->
-          <div *ngIf="section.sectionName === 'calendar'" class="calendar-preview">
-            Calendar Section
-          </div>
-  
-          <!-- Footer Section -->
-          <div *ngIf="section.sectionName === 'footer'" class="footer-preview">
-            Footer Section
-          </div>
-  
-          <!-- Default Section -->
-          <div *ngIf="!['logo', 'infoCompany', 'table', 'calendar', 'footer'].includes(section.sectionName)">
-            {{ section.sectionName }}
-          </div>
+          </ng-template>
+        </div>
+
+        <!-- Company Info Section -->
+        <div *ngIf="section.sectionName === 'info-company'" class="company-info p-2 border-gold rounded">
+          <h6 class="text-gold-dark">Informations Société</h6>
+          <ng-container *ngIf="section.content?.contentData; else noCompanyContent">
+<div [innerHTML]="getSafeHtml(section.content?.contentData ?? '')"></div>          </ng-container>
+          <ng-template #noCompanyContent>
+            <p class="mb-0 text-muted">Aucune information disponible</p>
+          </ng-template>
+        </div>
+
+        <!-- Client Info Section -->
+        <div *ngIf="section.sectionName === 'info-client'" class="client-info p-2 border-gold rounded">
+          <h6 class="text-gold-dark">Informations Client</h6>
+          <ng-container *ngIf="section.content?.contentData; else noClientContent">
+<div [innerHTML]="getSafeHtml(section.content?.contentData ?? '')"></div>          </ng-container>
+          <ng-template #noClientContent>
+            <p class="mb-0 text-muted">Aucune information disponible</p>
+          </ng-template>
+        </div>
+
+        <!-- Table Container Section -->
+        <div *ngIf="section.sectionName === 'tableContainer'" class="table-preview p-2">
+          <ng-container *ngIf="section.content?.contentData; else noTableContent">
+<div [innerHTML]="getSafeHtml(section.content?.contentData ?? '')"></div>          </ng-container>
+          <ng-template #noTableContent>
+            <p class="mb-0 text-muted">Aucune information disponible</p>
+          </ng-template>
+        </div>
+
+        <!-- Calendar Section -->
+        <div *ngIf="section.sectionName === 'calendar'" class="calendar-preview p-2 border-gold rounded">
+          <ng-container *ngIf="section.content?.contentData; else noCalendarContent">
+<div [innerHTML]="getSafeHtml(section.content?.contentData ?? '')"></div>          </ng-container>
+          <ng-template #noCalendarContent>
+            <div class="d-flex align-items-center">
+              <i class="bi bi-calendar-date text-gold me-2"></i>
+              <p class="mb-0 text-muted">Aucun calendrier défini</p>
+            </div>
+          </ng-template>
+        </div>
+
+        <!-- Footer Section -->
+        <div *ngIf="section.sectionName === 'footer'" class="footer-preview bg-light-gold p-2">
+          <ng-container *ngIf="section.content?.contentData; else noFooterContent">
+<div [innerHTML]="getSafeHtml(section.content?.contentData ?? '')"></div>          </ng-container>
+          <ng-template #noFooterContent>
+            <p class="text-gold-dark mb-0 small">
+              <i class="bi bi-info-circle me-1"></i> Pied de page - Mentions légales non définies
+            </p>
+          </ng-template>
+        </div>
+
+        <!-- Default Section -->
+        <div *ngIf="!['logo', 'info-company', 'info-client', 'tableContainer', 'calendar', 'footer'].includes(section.sectionName)"
+             class="default-section p-2 border-gold rounded">
+          <h6 class="text-gold-dark">{{ section.sectionName }}</h6>
+          <ng-container *ngIf="section.content?.contentData; else noDefaultContent">
+<div [innerHTML]="getSafeHtml(section.content?.contentData ?? '')"></div>          </ng-container>
+          <ng-template #noDefaultContent>
+            <p class="mb-0 text-muted">Aucun contenu disponible</p>
+          </ng-template>
         </div>
       </div>
     </div>
   </div>
-  
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline-secondary" (click)="close()">
-      <i class="bi bi-x-circle me-1"></i> Fermer
-    </button>
-    <button type="button" class="btn btn-primary" (click)="useTemplate()">
-      <i class="bi bi-check-circle me-1"></i> Utiliser ce modèle
-    </button>
-  </div>
+</div>
+
+<div class="modal-footer bg-light">
+  <button type="button" class="btn btn-outline-gold" (click)="close()">
+    <i class="bi bi-x-circle me-1"></i> Fermer
+  </button>
+  <button type="button" class="btn btn-gold" (click)="useTemplate()">
+    <i class="bi bi-check-circle me-1"></i> Utiliser ce modèle
+  </button>
+</div>

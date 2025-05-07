@@ -23,14 +23,8 @@
 }
 
 
-.employee-header:hover {
-  background: linear-gradient(to right, #ffd900, #f3d769);
-  transform: scale(1.02);
 
-}
-.employee-header:hover .employee-title {
-  color: white !important; /* Change the text color of .employee-title on hover */
-}
+
 .employee-title {
   font-size: 28px;
   font-weight: 700;
@@ -39,6 +33,3 @@
   color: #ffd700; 
 }
 
-.employee-title:hover {
-  color: #ffffff !important;
-}
