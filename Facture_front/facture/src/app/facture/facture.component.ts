@@ -44,6 +44,8 @@ export class FactureComponent implements AfterViewInit {
   ) {}
 
   ngAfterViewInit() {
+    const a4Rect = this.a4Page.nativeElement.getBoundingClientRect();
+  console.log('A4 Page Size: width=', a4Rect.width, 'height=', a4Rect.height);
     this.sectionRegistry = [
       this.logoComponent,
       this.tableComponent,
