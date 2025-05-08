@@ -1,0 +1,40 @@
+server:
+  port: 8094
+
+spring:
+  application:
+    name: facture
+  datasource:
+    url: jdbc:postgresql://localhost:5432/facture
+    username: postgres
+    password: Alichlaifa123@
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+
+logging:
+  level:
+    root: INFO
+    com.example.auth_service: DEBUG
+    org.springframework.security: DEBUG
+    com.netflix.eureka: DEBUG
+    com.netflix.discovery: DEBUG
+
+  logging:
+   level:
+    com.example.facture.services: DEBUG  # Plus spécifique

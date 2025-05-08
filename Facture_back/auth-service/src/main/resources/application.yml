@@ -1,0 +1,60 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: auth-service
+
+  logging:
+    level:
+      root: INFO
+      com.example.auth_service: DEBUG
+      org.springframework.security: DEBUG 
+
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: alichlaifa66@gmail.com
+    password: qdxb bkon zwkg betc
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/auth
+    username: postgres
+    password: Alichlaifa123@
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+cloudinary:
+  cloud-name: dcn9hfjdc
+  api-key: 524892727679375
+  api-secret: FlzbgUmhkP8wiZY3ph6dUomLvq4
+
+system:
+  email: system@gmail.com
+  password: System@123@
+  name: System
+  second-name: ERP
+  tel: 73588900
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    hostname: localhost
+  service-url:
+    defaultZone: http://localhost:8761/eureka/
+jwt:
+  secret: Uanh9hcdF+I0eHVxK4AhoYrk3jwIfIkQecufRfV3EeJATNtw9+aFpDqhL4DJvulo

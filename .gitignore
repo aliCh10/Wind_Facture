@@ -1,5 +1,5 @@
 # Ignorer tous les fichiers .yml dans tout le projet
-*.yml
+# *.yml
 
 # Backend - Spring (Facture_back)
 /Facture_back/target/

@@ -1,0 +1,43 @@
+server:
+  port: 8093
+
+spring:
+  application:
+    name: services-ser
+
+    logging:
+  level:
+    com.netflix.discovery: DEBUG
+    org.springframework.cloud.netflix.eureka: DEBUG
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/services
+    username: postgres
+    password: Alichlaifa123@
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+  
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+ 
+  springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    hostname: localhost
+  service-url:
+    defaultZone: http://localhost:8761/eureka/
+
