@@ -34,6 +34,7 @@ public class ServiceService {
     }
 
     // Get all services for the authenticated tenant
+    // test test changement
     public List<Service> getAllServices() {
         Long tenantId = getAuthenticatedTenantId();
         return serviceRepository.findByTenantId(tenantId);
