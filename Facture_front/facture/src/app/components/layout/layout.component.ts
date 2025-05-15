@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -16,11 +16,10 @@ export class LayoutComponent implements OnInit, OnDestroy {
   sidebarMenuItems: any[] = [];
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private router: Router
-  ) {}
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
+    this.checkMobile();
     this.initRouteListener();
     this.initPartnerId();
     this.updateSidebarItems();
@@ -29,6 +28,14 @@ export class LayoutComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  @HostListener('window:resize')
+  checkMobile(): void {
+    this.isMobile = window.innerWidth <= 768;
+    if (!this.isMobile) {
+      this.isSidebarActive = true;
+    }
   }
 
   private initRouteListener(): void {
@@ -50,31 +57,29 @@ export class LayoutComponent implements OnInit, OnDestroy {
   private updateSidebarItems(): void {
     const isSystemRoute = this.router.url.includes('/system');
   
-    if (isSystemRoute) {
-      this.sidebarMenuItems = [
-        { icon: 'person', label: 'MENU.Partners', route: '/system' },
-        { icon: 'settings', label: 'MENU.SETTINGS', route: '/settings' },
-      ];
-    } else {
-      this.sidebarMenuItems = [
-        { icon: 'home', label: 'MENU.HOME', route: '/home' },
-        { 
-          icon: 'receipt_long', 
-          label: 'MENU.Modele', 
-          route: '/modele',
-          children: [
-            { icon: 'receipt_long', label: 'MENU.models_list', route: 'models' }
-          ]
-        },  
-        { 
-          icon: 'people', 
-          label: 'MENU.Employé', 
-          route: this.partnerId ? `/employee/${this.partnerId}` : '/employees' 
-        },  
-        { icon: 'description', label: 'MENU.SERVICES', route: '/services' },
-        { icon: 'person', label: 'MENU.Client', route: '/clients' },  
-      ];
-    }
+    this.sidebarMenuItems = isSystemRoute ? [
+      { icon: 'person', label: 'MENU.Partners', route: '/system' },
+      { icon: 'settings', label: 'MENU.SETTINGS', route: '/settings' }
+    ] : [
+      { icon: 'home', label: 'MENU.HOME', route: '/home' },
+   {
+  icon: 'payment',
+  label: 'MENU.invoice',
+  route: '/facturation',
+  children: [
+    { icon: 'description', label: 'MENU.Modele', route: 'modele' },
+    { icon: 'list_alt', label: 'MENU.models_list', route: 'models' },
+    { icon: 'add_circle', label: 'MENU.Create Invoice', route: 'creer-facture' }
+  ]
+}, 
+      { 
+        icon: 'people', 
+        label: 'MENU.Employé', 
+        route: this.partnerId ? `/employee/${this.partnerId}` : '/employees' 
+      },  
+      { icon: 'description', label: 'MENU.SERVICES', route: '/services' },
+      { icon: 'person', label: 'MENU.Client', route: '/clients' }
+    ];
   }
 
   toggleSidebar(): void {

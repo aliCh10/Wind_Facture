@@ -22,7 +22,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTableModule } from '@angular/material/table';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -78,6 +78,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { NgxMatColorPickerModule } from 'ngx-mat-color-picker';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { FacturePreviewModalComponent } from './components/facture-preview-modal/facture-preview-modal.component';
+import { CustomMatPaginatorIntlService } from './services/custom-mat-paginator-intl.service';
 
 
 
@@ -176,6 +177,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   providers: [
     provideClientHydration(withEventReplay()),
     provideAnimationsAsync(),
+    { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntlService },
     provideHttpClient(withFetch())
   ],
   bootstrap: [AppComponent]

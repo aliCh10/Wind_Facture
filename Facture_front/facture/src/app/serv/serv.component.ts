@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Service } from '../models/service';
 import { SerService } from '../services/ser.service';
 import { ToastrService } from 'ngx-toastr';
 import { DynamicModalComponent } from '../components/dynamic-modal/dynamic-modal.component';
-import Swal from 'sweetalert2';
 import { UpdateServiceModalComponent } from '../components/update-service-modal/update-service-modal.component';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-serv',
@@ -16,9 +16,10 @@ import { MatTableDataSource } from '@angular/material/table';
 })
 export class ServComponent implements OnInit {
   services: Service[] = [];
-  displayedColumns: string[] = ['ref', 'serviceName',  'servicePrice', 'actions'];
-      dataSource: MatTableDataSource<any> = new MatTableDataSource();
-  
+  displayedColumns: string[] = ['ref', 'serviceName', 'servicePrice', 'actions'];
+  dataSource: MatTableDataSource<any> = new MatTableDataSource();
+  // Add pagination if needed
+  // @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
     private serservice: SerService,
@@ -30,54 +31,41 @@ export class ServComponent implements OnInit {
     this.loadServices();
   }
 
-loadServices(): void {
-  this.serservice.getAllServices().subscribe({
-    next: (data) => {
-      this.services = data;
-      this.dataSource.data = this.services;
-    },
-    error: (err) => console.error('Erreur lors du chargement des services', err)
-  });
-}
+  loadServices(): void {
+    this.serservice.getAllServices().subscribe({
+      next: (data) => {
+        this.services = data;
+        this.dataSource.data = this.services;
+        // Uncomment to enable pagination
+        // if (this.paginator) {
+        //   this.dataSource.paginator = this.paginator;
+        // }
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement des services', err);
+        this.toastr.error('Impossible de charger les services', 'Erreur');
+      }
+    });
+  }
+
   refreshServices(): void {
     this.loadServices();
   }
 
   delete(id: number): void {
-    Swal.fire({
-      title: 'Êtes-vous sûr ?',
-      text: 'Voulez-vous vraiment supprimer ce service ?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Oui, supprimer',
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      cancelButtonText: 'Annuler',
-      reverseButtons: true
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.serservice.deleteService(id).subscribe({
-          next: () => {
-            Swal.fire({
-              icon: 'success',
-              title: 'Succès',
-              text: 'Service supprimé avec succès'
-            });
-            this.loadServices();
-          },
-          error: (err) => {
-            console.error('Erreur lors de la suppression', err);
-            Swal.fire({
-              icon: 'error',
-              title: 'Erreur',
-              text: 'Une erreur est survenue lors de la suppression'
-            });
-          }
-        });
-      }
-    });
+    if (confirm('Voulez-vous vraiment supprimer ce service ?')) {
+      this.serservice.deleteService(id).subscribe({
+        next: () => {
+          this.toastr.success('Service supprimé avec succès', 'Succès');
+          this.loadServices();
+        },
+        error: (err) => {
+          console.error('Erreur lors de la suppression', err);
+          this.toastr.error('Une erreur est survenue lors de la suppression', 'Erreur');
+        }
+      });
+    }
   }
-  
 
   openAddServiceDialog(): void {
     const dialogRef = this.dialog.open(DynamicModalComponent, {
@@ -87,13 +75,18 @@ loadServices(): void {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result?.success) {
-        this.toastr.success(result.message || 'Service ajouté');
-        this.loadServices(); // Refresh automatique
+        this.toastr.success(result.message || 'Service ajouté', 'Succès');
+        this.loadServices();
       }
     });
   }
 
   openUpdateServiceDialog(service: Service): void {
+    if (!service.id) {
+      console.error('Service ID is undefined:', service);
+      this.toastr.error('Impossible d\'ouvrir la modification : ID du service manquant', 'Erreur');
+      return;
+    }
     const dialogRef = this.dialog.open(UpdateServiceModalComponent, {
       width: '500px',
       data: service
@@ -101,7 +94,8 @@ loadServices(): void {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result?.success) {
-        this.loadServices(); // Refresh automatique
+        this.toastr.success(result.message || 'Service mis à jour', 'Succès');
+        this.loadServices();
       }
     });
   }

@@ -72,16 +72,17 @@
           </mat-header-cell>
           <mat-cell *matCellDef="let element" class="px-8 py-4">
             <div class="flex space-x-4">
-              <button *ngIf="!element.validated" mat-mini-fab color="primary" 
+              <button *ngIf="!element.validated" mat-mini-fab color="green" 
                       class="transition-all transform hover:scale-110"
                       (click)="validatePartner(element.id)" [matTooltip]="'Validate'">
                 <mat-icon>check_circle</mat-icon>
               </button>
-              <button mat-mini-fab color="warn" 
-                      class="transition-all transform hover:scale-110"
-                      (click)="deletePartner(element.id)" [matTooltip]="'Delete'">
-                <mat-icon>delete</mat-icon>
-              </button>
+           <button mat-mini-fab 
+        class="custom-gold-button transition-all transform hover:scale-110"
+        (click)="deletePartner(element.id)" 
+        [matTooltip]="'Delete'">
+  <mat-icon>delete</mat-icon>
+</button>
             </div>
           </mat-cell>
         </ng-container>

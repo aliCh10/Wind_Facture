@@ -5,9 +5,8 @@
   (cdkDragEnded)="onDragEnd($event)"
   (click)="openOptionsPanel()"
 >
-  <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*" class="file-input" />
 
-  <div class="upload-area" (click)="fileInput.click()" [class.has-image]="imageUrl">
+  <div class="upload-area"  [class.has-image]="imageUrl">
     <div class="upload-content" *ngIf="!imageUrl">
       <div class="upload-icon">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -26,7 +25,7 @@
     <div class="image-preview" *ngIf="imageUrl">
       <img [src]="imageUrl" alt="Uploaded logo" class="uploaded-image" />
       <div class="image-overlay">
-        <button class="change-image-btn" (click)="fileInput.click(); $event.stopPropagation()">
+        <button class="change-image-btn" >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />

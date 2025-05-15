@@ -1,10 +1,9 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Service } from '../../models/service';
+import { Service, ServiceDTO } from '../../models/service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
 import { SerService } from '../../services/ser.service';
-import Swal from 'sweetalert2'; // Import Swal
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-update-service-modal',
@@ -12,73 +11,85 @@ import Swal from 'sweetalert2'; // Import Swal
   templateUrl: './update-service-modal.component.html',
   styleUrls: ['./update-service-modal.component.css']
 })
-export class UpdateServiceModalComponent {
+export class UpdateServiceModalComponent implements OnInit {
   serviceForm: FormGroup;
-  service: any;
   isLoading: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<UpdateServiceModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Service,
     private fb: FormBuilder,
-    private serviceService: SerService // Injecting the service
+    private serService: SerService,
+    private toastr: ToastrService
   ) {
-    // Initialisation du formulaire
-    this.service = data;
     this.serviceForm = this.fb.group({
-      ref: [this.service.ref, Validators.required],
-      serviceName: [this.service.serviceName, Validators.required],
-      serviceQuantity: [this.service.serviceQuantity, [Validators.required, Validators.min(1)]],
-      servicePrice: [this.service.servicePrice, [Validators.required, Validators.min(0.1)]],
+      ref: ['', Validators.required],
+      serviceName: ['', Validators.required],
+      serviceQuantity: [0, [Validators.required, Validators.min(0)]],
+      servicePrice: [0, [Validators.required, Validators.min(0)]]
     });
   }
 
-  closeDialog() {
-    this.dialogRef.close();
+  ngOnInit(): void {
+    if (this.data && this.data.id) {
+      this.serviceForm.patchValue({
+        ref: this.data.ref,
+        serviceName: this.data.serviceName,
+        serviceQuantity: this.data.serviceQuantity,
+        servicePrice: this.data.servicePrice
+      });
+    } else {
+      this.toastr.error('Données du service invalides ou ID manquant', 'Erreur');
+      this.closeDialog();
+    }
+  }
+
+  private hasChanges(): boolean {
+    const formValues = this.serviceForm.value;
+    return (
+      formValues.ref !== this.data.ref ||
+      formValues.serviceName !== this.data.serviceName ||
+      formValues.serviceQuantity !== this.data.serviceQuantity ||
+      formValues.servicePrice !== this.data.servicePrice
+    );
   }
 
   onSave(): void {
     if (this.serviceForm.invalid) {
-      return;  // Do not save if form is invalid
+      this.serviceForm.markAllAsTouched();
+      this.toastr.error('Veuillez remplir tous les champs requis', 'Erreur');
+      return;
     }
 
-    const updatedService: Service = {
-      ...this.service,
-      ...this.serviceForm.value
-    };
+    if (!this.data.id) {
+      this.toastr.error('ID du service manquant', 'Erreur');
+      return;
+    }
 
-    // Set loading state to true before calling the service method
+    if (!this.hasChanges()) {
+      this.toastr.info('Aucun changement à enregistrer', 'Info');
+      this.closeDialog();
+      return;
+    }
+
     this.isLoading = true;
 
-    // Call the updateService method
-    this.serviceService.updateService(this.service.id, updatedService).subscribe(
-      (response) => {
-        // Show success message using Swal.fire
-        Swal.fire({
-          icon: 'success',
-          title: 'Succès',
-          text: 'Service mis à jour avec succès'
-        }).then(() => {
-          this.dialogRef.close({ success: true, updatedService: response, message: 'Service mis à jour avec succès' });
-        });
-        this.isLoading = false; // Set loading state to false after successful update
+    const serviceDTO: ServiceDTO = this.serviceForm.value;
+
+    this.serService.updateService(this.data.id, serviceDTO).subscribe({
+      next: () => {
+        this.toastr.success('Service mis à jour avec succès', 'Succès');
+        this.dialogRef.close({ success: true, message: 'Service mis à jour avec succès' });
+        this.isLoading = false;
       },
-      (error) => {
-        // Handle error here and show error message using Swal.fire
-        console.error('Error updating service:', error);
-        this.isLoading = false; // Set loading state to false after error
-        Swal.fire({
-          icon: 'error',
-          title: 'Erreur',
-          text: 'Erreur lors de la mise à jour du service'
-        }).then(() => {
-          this.dialogRef.close({ success: false, message: 'Erreur lors de la mise à jour du service' });
-        });
+      error: (error) => {
+        this.toastr.error(error.message || 'Échec de la mise à jour du service', 'Erreur');
+        this.isLoading = false;
       }
-    );
+    });
   }
 
-  onCancel(): void {
+  closeDialog(): void {
     this.dialogRef.close();
   }
 }

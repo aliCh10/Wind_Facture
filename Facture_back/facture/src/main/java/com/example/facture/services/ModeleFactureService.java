@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -80,12 +81,12 @@ public class ModeleFactureService {
         }
         return false;
     }
-    public byte[] generateModeleFacturePdf(Long id) {
-        Optional<ModeleFacture> modeleFacture = getModeleFactureById(id);
-        if (modeleFacture.isPresent()) {
-            return pdfGenerationService.generatePdfFromModele(modeleFacture.get());
-        } else {
-            throw new RuntimeException("ModeleFacture with ID " + id + " not found");
-        }
+  public byte[] generateModeleFacturePdf(Long id, Map<String, String> clientData) {
+    Optional<ModeleFacture> modeleFacture = getModeleFactureById(id);
+    if (modeleFacture.isPresent()) {
+        return pdfGenerationService.generatePdfFromModele(modeleFacture.get(), clientData);
+    } else {
+        throw new RuntimeException("ModeleFacture with ID " + id + " not found");
     }
+}
 }

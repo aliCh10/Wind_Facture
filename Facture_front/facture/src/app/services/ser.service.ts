@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { Service } from '../models/service';
+import { Service, ServiceDTO } from '../models/service';
 
 @Injectable({ providedIn: 'root' })
 export class SerService {
@@ -27,6 +27,7 @@ export class SerService {
     return throwError(() => new Error(message));
   }
 
+
   getAllServices(): Observable<Service[]> {
     return this.http.get<Service[]>(this.apiUrl, { headers: this.getHeaders() })
       .pipe(catchError(this.handleError));
@@ -37,12 +38,12 @@ export class SerService {
       .pipe(catchError(this.handleError));
   }
 
-  createService(service: Service): Observable<Service> {
+  createService(service: ServiceDTO): Observable<Service> {
     return this.http.post<Service>(this.apiUrl, service, { headers: this.getHeaders() })
       .pipe(catchError(this.handleError));
   }
 
-  updateService(id: number, service: Service): Observable<Service> {
+  updateService(id: number, service: ServiceDTO): Observable<Service> {
     return this.http.put<Service>(`${this.apiUrl}/${id}`, service, { headers: this.getHeaders() })
       .pipe(catchError(this.handleError));
   }

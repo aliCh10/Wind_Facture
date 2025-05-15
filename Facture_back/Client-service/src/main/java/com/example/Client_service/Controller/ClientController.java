@@ -1,7 +1,7 @@
 package com.example.Client_service.Controller;
 
+import com.example.Client_service.DTO.ClientDTO;
 import com.example.Client_service.Service.ClientService;
-import com.example.Client_service.model.Client;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,13 +28,13 @@ public class ClientController {
 
     @Operation(summary = "Récupérer tous les clients du tenant authentifié")
     @GetMapping
-    public ResponseEntity<List<Client>> getAllClients() {
+    public ResponseEntity<List<ClientDTO>> getAllClients() {
         return ResponseEntity.ok(clientService.getAllClients());
     }
 
     @Operation(summary = "Récupérer un client par ID pour le tenant authentifié")
     @GetMapping("/{id}")
-    public ResponseEntity<Client> getClientById(@PathVariable Long id) {
+    public ResponseEntity<ClientDTO> getClientById(@PathVariable Long id) {
         return clientService.getClientById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -42,15 +42,15 @@ public class ClientController {
 
     @Operation(summary = "Créer un nouveau client pour le tenant authentifié")
     @PostMapping
-    public ResponseEntity<Client> createClient(@RequestBody Client client) {
-        Client savedClient = clientService.createClient(client);
+    public ResponseEntity<ClientDTO> createClient(@RequestBody ClientDTO clientDTO) {
+        ClientDTO savedClient = clientService.createClient(clientDTO);
         return ResponseEntity.ok(savedClient);
     }
 
     @Operation(summary = "Mettre à jour un client pour le tenant authentifié")
     @PutMapping("/{id}")
-    public ResponseEntity<Client> updateClient(@PathVariable Long id, @RequestBody Client clientDetails) {
-        Client updatedClient = clientService.updateClient(id, clientDetails);
+    public ResponseEntity<ClientDTO> updateClient(@PathVariable Long id, @RequestBody ClientDTO clientDTO) {
+        ClientDTO updatedClient = clientService.updateClient(id, clientDTO);
         return ResponseEntity.ok(updatedClient);
     }
 

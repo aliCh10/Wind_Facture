@@ -1,4 +1,3 @@
-/* --- Sidebar container --- */
 .sidebar {
   width: 200px;
   height: 100vh;
@@ -6,41 +5,33 @@
   color: #FFD700;
   padding: 20px;
   position: fixed;
-  left: 0;
   top: 0;
+  left: 0;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   box-shadow: 4px 0 15px rgba(0, 0, 0, 0.6);
-  transition: all 0.3s ease-in-out;
+  transition: width 0.3s ease-in-out, transform 0.3s ease-in-out;
   overflow-y: auto;
   z-index: 1000;
 }
 
-/* Collapsed state */
 .sidebar.collapsed {
   width: 60px;
   padding: 10px;
 }
 
-/* Logo styling */
 .logo img {
-  margin-top: -50px;
   width: 100%;
   max-height: 160px;
   object-fit: contain;
-  /* margin-bottom: 30px; */
-  /* margin-top: 20px; */
   transition: transform 0.3s ease-in-out;
 }
 
-/* --- Menu styling --- */
 .menu {
-  list-style-type: none;
+  list-style: none;
   padding: 0;
   width: 100%;
-  display: flex;
-  flex-direction: column;
+  margin: 0;
 }
 
 .menu-item {
@@ -51,27 +42,23 @@
   border-radius: 8px;
   color: white;
   font-weight: 500;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   background: rgba(255, 215, 0, 0.08);
-  transition: all 0.3s ease-in-out;
-  position: relative;
+  transition: background 0.2s, transform 0.2s, color 0.2s;
 }
 
 .menu-item:hover {
   background: linear-gradient(90deg, #FFD700, #ffcc00);
   color: #1a1a1a;
-  transform: translateX(10px);
-  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+  transform: translateX(5px);
 }
 
 .menu-item.active {
   background: linear-gradient(90deg, #FFD700, #ffcc00);
-  color: #000 !important;
+  color: #000;
   font-weight: bold;
-  border-radius: 5px;
 }
 
-/* Collapsed menu items */
 .sidebar.collapsed .menu-item {
   justify-content: center;
   padding: 10px;
@@ -81,84 +68,72 @@
   transform: none;
 }
 
-/* --- Icons --- */
 mat-icon {
   font-size: 20px;
   margin-right: 15px;
-  color: inherit;
-  transition: transform 0.3s ease-in-out;
+  transition: margin 0.3s;
 }
 
 .sidebar.collapsed mat-icon {
   margin-right: 0;
 }
 
-/* --- Submenu styling --- */
 .submenu-items {
-  width: 100%;
-  padding-left: 20px; /* Indentation for submenu items */
+  padding-left: 20px;
   background: rgba(37, 36, 55, 0.9);
   overflow: hidden;
-  max-height: 0;
-  transition: max-height 0.3s ease-in-out;
-  list-style-type: none;
-  padding: 0;
+  transition: all 0.3s ease-in-out;
 }
 
-/* --- Submenu item styling --- */
 .submenu-item {
   display: flex;
   align-items: center;
-  padding: 12px 15px;
+  padding: 10px 15px;
   cursor: pointer;
   border-radius: 8px;
   color: white;
   font-weight: 500;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   background: rgba(255, 215, 0, 0.08);
-  transition: all 0.3s ease-in-out;
+  transition: background 0.2s, transform 0.2s;
 }
 
 .submenu-item:hover {
   background: linear-gradient(90deg, #FFD700, #ffcc00);
   color: #1a1a1a;
-  transform: translateX(10px);
-  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+  transform: translateX(5px);
 }
 
 .submenu-item.active {
   background: linear-gradient(90deg, #FFD700, #ffcc00);
-  color: #000 !important;
-  font-weight: bold;
-  border-radius: 5px;
+  color: #000;
 }
 
-/* --- Submenu item icon styling --- */
 .submenu-item mat-icon {
   font-size: 18px;
   margin-right: 10px;
-  color: inherit;
 }
 
-/* --- Show submenu when active --- */
-.menu-item.active .submenu-items,
-.submenu-items.show {
-  max-height: 500px;
-}
-
-/* --- Responsive design for submenu items --- */
 @media (max-width: 768px) {
-  /* Adjust submenu items to align with the parent items */
-  .submenu-item {
-    padding: 10px;
+  .sidebar {
+    transform: translateX(-100%);
+    width: 200px;
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .sidebar.collapsed {
+    width: 200px;
+    transform: translateX(-100%);
   }
 
   .submenu-items {
-    padding-left: 15px; /* Align submenu items with the parent */
+    padding-left: 15px;
   }
 
-  .submenu-item:hover {
-    background: rgba(255, 215, 0, 0.2);
-    transform: translateX(5px);
+  .submenu-item {
+    padding: 10px;
   }
 }

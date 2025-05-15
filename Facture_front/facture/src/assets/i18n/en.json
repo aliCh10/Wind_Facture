@@ -66,7 +66,9 @@
      "Employé":"Employee",
      "Client":"Client",
      "SERVICES": "Services",
-     "models_list":"Models List"
+     "models_list":"Models List",
+     "invoice":"Invoice",
+     "Create Invoice":"Create Invoice"
     },
     
       "or click to select files": "or click to select files",
@@ -79,7 +81,24 @@
       "Actions":"Actions",
       "Add Employee":"Add Employee",
       "Department":"Department",
-      "Job":"Job"   
+      "Job":"Job",
+      "EMPLOYEE": {
+    "ERROR": {
+      "TITLE": "Error",
+      "NO_PARTNER_ID": "Unable to load employees without partnerId",
+      "LOAD_FAILED": "Error loading employees",
+      "MISSING_ID": "Employee ID missing",
+      "DELETE_FAILED": "Unable to delete employee"
+    },
+    "SUCCESS": {
+      "TITLE": "Success",
+      "UPDATE": "Employee updated successfully",
+      "DELETE": "Employee deleted successfully"
+    },
+    "CONFIRM": {
+      "DELETE_TEXT": "Do you really want to delete this employee?"
+    }
+  }  
      },
      "SERVICES_PAGE": {
       "TITLE": "Services List",
@@ -131,7 +150,32 @@
 
 
       }
-    }   
+    }  ,
+    
+  "PAGINATOR": {
+    "ITEMS_PER_PAGE": "Items per page:",
+    "NEXT_PAGE": "Next page",
+    "PREVIOUS_PAGE": "Previous page",
+    "FIRST_PAGE": "First page",
+    "LAST_PAGE": "Last page",
+    "RANGE": "{start} – {end} of {total}"
+  
+},
+
+  "SUCCESS": {
+    "TITLE": "Success",
+    "VALIDATE_PARTNER": "Partner validated successfully",
+    "DELETE_PARTNER": "Partner deleted successfully"
+  },
+  "INFO": {
+    "TITLE": "Information",
+    "VALIDATE_CANCELLED": "Partner validation cancelled",
+    "DELETE_CANCELLED": "Partner deletion cancelled"
+  },
+  "CONFIRM": {
+    "VALIDATE_TEXT": "Do you really want to validate this partner?",
+    "DELETE_TEXT": "Do you really want to delete this partner?"
+  }
+}
   
 
-}

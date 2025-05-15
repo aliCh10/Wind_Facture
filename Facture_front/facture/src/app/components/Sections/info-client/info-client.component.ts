@@ -160,19 +160,19 @@ export class InfoClientComponent implements Section, OnInit, OnDestroy {
       height: `${this.height}px`,
     };
   }
-  public getSectionContent(): SectionContent {
+public getSectionContent(): SectionContent {
     const tableEl = this.tableContainer?.nativeElement;
     if (!tableEl) {
         return { contentData: '' };
     }
+    
+    // Crée une copie du HTML pour conserver les placeholders
     let htmlContent = tableEl.innerHTML;
-
-    // Appliquer display: block aux <td> pour forcer le retour à la ligne
-    htmlContent = htmlContent.replace(/<td/g, '<td style="display: block;"');
-
-    // Nettoyer les attributs Angular
-    htmlContent = htmlContent.replace(/(_ngcontent-[a-zA-Z0-9-]+="")/g, '');
-
+    
+    // Conserve les attributs data-placeholder
+    htmlContent = htmlContent.replace(/<span class="input-field" data-placeholder="([^"]+)">[^<]*<\/span>/g, 
+        '<span class="input-field" data-placeholder="$1">$1</span>');
+    
     return { contentData: htmlContent };
 }
 public applyContent(htmlContent: string): void {

@@ -32,4 +32,30 @@
   transition: all 0.3s ease;
   color: #ffd700; 
 }
+/* Success toast (green) */
+.success-snackbar {
+  background-color: #4caf50 !important; /* Green background */
+  color: white !important; /* White text */
+}
+.success-snackbar .mat-snack-bar-action {
+  color: white !important; /* White action button */
+}
+
+/* Error toast (red) */
+.error-snackbar {
+  background-color: #f44336 !important; /* Red background */
+  color: white !important; /* White text */
+}
+.error-snackbar .mat-snack-bar-action {
+  color: white !important; /* White action button */
+}
+
+/* Warning toast (yellow/orange) */
+.warning-snackbar {
+  background-color: #ff9800 !important; /* Orange background */
+  color: white !important; /* White text */
+}
+.warning-snackbar .mat-snack-bar-action {
+  color: white !important; /* White action button */
+}
 

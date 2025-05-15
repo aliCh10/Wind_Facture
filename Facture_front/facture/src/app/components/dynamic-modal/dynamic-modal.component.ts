@@ -5,8 +5,8 @@ import { Employee } from '../../models/User';
 import { Client } from '../../models/Client';
 import { Service } from '../../models/service';
 import { SerService } from '../../services/ser.service';
-import Swal from 'sweetalert2';
 import { ClientService } from '../../services/ClientService';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-dynamic-modal',
@@ -25,8 +25,7 @@ export class DynamicModalComponent {
   });
 
   client: Client = new Client('', '', '', '');
-  service: Service = new Service('', 0, '', 0);
-
+  service: Service = new Service(0, '', 0, '', 0);
   isLoading = false;
 
   constructor(
@@ -34,7 +33,8 @@ export class DynamicModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: { type: string; partnerId?: number },
     private employeeService: EmployeeService,
     private clientService: ClientService,
-    private serService: SerService
+    private serService: SerService,
+    private toastr: ToastrService
   ) {
     console.log('Modal opened with type:', this.data.type, 'and partnerId:', this.data.partnerId);
   }
@@ -55,11 +55,7 @@ export class DynamicModalComponent {
 
   private saveService(): void {
     if (!this.isServiceFormValid()) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Erreur',
-        text: 'Veuillez remplir tous les champs du service'
-      });
+      this.toastr.error('Veuillez remplir tous les champs du service', 'Erreur');
       return;
     }
 
@@ -68,11 +64,7 @@ export class DynamicModalComponent {
     this.serService.createService(this.service).subscribe({
       next: (response) => {
         this.isLoading = false;
-        Swal.fire({
-          icon: 'success',
-          title: 'Succès',
-          text: 'Service ajouté avec succès'
-        });
+        this.toastr.success('Service ajouté avec succès', 'Succès');
         this.dialogRef.close({
           success: true,
           service: response,
@@ -89,20 +81,12 @@ export class DynamicModalComponent {
 
   private saveEmployee(): void {
     if (!this.isEmployeeFormValid()) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Erreur',
-        text: 'Veuillez remplir tous les champs obligatoires'
-      });
+      this.toastr.error('Veuillez remplir tous les champs obligatoires', 'Erreur');
       return;
     }
 
     if (!this.data.partnerId) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Erreur',
-        text: 'partnerId est manquant pour l\'employé !'
-      });
+      this.toastr.error('partnerId est manquant pour l\'employé', 'Erreur');
       return;
     }
 
@@ -111,11 +95,7 @@ export class DynamicModalComponent {
     this.employeeService.addEmployee(this.data.partnerId, this.employee).subscribe({
       next: (response) => {
         this.isLoading = false;
-        Swal.fire({
-          icon: 'success',
-          title: 'Succès',
-          text: 'Employé ajouté avec succès'
-        });
+        this.toastr.success('Employé ajouté avec succès', 'Succès');
         this.dialogRef.close({
           success: true,
           employee: response,
@@ -132,11 +112,7 @@ export class DynamicModalComponent {
 
   private saveClient(): void {
     if (!this.isClientFormValid()) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Erreur',
-        text: 'Veuillez remplir tous les champs obligatoires'
-      });
+      this.toastr.error('Veuillez remplir tous les champs obligatoires', 'Erreur');
       return;
     }
 
@@ -145,11 +121,7 @@ export class DynamicModalComponent {
     this.clientService.addClient(this.client).subscribe({
       next: (response) => {
         this.isLoading = false;
-        Swal.fire({
-          icon: 'success',
-          title: 'Succès',
-          text: 'Client ajouté avec succès'
-        });
+        this.toastr.success('Client ajouté avec succès', 'Succès');
         this.dialogRef.close({
           success: true,
           client: response,
@@ -187,10 +159,6 @@ export class DynamicModalComponent {
       errorMessage = 'Données invalides. Vérifiez les informations saisies.';
     }
 
-    Swal.fire({
-      icon: 'error',
-      title: 'Erreur',
-      text: errorMessage
-    });
+    this.toastr.error(errorMessage, 'Erreur');
   }
 }

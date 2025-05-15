@@ -167,15 +167,15 @@ export class CalendarComponent implements Section, AfterViewInit, OnDestroy {
       'height': `${this.height}px`
     };
   }
-//   public getSectionContent(): SectionContent {
-//     const contentEl = this.calendarContainer?.nativeElement;
-//     if (!contentEl) {
-//         return { contentData: '' };
-//     }
-//     let htmlContent = contentEl.innerHTML;
-//     htmlContent = htmlContent.replace(/(_ngcontent-[a-zA-Z0-9-]+="")/g, '');
-//     return { contentData: htmlContent };
-// }
+  public getSectionContent(): SectionContent {
+    const contentEl = this.calendarContainer?.nativeElement;
+    if (!contentEl) {
+        return { contentData: '' };
+    }
+    let htmlContent = contentEl.innerHTML;
+    htmlContent = htmlContent.replace(/(_ngcontent-[a-zA-Z0-9-]+="")/g, '');
+    return { contentData: htmlContent };
+}
 
 
   openOptionsPanel() {

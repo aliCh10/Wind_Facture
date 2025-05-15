@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ModeleFactureService } from '../services/ModeleFactureService';
 import { ModeleFacture } from '../models/modele-facture.model';
 import { Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-new-facture',
@@ -18,7 +18,7 @@ export class NewFactureComponent implements OnInit {
   constructor(
     private modeleFactureService: ModeleFactureService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -35,10 +35,11 @@ export class NewFactureComponent implements OnInit {
       error: (error) => {
         console.error('Error loading templates', error);
         this.loading = false;
-        this.snackBar.open('Failed to load templates', 'Close', { duration: 3000 });
+        this.toastr.error('Failed to load templates', 'Error');
       }
     });
   }
+
   openModelePreview(modele: ModeleFacture): void {
     if (!modele.id) return;
   
@@ -51,10 +52,7 @@ export class NewFactureComponent implements OnInit {
       },
       error => {
         console.error('PDF loading error:', error);
-        this.snackBar.open('Failed to load PDF', 'Close', {
-          duration: 3000,
-          panelClass: ['error-snackbar']
-        });
+        this.toastr.error('Failed to load PDF', 'Error');
       }
     );
   }
@@ -73,10 +71,7 @@ export class NewFactureComponent implements OnInit {
     event.stopPropagation();
     if (!modele.id) {
       console.error('Cannot delete template - no ID provided');
-      this.snackBar.open('Cannot delete template - missing ID', 'Close', {
-        duration: 3000,
-        panelClass: ['error-snackbar']
-      });
+      this.toastr.error('Cannot delete template - missing ID', 'Error');
       return;
     }
 
@@ -84,17 +79,11 @@ export class NewFactureComponent implements OnInit {
       this.modeleFactureService.deleteModeleFacture(modele.id).subscribe({
         next: () => {
           this.modeles = this.modeles.filter(m => m.id !== modele.id);
-          this.snackBar.open('Template deleted successfully', 'Close', {
-            duration: 3000,
-            panelClass: ['success-snackbar']
-          });
+          this.toastr.success('Template deleted successfully', 'Success');
         },
         error: (error) => {
           console.error('Error deleting template', error);
-          this.snackBar.open('Failed to delete template', 'Close', {
-            duration: 3000,
-            panelClass: ['error-snackbar']
-          });
+          this.toastr.error('Failed to delete template', 'Error');
         }
       });
     }

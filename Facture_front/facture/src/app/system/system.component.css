@@ -25,6 +25,11 @@ button[disabled] {
   opacity: 0.5;
   cursor: not-allowed;
 }
+/* In your component's CSS file (e.g., component.scss) */
+.custom-gold-button {
+  background-color: #FFD700 !important; /* Use !important to override Material defaults */
+  color: white !important;
+}
 
 .sidebar.collapsed ~ .content {
   margin-left: 60px;

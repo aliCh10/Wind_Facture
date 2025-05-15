@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -73,17 +74,17 @@ public class ModeleFactureController {
             @ApiResponse(responseCode = "200", description = "PDF generated successfully"),
             @ApiResponse(responseCode = "404", description = "Template not found")
     })
-    public ResponseEntity<byte[]> getModeleFacturePdf(@PathVariable Long id) {
-        return modeleFactureService.getModeleFactureById(id)
-                .map(model -> {
-                    byte[] pdfBytes = modeleFactureService.generateModeleFacturePdf(id);
-                    HttpHeaders headers = new HttpHeaders();
-                    headers.setContentType(MediaType.APPLICATION_PDF);
-                    headers.setContentDispositionFormData("inline", "invoice-template-" + id + ".pdf");
-                    return ResponseEntity.ok()
-                            .headers(headers)
-                            .body(pdfBytes);
-                })
-                .orElse(ResponseEntity.notFound().build());
-    }
+public ResponseEntity<byte[]> getModeleFacturePdf(@PathVariable Long id) {
+    return modeleFactureService.getModeleFactureById(id)
+            .map(model -> {
+                byte[] pdfBytes = modeleFactureService.generateModeleFacturePdf(id, Collections.emptyMap());
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_PDF);
+                headers.setContentDispositionFormData("inline", "invoice-template-" + id + ".pdf");
+                return ResponseEntity.ok()
+                        .headers(headers)
+                        .body(pdfBytes);
+            })
+            .orElse(ResponseEntity.notFound().build());
+}
 }

@@ -1,11 +1,10 @@
 import { Component, ViewChild, AfterViewInit, OnInit } from '@angular/core';
 import { SystemService } from '../services/SystemService';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
-import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-system',
   standalone: false,
@@ -13,29 +12,40 @@ import Swal from 'sweetalert2';
   styleUrls: ['./system.component.css']
 })
 export class SystemComponent implements OnInit, AfterViewInit {
-sidebarMenuItems = [
-  { icon: 'person', label: 'MENU.Partners', route: '/system' },
-  { icon: 'settings', label: 'MENU.SETTINGS', route: '/settings' },
-];
+  sidebarMenuItems = [
+    { icon: 'person', label: 'MENU.Partners', route: '/system' },
+    { icon: 'settings', label: 'MENU.SETTINGS', route: '/settings' },
+  ];
 
   partners: any[] = [];
-  currentPartner: any = {}; 
-  isTableEmpty: boolean = false; // New variable to track if table is empty
+  currentPartner: any = {};
+  isTableEmpty: boolean = false;
   displayedColumns: string[] = ['name', 'email', 'companyName', 'status', 'actions'];
   dataSource: MatTableDataSource<any> = new MatTableDataSource();
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;  
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(private systemService: SystemService, private snackBar: MatSnackBar ,private translate: TranslateService, private toastr: ToastrService)
-  {
+  constructor(
+    private systemService: SystemService,
+    private translate: TranslateService,
+    private toastr: ToastrService
+  ) {
     translate.setDefaultLang('fr');
-    translate.use('fr');  
+    translate.use('fr');
   }
 
   ngOnInit(): void {
+    this.translate.setDefaultLang('fr');
+    this.translate.use('fr').subscribe(() => {
+      console.log('Language set to French');
+      console.log('PAGINATOR.RANGE:', this.translate.instant('PAGINATOR.RANGE', { start: 1, end: 5, total: 10 }));
+      console.log('PAGINATOR.ITEMS_PER_PAGE:', this.translate.instant('PAGINATOR.ITEMS_PER_PAGE'));
+      console.log('Partners List:', this.translate.instant('Partners List'));
+    });
     this.getPartners();
-    console.log(this.partners)
+    console.log(this.partners);
   }
+
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
   }
@@ -45,99 +55,90 @@ sidebarMenuItems = [
       (data) => {
         this.partners = data;
         this.dataSource.data = data;
-        this.isTableEmpty = this.partners.length === 0; // Check if partners array is empty
+        this.isTableEmpty = this.partners.length === 0;
 
         if (this.paginator) {
           this.dataSource.paginator = this.paginator;
         }
       },
       (error) => {
-        this.toastr.error('Error fetching partners!', 'error');
+        this.toastr.error(this.translate.instant('ERROR.FETCH_PARTNERS'), this.translate.instant('ERROR.TITLE'));
         console.error('Error fetching partners:', error);
       }
     );
   }
-  
 
   isPartnerValidated(partner: any): boolean {
     return partner.validated;
   }
-  
-  // Modifiez la méthode validatePartner pour rafraîchir correctement les données
+
   validatePartner(id: number): void {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'Do you want to validate this partner?',
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, validate it!',
-      cancelButtonText: 'No, cancel',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.systemService.validatePartner(id).subscribe(
-          (response) => {
-            this.toastr.success(response.message, 'Success');
-            // Mettre à jour localement le partenaire validé
-            const partnerIndex = this.partners.findIndex(p => p.id === id);
-            if (partnerIndex !== -1) {
-              this.partners[partnerIndex].validated = true;
-              this.partners[partnerIndex].status = true;
-              this.dataSource.data = [...this.partners]; // Forcer la mise à jour
-            }
-          },
-          (error) => {
-            this.toastr.error('Validation failed.', 'Error');
-            console.error('Error validating partner:', error);
+    const confirmMessage = this.translate.instant('CONFIRM.VALIDATE_TEXT');
+    if (confirm(confirmMessage)) {
+      this.systemService.validatePartner(id).subscribe(
+        (response) => {
+          this.toastr.success(
+            this.translate.instant(response.message || 'SUCCESS.VALIDATE_PARTNER'),
+            this.translate.instant('SUCCESS.TITLE')
+          );
+          const partnerIndex = this.partners.findIndex(p => p.id === id);
+          if (partnerIndex !== -1) {
+            this.partners[partnerIndex].validated = true;
+            this.partners[partnerIndex].status = true;
+            this.dataSource.data = [...this.partners];
           }
-        );
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        Swal.fire('Cancelled', 'The partner was not validated.', 'info');
-      }
-    });
+        },
+        (error) => {
+          this.toastr.error(
+            this.translate.instant(error.error?.message || 'ERROR.VALIDATE_FAILED'),
+            this.translate.instant('ERROR.TITLE')
+          );
+          console.error('Error validating partner:', error);
+        }
+      );
+    } else {
+      this.toastr.info(
+        this.translate.instant('INFO.VALIDATE_CANCELLED'),
+        this.translate.instant('INFO.TITLE')
+      );
+    }
   }
-  
 
   deletePartner(id: number): void {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'You will not be able to recover this partner!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'No, keep it',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // Si l'utilisateur confirme, supprimez le partenaire
-        this.systemService.deletePartner(id).subscribe(
-          (response) => {
-            this.toastr.success(response.message, 'Success');
-            this.getPartners(); // Rafraîchir la liste des partenaires
-          },
-          (error) => {
-            this.toastr.error(error.error?.message || 'Deletion failed.', 'Error');
-            console.error('Error deleting partner:', error);
-          }
-        );
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        // Si l'utilisateur annule, affichez un message
-        Swal.fire('Cancelled', 'Your partner is safe :)', 'info');
-      }
-    });
+    const confirmMessage = this.translate.instant('CONFIRM.DELETE_TEXT');
+    if (confirm(confirmMessage)) {
+      this.systemService.deletePartner(id).subscribe(
+        (response) => {
+          this.toastr.success(
+            this.translate.instant(response.message || 'SUCCESS.DELETE_PARTNER'),
+            this.translate.instant('SUCCESS.TITLE')
+          );
+          this.getPartners();
+        },
+        (error) => {
+          this.toastr.error(
+            this.translate.instant(error.error?.message || 'ERROR.DELETE_FAILED'),
+            this.translate.instant('ERROR.TITLE')
+          );
+          console.error('Error deleting partner:', error);
+        }
+      );
+    } else {
+      this.toastr.info(
+        this.translate.instant('INFO.DELETE_CANCELLED'),
+        this.translate.instant('INFO.TITLE')
+      );
+    }
   }
 
   onPageChange(event: any): void {
     this.dataSource.paginator!.pageIndex = event.pageIndex;
     this.dataSource.paginator!.pageSize = event.pageSize;
   }
+
   isNavCollapsed = false;
 
   onNavCollapse() {
     this.isNavCollapsed = !this.isNavCollapsed;
   }
-
-  // onNavCollapsedMob() {
-  //   console.log('Mobile collapse clicked');
-  // }
-
-
 }

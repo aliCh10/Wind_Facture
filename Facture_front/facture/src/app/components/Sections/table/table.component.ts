@@ -217,7 +217,8 @@ export class TableComponent implements Section, AfterViewInit, OnDestroy {
       'font-family': this.fontFamily,
       'font-size': `${this.fontSize}px`,
       'width': `${this.width}px`,
-      'height': `${this.height}px`
+      'height': `${this.height}px`,
+      'cell-height': '30px' // Add cell-height for <td> elements
     };
   }
   public getSectionContent(): SectionContent {
