@@ -3,7 +3,7 @@
   
   <div #a4Page class="a4-page">
     <div class="page-content">
-      <app-logo [containerRef]="mainContent" [boundaryElement]="a4Page" (openOptions)="onOpenOptions($event)" ></app-logo>
+      <app-logo [containerRef]="mainContent" [boundaryElement]="a4Page" (openOptions)="onOpenOptions($event)"></app-logo>
 
       <app-table [containerRef]="mainContent" [boundaryElement]="a4Page" (openOptions)="onOpenOptions($event)"></app-table>
       <app-calendar [boundaryElement]="a4Page" (openOptions)="onOpenOptions($event)"></app-calendar>
@@ -17,19 +17,22 @@
     <app-options 
       [activeComponent]="activeComponent"
       (stylesUpdated)="onStylesUpdated($event)">
-    </app-options>  </div>
+    </app-options>
+  </div>
 
-  <button class="save-btn bg-amber-300 text-white py-2 px-4 rounded-sm" matTooltip="Sauvegarder le modèle"
-    aria-label="Save model"
-    (click)="saveModeleFacture()" >
+  <button class="save-btn bg-amber-300 text-white py-2 px-4 rounded-sm" 
+    [matTooltip]="'Invoice.saveTooltip' | translate"
+    [attr.aria-label]="'Invoice.saveAriaLabel' | translate"
+    (click)="saveModeleFacture()">
     <mat-icon>save</mat-icon>
-    <span class="btn-text">Sauvegarder</span>
-    
+    <span class="btn-text">{{ 'Invoice.Sauvegarder' | translate }}</span>
   </button>
 
-  <button class="toggle-options-btn" (click)="toggleOptions()" matTooltip="Afficher/Masquer les options"
-    matTooltipPosition="left" aria-label="Toggle options panel">
+  <button class="toggle-options-btn" (click)="toggleOptions()" 
+    [matTooltip]="'Invoice.toggleTooltip' | translate"
+    matTooltipPosition="left" 
+    [attr.aria-label]="'Invoice.toggleAriaLabel' | translate">
     <mat-icon>settings</mat-icon>
-    <span class="btn-text">Options</span>
+    <span class="btn-text">{{ 'Invoice.options' | translate }}</span>
   </button>
-</div>  
+</div>

@@ -7,6 +7,8 @@ import { Service } from '../../models/service';
 import { SerService } from '../../services/ser.service';
 import { ClientService } from '../../services/ClientService';
 import { ToastrService } from 'ngx-toastr';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-dynamic-modal',
@@ -27,16 +29,27 @@ export class DynamicModalComponent {
   client: Client = new Client('', '', '', '');
   service: Service = new Service(0, '', 0, '', 0);
   isLoading = false;
+    serviceForm: FormGroup;
+
 
   constructor(
     public dialogRef: MatDialogRef<DynamicModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { type: string; partnerId?: number },
+        private fb: FormBuilder,
+
     private employeeService: EmployeeService,
     private clientService: ClientService,
     private serService: SerService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {
     console.log('Modal opened with type:', this.data.type, 'and partnerId:', this.data.partnerId);
+     this.serviceForm = this.fb.group({
+      ref: ['', Validators.required],
+      serviceName: ['', Validators.required],
+      serviceQuantity: [0, [Validators.required, Validators.min(0)]],
+      servicePrice: [0, [Validators.required, Validators.min(0)]]
+    });
   }
 
   onClose(): void {
@@ -53,40 +66,50 @@ export class DynamicModalComponent {
     }
   }
 
-  private saveService(): void {
-    if (!this.isServiceFormValid()) {
-      this.toastr.error('Veuillez remplir tous les champs du service', 'Erreur');
-      return;
-    }
-
-    this.isLoading = true;
-
-    this.serService.createService(this.service).subscribe({
-      next: (response) => {
-        this.isLoading = false;
-        this.toastr.success('Service ajouté avec succès', 'Succès');
-        this.dialogRef.close({
-          success: true,
-          service: response,
-          message: 'Service ajouté avec succès'
-        });
-      },
-      error: (error) => {
-        this.isLoading = false;
-        console.error('Erreur:', error);
-        this.handleError(error);
-      }
-    });
+ private saveService(): void {
+  if (!this.isServiceFormValid()) {
+    this.toastr.error(
+      this.translate.instant('DYNAMIC_MODAL.SERVICE.ERROR.INVALID'),
+      this.translate.instant('DYNAMIC_MODAL.ERROR.TITLE')
+    );
+    return;
   }
+  this.isLoading = true;
+  this.serService.createService(this.service).subscribe({
+    next: (response) => {
+      this.isLoading = false;
+      this.toastr.success(
+        this.translate.instant('DYNAMIC_MODAL.SERVICE.SUCCESS.ADD'),
+        this.translate.instant('DYNAMIC_MODAL.SUCCESS.TITLE')
+      );
+      this.dialogRef.close({
+        success: true,
+        service: response,
+        message: this.translate.instant('DYNAMIC_MODAL.SERVICE.SUCCESS.ADD')
+      });
+    },
+    error: (error) => {
+      this.isLoading = false;
+      console.error('Error:', error);
+      this.handleError(error);
+    }
+  });
+}
 
   private saveEmployee(): void {
     if (!this.isEmployeeFormValid()) {
-      this.toastr.error('Veuillez remplir tous les champs obligatoires', 'Erreur');
+      this.toastr.error(
+        this.translate.instant('DYNAMIC_MODAL.ERROR.INVALID_FIELDS'),
+        this.translate.instant('DYNAMIC_MODAL.ERROR.TITLE')
+      );
       return;
     }
 
     if (!this.data.partnerId) {
-      this.toastr.error('partnerId est manquant pour l\'employé', 'Erreur');
+      this.toastr.error(
+        this.translate.instant('DYNAMIC_MODAL.EMPLOYEE.ERROR.MISSING_PARTNER_ID'),
+        this.translate.instant('DYNAMIC_MODAL.ERROR.TITLE')
+      );
       return;
     }
 
@@ -95,24 +118,30 @@ export class DynamicModalComponent {
     this.employeeService.addEmployee(this.data.partnerId, this.employee).subscribe({
       next: (response) => {
         this.isLoading = false;
-        this.toastr.success('Employé ajouté avec succès', 'Succès');
+        this.toastr.success(
+          this.translate.instant('DYNAMIC_MODAL.EMPLOYEE.SUCCESS.ADD'),
+          this.translate.instant('DYNAMIC_MODAL.SUCCESS.TITLE')
+        );
         this.dialogRef.close({
           success: true,
           employee: response,
-          message: 'Employé ajouté avec succès'
+          message: this.translate.instant('DYNAMIC_MODAL.EMPLOYEE.SUCCESS.ADD')
         });
       },
       error: (error) => {
         this.isLoading = false;
-        console.error('Erreur:', error);
+        console.error('Error:', error);
         this.handleError(error);
       }
     });
   }
 
-  private saveClient(): void {
+ private saveClient(): void {
     if (!this.isClientFormValid()) {
-      this.toastr.error('Veuillez remplir tous les champs obligatoires', 'Erreur');
+      this.toastr.error(
+        this.translate.instant('DYNAMIC_MODAL.ERROR.INVALID_FIELDS'),
+        this.translate.instant('DYNAMIC_MODAL.ERROR.TITLE')
+      );
       return;
     }
 
@@ -121,16 +150,19 @@ export class DynamicModalComponent {
     this.clientService.addClient(this.client).subscribe({
       next: (response) => {
         this.isLoading = false;
-        this.toastr.success('Client ajouté avec succès', 'Succès');
+        this.toastr.success(
+          this.translate.instant('DYNAMIC_MODAL.CLIENT.SUCCESS.ADD'),
+          this.translate.instant('DYNAMIC_MODAL.SUCCESS.TITLE')
+        );
         this.dialogRef.close({
           success: true,
           client: response,
-          message: 'Client ajouté avec succès'
+          message: this.translate.instant('DYNAMIC_MODAL.CLIENT.SUCCESS.ADD')
         });
       },
       error: (error) => {
         this.isLoading = false;
-        console.error('Erreur:', error);
+        console.error('Error:', error);
         this.handleError(error);
       }
     });

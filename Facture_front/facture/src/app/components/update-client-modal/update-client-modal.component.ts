@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ClientService } from '../../services/ClientService';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 // Define interface for client data to ensure type safety
 interface Client {
@@ -27,6 +28,7 @@ export class UpdateClientModalComponent implements OnInit {
     private fb: FormBuilder,
     private clientService: ClientService,
     private toastr: ToastrService,
+    private translate: TranslateService,
     public dialogRef: MatDialogRef<UpdateClientModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { client: Client }
   ) {
@@ -36,6 +38,7 @@ export class UpdateClientModalComponent implements OnInit {
       clientAddress: ['', Validators.required],
       rib: ['', Validators.required]
     });
+   
   }
 
   ngOnInit(): void {
@@ -47,7 +50,10 @@ export class UpdateClientModalComponent implements OnInit {
         rib: this.data.client.rib || ''
       });
     } else {
-      this.toastr.error('Données du client invalides ou ID manquant', 'Erreur');
+      this.toastr.error(
+        this.translate.instant('DYNAMIC_MODAL.CLIENT.ERROR.INVALID_CLIENT_DATA'),
+        this.translate.instant('DYNAMIC_MODAL.ERROR.TITLE')
+      );
       this.dialogRef.close();
     }
   }
@@ -78,17 +84,26 @@ export class UpdateClientModalComponent implements OnInit {
   onSubmit(): void {
     if (this.clientForm.invalid) {
       this.clientForm.markAllAsTouched();
-      this.toastr.error('Veuillez remplir tous les champs requis', 'Erreur');
+      this.toastr.error(
+        this.translate.instant('DYNAMIC_MODAL.ERROR.INVALID_FIELDS'),
+        this.translate.instant('DYNAMIC_MODAL.ERROR.TITLE')
+      );
       return;
     }
 
     if (!this.data?.client?.id) {
-      this.toastr.error('ID du client manquant', 'Erreur');
+      this.toastr.error(
+        this.translate.instant('DYNAMIC_MODAL.CLIENT.ERROR.MISSING_CLIENT_ID'),
+        this.translate.instant('DYNAMIC_MODAL.ERROR.TITLE')
+      );
       return;
     }
 
     if (!this.hasChanges()) {
-      this.toastr.info('Aucun changement à enregistrer', 'Info');
+      this.toastr.info(
+        this.translate.instant('DYNAMIC_MODAL.CLIENT.INFO.NO_CHANGES'),
+        this.translate.instant('DYNAMIC_MODAL.SUCCESS.TITLE')
+      );
       this.dialogRef.close();
       return;
     }
@@ -98,12 +113,18 @@ export class UpdateClientModalComponent implements OnInit {
 
     this.clientService.updateClient(this.data.client.id, updatedClient).subscribe({
       next: () => {
-        this.dialogRef.close({ success: true, message: 'Client mis à jour avec succès' });
+        this.dialogRef.close({
+          success: true,
+          message: this.translate.instant('DYNAMIC_MODAL.CLIENT.SUCCESS.UPDATE')
+        });
         this.isLoading = false;
       },
       error: (err) => {
         console.error('Update error:', err);
-        this.toastr.error(err.message || 'Échec de la mise à jour du client', 'Erreur');
+        this.toastr.error(
+          err.message || this.translate.instant('DYNAMIC_MODAL.CLIENT.ERROR.UPDATE_FAILED'),
+          this.translate.instant('DYNAMIC_MODAL.ERROR.TITLE')
+        );
         this.isLoading = false;
       }
     });

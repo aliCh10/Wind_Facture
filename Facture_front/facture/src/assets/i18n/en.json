@@ -72,17 +72,58 @@
     },
     
       "or click to select files": "or click to select files",
-     "employee":{
-      "List of Employees":"List of Employees",
-      "Name":"Name",
-      "Second Name":"Second Name",
-      "Email":"Email",
-      "Phone":"Phone",
-      "Actions":"Actions",
-      "Add Employee":"Add Employee",
-      "Department":"Department",
-      "Job":"Job",
-      "EMPLOYEE": {
+  
+  "employee": {
+    "List of Employees": "List of Employees",
+    "Name": "Name",
+    "Second Name": "Second Name",
+    "Email": "Email",
+    "Phone": "Phone",
+    "Actions": "Actions",
+    "Add Employee": "Add Employee",
+    "Department": "Department",
+    "Job": "Job",
+     "form": {
+      "addTitle": "Add Employee",
+      "title": "Edit Employee",
+      "name": {
+        "label": "Name *",
+        "placeholder": "Enter the name",
+        "error": "Name is required."
+      },
+      "secondName": {
+        "label": "Second Name *",
+        "placeholder": "Enter the second name",
+        "error": "Second name is required."
+      },
+      "job": {
+        "label": "Job *",
+        "placeholder": "Enter the job",
+        "error": "Job is required."
+      },
+      "phone": {
+        "label": "Phone *",
+        "placeholder": "Enter the phone number",
+        "error": "Phone is required."
+      },
+      "email": {
+        "label": "Email *",
+        "placeholder": "Enter the email",
+        "error": "Please enter a valid email."
+      },
+      "department": {
+        "label": "Department *",
+        "placeholder": "Enter the department",
+        "error": "Department is required."
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "save": "Save",
+        "saving": "Saving...",
+         "addSave": "Save",
+        "addSaving": "Saving..."
+      }
+    },
     "ERROR": {
       "TITLE": "Error",
       "NO_PARTNER_ID": "Unable to load employees without partnerId",
@@ -98,21 +139,86 @@
     "CONFIRM": {
       "DELETE_TEXT": "Do you really want to delete this employee?"
     }
-  }  
-     },
-     "SERVICES_PAGE": {
-      "TITLE": "Services List",
-      "create_service": "Add Service",
-      "REFERENCE": "Reference",
-      "SERVICE_NAME": "Service Name",
-      "QUANTITY": "Quantity",
-      "PRICE": "Price",
-      "ACTIONS": "Actions",
-      "EDIT_TOOLTIP": "Edit",
-      "DELETE_TOOLTIP": "Delete",
-      "NO_SERVICES": "No services found"
-
+  }
+,
+   "SERVICES_PAGE": {
+    "TITLE": "Services List",
+    "create_service": "Add Service",
+    "REFERENCE": "Reference",
+    "SERVICE_NAME": "Service Name",
+    "QUANTITY": "Quantity",
+    "PRICE": "Price",
+    "ACTIONS": "Actions",
+    "EDIT_TOOLTIP": "Edit",
+    "DELETE_TOOLTIP": "Delete",
+    "NO_SERVICES": "No services found",
+    "form": {
+      "updateTitle": "Update Service",
+      "addTitle": "Add Service",
+      "ref": {
+        "label": "Service Reference *",
+        "placeholder": "Enter the reference",
+        "error": {
+          "required": "The reference is required"
+        }
+      },
+      "serviceName": {
+        "label": "Service Name *",
+        "placeholder": "Enter the service name",
+        "error": {
+          "required": "The service name is required"
+        }
+      },
+      "serviceQuantity": {
+        "label": "Quantity *",
+        "placeholder": "Enter the quantity",
+        "error": {
+          "required": "The quantity is required",
+          "min": "The quantity must be positive"
+        }
+      },
+      "servicePrice": {
+        "label": "Price *",
+        "placeholder": "Enter the price",
+        "error": {
+          "required": "The price is required",
+          "min": "The price must be greater than 0"
+        }
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "save": "Save",
+        "saving": "Saving...",
+          "addSave": "Save",
+        "addSaving": "Saving..."
+      }
     },
+     "ERROR": {
+      "TITLE": "Error",
+      "INVALID_DATA": "Invalid service data or missing ID",
+      "INVALID_FIELDS": "Please fill in all required fields",
+      "MISSING_ID": "Service ID missing",
+      "UPDATE_FAILED": "Failed to update service",
+      "ADD_FAILED": "Failed to add service",
+      "LOAD_FAILED": "Unable to load services",
+      "DELETE_FAILED": "Unable to delete service",
+      "UPDATE_OPEN_FAILED": "Unable to open update: Service ID missing"
+    },
+    "INFO": {
+      "TITLE": "Info",
+      "NO_CHANGES": "No changes to save"
+    },
+    "SUCCESS": {
+      "TITLE": "Success",
+      "UPDATE": "Service updated successfully",
+      "ADD": "Service added successfully",
+      "DELETE": "Service deleted successfully",
+      "CUSTOM_UPDATE": "Service updated successfully! Great job!"
+    },
+    "CONFIRM": {
+      "DELETE_TEXT": "Do you really want to delete this service?"
+    }
+  },
     "TOOLBAR": {
       "SEARCH_PLACEHOLDER": "Search...",
       "CREATE_INVOICE": "Create Invoice",
@@ -121,36 +227,152 @@
       "CREATE_SERVICE": "Create Service",
       "CREATE_TEMPLATE": "Create Template"
     },
-    "CLIENTS_PAGE": {
-      "TITLE": "Clients List",
-      "CLIENT_NAME": "Client Name",
-      "PHONE": "Phone",
-      "ADDRESS": "Address",
-      "RIB": "RIB",
-      "ACTIONS": "Actions",
-      "EDIT_TOOLTIP": "Edit",
-      "DELETE_TOOLTIP": "Delete",
-      "NO_CLIENTS": "No clients found",
-      "PAGINATOR_LABEL": "Select page of clients"
+ "CLIENTS_PAGE": {
+    "TITLE": "Clients List",
+    "CLIENT_NAME": "Client Name",
+    "PHONE": "Phone",
+    "ADDRESS": "Address",
+    "RIB": "RIB",
+    "ACTIONS": "Actions",
+    "EDIT_TOOLTIP": "Edit",
+    "DELETE_TOOLTIP": "Delete",
+    "NO_CLIENTS": "No clients found",
+    "PAGINATOR_LABEL": "Select page of clients"
+  },
+  "DYNAMIC_MODAL": {
+    "ERROR": {
+      "TITLE": "Error",
+      "INVALID_FIELDS": "Please fill in all required fields",
+      "GENERIC": "An error occurred during addition",
+      "NETWORK": "Unable to connect to the server. Check your internet connection.",
+      "BAD_REQUEST": "Invalid data. Check the entered information."
     },
-    
-    "INVOICE_TEMPLATES": {
-      "TITLE": "Invoice Templates",
-      "NO_TEMPLATES": {
-        "TITLE": "No templates available",
-        "DESCRIPTION": "Get started by creating your first template!",
-        "BUTTON": "Get Started"
+    "SUCCESS": {
+      "TITLE": "Success"
+    },
+    "SERVICE": {
+      "ERROR": {
+        "INVALID": "Please fill in all service fields"
       },
-      "CARD": {
-        "UNTITLED": "Untitled template",
-        "CREATED_ON": "Created on:",
-        "SECTIONS": "sections",
-        "PREVIEW": "Preview",
-        "DELETE": "Remove template"
-
-
+      "SUCCESS": {
+        "ADD": "Service added successfully"
       }
-    }  ,
+    },
+    "EMPLOYEE": {
+      "ERROR": {
+        "MISSING_PARTNER_ID": "partnerId is missing for the employee"
+      },
+      "SUCCESS": {
+        "ADD": "Employee added successfully"
+      }
+    },
+    "CLIENT": {
+      "SUCCESS": {
+        "ADD": "Client added successfully",
+        "UPDATE": "Client updated successfully",
+        "DELETE": "Client deleted successfully"
+      },
+      "ERROR": {
+        "INVALID_CLIENT_DATA": "Invalid client data or missing ID",
+        "MISSING_CLIENT_ID": "Missing client ID",
+        "UPDATE_FAILED": "Failed to update client",
+        "FETCH_FAILED": "Failed to load clients",
+        "DELETE_FAILED": "Failed to delete client"
+      },
+      "INFO": {
+        "NO_CHANGES": "No changes to save"
+      },
+      "CONFIRM": {
+        "DELETE_CONFIRM": "Are you sure you want to delete this client?"
+      },
+      "form": {
+        "addTitle": "Add Client",
+        "updateTitle": "Update Client",
+        "clientName": {
+          "placeholder": "Enter the client name"
+        },
+        "phone": {
+          "placeholder": "Enter the phone number"
+        },
+        "address": {
+          "placeholder": "Enter the address"
+        },
+        "rib": {
+          "placeholder": "Enter the RIB"
+        },
+        "buttons": {
+          "cancel": "Cancel",
+          "save": "Save",
+          "saving": "Saving...",
+          "update": "Update",
+          "updating": "Updating..."
+        }
+      },
+      "validation": {
+        "clientName": {
+          "required": "Name is required"
+        },
+        "phone": {
+          "required": "Phone is required"
+        },
+        "address": {
+          "required": "Address is required"
+        },
+        "rib": {
+          "required": "RIB is required"
+        }
+      }
+    }
+  
+  },
+    
+ "INVOICE_TEMPLATES": {
+    "TITLE": "Invoice Templates",
+    "NO_TEMPLATES": {
+      "TITLE": "No templates available",
+      "DESCRIPTION": "Get started by creating your first template!",
+      "BUTTON": "Get Started"
+    },
+    "CARD": {
+      "UNTITLED": "Untitled template",
+      "CREATED_ON": "Created on:",
+      "SECTIONS": "sections",
+      "PREVIEW": "Preview",
+      "DELETE": "Remove template"
+    },
+    "MESSAGES": {
+      "FAILED_LOAD_TEMPLATES": {
+        "TEXT": "Failed to load templates",
+        "TITLE": "Error"
+      },
+      "FAILED_LOAD_PDF": {
+        "TEXT": "Failed to load PDF",
+        "TITLE": "Error"
+      },
+      "CANNOT_DELETE_NO_ID": {
+        "TEXT": "Cannot delete template - missing ID",
+        "TITLE": "Error"
+      },
+      "FAILED_DELETE_TEMPLATE": {
+        "TEXT": "Failed to delete template",
+        "TITLE": "Error"
+      },
+      "TEMPLATE_DELETED": {
+       "TEXT": "Template deleted successfully",
+        "TITLE": "Success"
+      },
+      "CONFIRM_DELETE": "Are you sure you want to delete \"{{name}}\"?",
+      "TEMPLATE_SAVED": {
+        "TEXT": "Template saved successfully",
+        "TITLE": "Success"
+      },
+      "ERROR_SAVING_TEMPLATE": {
+        "TEXT": "Error saving template",
+        "TITLE": "Error"
+      }
+    }
+  
+  },
     
   "PAGINATOR": {
     "ITEMS_PER_PAGE": "Items per page:",
@@ -175,7 +397,17 @@
   "CONFIRM": {
     "VALIDATE_TEXT": "Do you really want to validate this partner?",
     "DELETE_TEXT": "Do you really want to delete this partner?"
-  }
+  },
+
+  "Invoice": {
+    "options": "Settings",
+    "Sauvegarder": "Save",
+    "saveTooltip": "Save the model",
+    "toggleTooltip": "Show/Hide settings",
+    "saveAriaLabel": "Save model",
+    "toggleAriaLabel": "Toggle settings panel"
+  
+}
 }
   
 

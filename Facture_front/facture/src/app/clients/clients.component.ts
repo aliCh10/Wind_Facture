@@ -5,6 +5,7 @@ import { UpdateClientModalComponent } from '../components/update-client-modal/up
 import { DynamicModalComponent } from '../components/dynamic-modal/dynamic-modal.component';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-clients',
@@ -21,8 +22,11 @@ export class ClientsComponent implements OnInit {
   constructor(
     private clientService: ClientService,
     private dialog: MatDialog,
-    private toastr: ToastrService
-  ) {}
+    private toastr: ToastrService,
+    private translate: TranslateService
+  ) {
+  
+  }
 
   ngOnInit(): void {
     this.fetchClients();
@@ -38,33 +42,41 @@ export class ClientsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error fetching clients', error);
-        this.toastr.error('Impossible de charger les clients', 'Erreur');
+        this.toastr.error(
+          this.translate.instant('DYNAMIC_MODAL.CLIENT.ERROR.FETCH_FAILED'),
+          this.translate.instant('DYNAMIC_MODAL.ERROR.TITLE')
+        );
         this.isLoading = false;
       }
     });
   }
 
-  // Méthode pour rafraîchir la liste des clients
   refreshClients(): void {
-    this.fetchClients(); // Appeler la méthode fetchClients pour réactualiser la liste
+    this.fetchClients();
   }
 
   openCreateModal(): void {
     const dialogRef = this.dialog.open(DynamicModalComponent, {
       width: '400px',
       data: {
-        title: 'Créer Client',
+        title: this.translate.instant('DYNAMIC_MODAL.CLIENT.form.addTitle'),
         type: 'client'
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('Résultat du modal :', result);
+      console.log('Modal result:', result);
       if (result?.success) {
-        this.toastr.success(result.message || 'Le client a été ajouté avec succès', 'Succès');
+        this.toastr.success(
+          result.message || this.translate.instant('DYNAMIC_MODAL.CLIENT.SUCCESS.ADD'),
+          this.translate.instant('DYNAMIC_MODAL.SUCCESS.TITLE')
+        );
         this.refreshClients();
       } else if (result?.error) {
-        this.toastr.error(result.message || 'Une erreur est survenue lors de l’ajout', 'Erreur');
+        this.toastr.error(
+          result.message || this.translate.instant('DYNAMIC_MODAL.ERROR.GENERIC'),
+          this.translate.instant('DYNAMIC_MODAL.ERROR.TITLE')
+        );
       }
     });
   }
@@ -77,23 +89,32 @@ export class ClientsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result?.success) {
-        this.toastr.success(result.message || 'Client mis à jour avec succès', 'Succès');
+        this.toastr.success(
+          result.message || this.translate.instant('DYNAMIC_MODAL.CLIENT.SUCCESS.UPDATE'),
+          this.translate.instant('DYNAMIC_MODAL.SUCCESS.TITLE')
+        );
         this.refreshClients();
       }
     });
   }
 
   deleteClient(clientId: number): void {
-    if (confirm('Voulez-vous vraiment supprimer ce client ? Cette action est irréversible.')) {
+    if (confirm(this.translate.instant('DYNAMIC_MODAL.CLIENT.CONFIRM.DELETE_CONFIRM'))) {
       this.clientService.deleteClient(clientId).subscribe({
         next: () => {
           this.clients = this.clients.filter(c => c.id !== clientId);
-          this.dataSource.data = this.clients; // Update MatTableDataSource
-          this.toastr.success('Client supprimé avec succès', 'Succès');
+          this.dataSource.data = this.clients;
+          this.toastr.success(
+            this.translate.instant('DYNAMIC_MODAL.CLIENT.SUCCESS.DELETE'),
+            this.translate.instant('DYNAMIC_MODAL.SUCCESS.TITLE')
+          );
         },
         error: (error) => {
           console.error('Error deleting client', error);
-          this.toastr.error('Échec de la suppression du client', 'Erreur');
+          this.toastr.error(
+            this.translate.instant('DYNAMIC_MODAL.CLIENT.ERROR.DELETE_FAILED'),
+            this.translate.instant('DYNAMIC_MODAL.ERROR.TITLE')
+          );
         }
       });
     }

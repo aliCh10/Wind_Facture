@@ -3,6 +3,7 @@ import { ModeleFactureService } from '../services/ModeleFactureService';
 import { ModeleFacture } from '../models/modele-facture.model';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-new-facture',
@@ -18,7 +19,8 @@ export class NewFactureComponent implements OnInit {
   constructor(
     private modeleFactureService: ModeleFactureService,
     private router: Router,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -33,9 +35,12 @@ export class NewFactureComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error loading templates', error);
+        console.error(this.translate.instant('INVOICE_TEMPLATES.MESSAGES.FAILED_LOAD_TEMPLATES.TEXT'), error);
         this.loading = false;
-        this.toastr.error('Failed to load templates', 'Error');
+        this.toastr.error(
+          this.translate.instant('INVOICE_TEMPLATES.MESSAGES.FAILED_LOAD_TEMPLATES.TEXT'),
+          this.translate.instant('INVOICE_TEMPLATES.MESSAGES.FAILED_LOAD_TEMPLATES.TITLE')
+        );
       }
     });
   }
@@ -47,12 +52,14 @@ export class NewFactureComponent implements OnInit {
       (pdfBlob: Blob) => {
         const blobUrl = URL.createObjectURL(pdfBlob);
         window.open(blobUrl, '_blank');
-        // Optional: Revoke the blob URL after some time
         setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
       },
       error => {
-        console.error('PDF loading error:', error);
-        this.toastr.error('Failed to load PDF', 'Error');
+        console.error(this.translate.instant('INVOICE_TEMPLATES.MESSAGES.FAILED_LOAD_PDF.TEXT'), error);
+        this.toastr.error(
+          this.translate.instant('INVOICE_TEMPLATES.MESSAGES.FAILED_LOAD_PDF.TEXT'),
+          this.translate.instant('INVOICE_TEMPLATES.MESSAGES.FAILED_LOAD_PDF.TITLE')
+        );
       }
     );
   }
@@ -70,20 +77,30 @@ export class NewFactureComponent implements OnInit {
   deleteModele(modele: ModeleFacture, event: Event): void {
     event.stopPropagation();
     if (!modele.id) {
-      console.error('Cannot delete template - no ID provided');
-      this.toastr.error('Cannot delete template - missing ID', 'Error');
+      console.error(this.translate.instant('INVOICE_TEMPLATES.MESSAGES.CANNOT_DELETE_NO_ID.TEXT'));
+      this.toastr.error(
+        this.translate.instant('INVOICE_TEMPLATES.MESSAGES.CANNOT_DELETE_NO_ID.TEXT'),
+        this.translate.instant('INVOICE_TEMPLATES.MESSAGES.CANNOT_DELETE_NO_ID.TITLE')
+      );
       return;
     }
 
-    if (confirm(`Are you sure you want to delete "${modele.nameModel}"?`)) {
+    const confirmMessage = this.translate.instant('INVOICE_TEMPLATES.MESSAGES.CONFIRM_DELETE', { name: modele.nameModel });
+    if (confirm(confirmMessage)) {
       this.modeleFactureService.deleteModeleFacture(modele.id).subscribe({
         next: () => {
           this.modeles = this.modeles.filter(m => m.id !== modele.id);
-          this.toastr.success('Template deleted successfully', 'Success');
+          this.toastr.success(
+            this.translate.instant('INVOICE_TEMPLATES.MESSAGES.TEMPLATE_DELETED.TEXT'),
+            this.translate.instant('INVOICE_TEMPLATES.MESSAGES.TEMPLATE_DELETED.TITLE')
+          );
         },
         error: (error) => {
-          console.error('Error deleting template', error);
-          this.toastr.error('Failed to delete template', 'Error');
+          console.error(this.translate.instant('INVOICE_TEMPLATES.MESSAGES.FAILED_DELETE_TEMPLATE.TEXT'), error);
+          this.toastr.error(
+            this.translate.instant('INVOICE_TEMPLATES.MESSAGES.FAILED_DELETE_TEMPLATE.TEXT'),
+            this.translate.instant('INVOICE_TEMPLATES.MESSAGES.FAILED_DELETE_TEMPLATE.TITLE')
+          );
         }
       });
     }

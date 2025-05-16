@@ -71,46 +71,156 @@
       "Create Invoice":"Créer Facture"
     },
     "or click to select files": "ou cliquez pour sélectionner les fichiers",
-    "employee":{
-    "List of Employees":"Liste des Employés",
-    "Name":"Nom",
-    "Second Name":"Prénom",
-    "Email":"EMAIL",
-    "Phone":"telephone",
-    "Actions":"Actions",
-    "Add Employee":"Ajouter un Employé",
-    "Department":"Departement",
-    "Job":"Poste",
-    "ERROR": {
+   "employee": {
+  "List of Employees": "Liste des Employés",
+  "Name": "Nom",
+  "Second Name": "Prénom",
+  "Email": "EMAIL",
+  "Phone": "telephone",
+  "Actions": "Actions",
+  "Add Employee": "Ajouter un Employé",
+  "Department": "Departement",
+  "Job": "Poste",
+
+   "form": {
+      "addTitle": "Ajouter un Employé",
+      "title": "Modifier l'Employé",
+      "editTitle": "Modifier l'Employé",
+
+      "name": {
+        "label": "Nom *",
+        "placeholder": "Entrez le nom",
+        "error": "Le nom est requis."
+      },
+      "secondName": {
+        "label": "Prénom *",
+        "placeholder": "Entrez le prénom",
+        "error": "Le prénom est requis."
+      },
+      "job": {
+        "label": "Poste *",
+        "placeholder": "Entrez le poste",
+        "error": "Le poste est requis."
+      },
+      "phone": {
+        "label": "Téléphone *",
+        "placeholder": "Entrez le numéro",
+        "error": "Le téléphone est requis."
+      },
+      "email": {
+        "label": "Email *",
+        "placeholder": "Entrez l'email",
+        "error": "Veuillez entrer un email valide."
+      },
+      "department": {
+        "label": "Département *",
+        "placeholder": "Entrez le département",
+        "error": "Le département est requis."
+      },
+      "buttons": {
+        "cancel": "Annuler",
+        "save": "Sauvegarder",
+        "saving": "Sauvegarde...",
+        "addSave": "Enregistrer",
+        "addSaving": "Enregistrement..."      }
+    },
+  "ERROR": {
       "TITLE": "Erreur",
-      "NO_PARTNER_ID": "Impossible de charger les employés sans partnerId",
-      "LOAD_FAILED": "Erreur lors du chargement des employés",
-      "MISSING_ID": "ID de l'employé manquant",
-      "DELETE_FAILED": "Impossible de supprimer l'employé"
+      "INVALID_DATA": "Données du employé invalides ou ID manquant",
+      "INVALID_FIELDS": "Veuillez remplir tous les champs requis",
+      "MISSING_ID": "ID du employé manquant",
+      "UPDATE_FAILED": "Échec de la mise à jour du employé",
+      "ADD_FAILED": "Échec de l'ajout du employé",
+      "LOAD_FAILED": "Impossible de charger les employee",
+      "DELETE_FAILED": "Une erreur est survenue lors de la suppression",
+      "UPDATE_OPEN_FAILED": "Impossible d'ouvrir la modification : ID du employé manquant"
+    },
+    "INFO": {
+      "TITLE": "Info",
+      "NO_CHANGES": "Aucun changement à enregistrer"
     },
     "SUCCESS": {
       "TITLE": "Succès",
-      "UPDATE": "Employé mis à jour avec succès",
-      "DELETE": "Employé supprimé avec succès"
+      "UPDATE": "employé mis à jour avec succès",
+      "ADD": "employé ajouté avec succès",
+      "DELETE": "employé supprimé avec succès",
+      "CUSTOM_UPDATE": "employé mis à jour avec succès ! Super travail !"
     },
     "CONFIRM": {
-      "DELETE_TEXT": "Voulez-vous vraiment supprimer cet employé ?"
+      "DELETE_TEXT": "Voulez-vous vraiment supprimer ce employé ?"
     }
-  
-
-    },
+},
     "SERVICES_PAGE": {
-      "TITLE": "Liste des Services",
-      "create_service": "Ajouter un Service",
-      "REFERENCE": "Référence",
-      "SERVICE_NAME": "Nom du Service",
-      "QUANTITY": "Quantité",
-      "PRICE": "Prix",
-      "ACTIONS": "Actions",
-      "EDIT_TOOLTIP": "Modifier",
-      "DELETE_TOOLTIP": "Supprimer",
-      "NO_SERVICES": "Aucun service trouvé"
+    "TITLE": "Liste des Services",
+    "create_service": "Ajouter un Service",
+    "REFERENCE": "Référence",
+    "SERVICE_NAME": "Nom du Service",
+    "QUANTITY": "Quantité",
+    "PRICE": "Prix",
+    "ACTIONS": "Actions",
+    "EDIT_TOOLTIP": "Modifier",
+    "DELETE_TOOLTIP": "Supprimer",
+    "NO_SERVICES": "Aucun service trouvé",
+    "form": {
+      "updateTitle": "Mettre à jour le Service",
+      "addTitle": "Ajouter un Service",
+      "ref": {
+        "label": "Référence du Service *",
+        "placeholder": "Entrez la référence",
+        "error": {
+          "required": "La référence est requise"
+        }
+      },
+      "serviceName": {
+        "label": "Nom du Service *",
+        "placeholder": "Entrez le nom du service",
+        "error": {
+          "required": "Le nom du service est requis"
+        }
+      },
+      "serviceQuantity": {
+        "label": "Quantité *",
+        "placeholder": "Entrez la quantité",
+        "error": {
+          "required": "La quantité est requise",
+          "min": "La quantité doit être positive"
+        }
+      },
+      "servicePrice": {
+        "label": "Prix *",
+        "placeholder": "Entrez le prix",
+        "error": {
+          "required": "Le prix est requis",
+          "min": "Le prix doit être supérieur à 0"
+        }
+      },
+      "buttons": {
+        "cancel": "Annuler",
+        "save": "Sauvegarder",
+        "saving": "Sauvegarde...",
+        "addSave": "Enregistrer",
+        "addSaving": "Enregistrement..."
+      }
     },
+    "ERROR": {
+      "TITLE": "Erreur",
+      "INVALID_DATA": "Données du service invalides ou ID manquant",
+      "INVALID_FIELDS": "Veuillez remplir tous les champs requis",
+      "MISSING_ID": "ID du service manquant",
+      "UPDATE_FAILED": "Échec de la mise à jour du service"
+    },
+    "INFO": {
+      "TITLE": "Info",
+      "NO_CHANGES": "Aucun changement à enregistrer"
+    },
+    "SUCCESS": {
+      "TITLE": "Succès",
+      "UPDATE": "Service mis à jour avec succès"
+    },
+     "CONFIRM": {
+      "DELETE_TEXT": "Voulez-vous vraiment supprimer ce service ?"
+    }
+  },
     "TOOLBAR": {
       "SEARCH_PLACEHOLDER": "Rechercher...",
       "CREATE_INVOICE": "Créer Facture",
@@ -119,33 +229,150 @@
       "CREATE_SERVICE": "Créer Service",
       "CREATE_TEMPLATE": "Créer Modèle"
     },
-    "CLIENTS_PAGE": {
-      "TITLE": "Liste des Clients",
-      "CLIENT_NAME": "Nom du Client",
-      "PHONE": "Téléphone",
-      "ADDRESS": "Adresse",
-      "RIB": "RIB",
-      "ACTIONS": "Actions",
-      "EDIT_TOOLTIP": "Modifier",
-      "DELETE_TOOLTIP": "Supprimer",
-      "NO_CLIENTS": "Aucun client trouvé",
-      "PAGINATOR_LABEL": "Sélectionner la page des clients"
+ "CLIENTS_PAGE": {
+    "TITLE": "Liste des Clients",
+    "CLIENT_NAME": "Nom du Client",
+    "PHONE": "Téléphone",
+    "ADDRESS": "Adresse",
+    "RIB": "RIB",
+    "ACTIONS": "Actions",
+    "EDIT_TOOLTIP": "Modifier",
+    "DELETE_TOOLTIP": "Supprimer",
+    "NO_CLIENTS": "Aucun client trouvé",
+    "PAGINATOR_LABEL": "Sélectionner la page des clients"
+  },
+  "DYNAMIC_MODAL": {
+    "ERROR": {
+      "TITLE": "Erreur",
+      "INVALID_FIELDS": "Veuillez remplir tous les champs obligatoires",
+      "GENERIC": "Une erreur est survenue lors de l'ajout",
+      "NETWORK": "Impossible de se connecter au serveur. Vérifiez votre connexion internet.",
+      "BAD_REQUEST": "Données invalides. Vérifiez les informations saisies."
     },
-    "INVOICE_TEMPLATES": {
-      "TITLE": "Modèles de facture",
-      "NO_TEMPLATES": {
-        "TITLE": "Aucun modèle disponible",
-        "DESCRIPTION": "Commencez dès maintenant en créant votre premier modèle !",
-        "BUTTON": "Commencer"
+    "SUCCESS": {
+      "TITLE": "Succès"
+    },
+    "SERVICE": {
+      "ERROR": {
+        "INVALID": "Veuillez remplir tous les champs du service"
       },
-      "CARD": {
-        "UNTITLED": "Modèle sans nom",
-        "CREATED_ON": "Créé le:",
-        "SECTIONS": "sections",
-        "PREVIEW": "Prévisualiser",
-        "DELETE": "Effacer ce modèle"
-
+      "SUCCESS": {
+        "ADD": "Service ajouté avec succès"
       }
+    },
+    "EMPLOYEE": {
+      "ERROR": {
+        "MISSING_PARTNER_ID": "partnerId est manquant pour l'employé"
+      },
+      "SUCCESS": {
+        "ADD": "Employé ajouté avec succès"
+      }
+    },
+   "CLIENT": {
+      "SUCCESS": {
+        "ADD": "Client ajouté avec succès",
+        "UPDATE": "Client mis à jour avec succès",
+        "DELETE": "Client supprimé avec succès"
+      },
+      "ERROR": {
+        "INVALID_CLIENT_DATA": "Données du client invalides ou ID manquant",
+        "MISSING_CLIENT_ID": "ID du client manquant",
+        "UPDATE_FAILED": "Échec de la mise à jour du client",
+        "FETCH_FAILED": "Impossible de charger les clients",
+        "DELETE_FAILED": "Échec de la suppression du client"
+      },
+      "INFO": {
+        "NO_CHANGES": "Aucun changement à enregistrer"
+      },
+      "CONFIRM": {
+        "DELETE_CONFIRM": "Voulez-vous vraiment supprimer ce client ?"
+      },
+      "form": {
+        "addTitle": "Ajouter un Client",
+        "updateTitle": "Modifier un Client",
+        "clientName": {
+          "placeholder": "Entrez le nom du client"
+        },
+        "phone": {
+          "placeholder": "Entrez le numéro"
+        },
+        "address": {
+          "placeholder": "Entrez l'adresse"
+        },
+        "rib": {
+          "placeholder": "Entrez le RIB"
+        },
+        "buttons": {
+          "cancel": "Annuler",
+          "save": "Enregistrer",
+          "saving": "Enregistrement...",
+          "update": "Mettre à jour",
+          "updating": "En cours..."
+        }
+      },
+      "validation": {
+        "clientName": {
+          "required": "Le nom est requis"
+        },
+        "phone": {
+          "required": "Le téléphone est requis"
+        },
+        "address": {
+          "required": "L'adresse est requise"
+        },
+        "rib": {
+          "required": "Le RIB est requis"
+        }
+      }
+    }
+  
+  },
+   "INVOICE_TEMPLATES": {
+    "TITLE": "Modèles de facture",
+    "NO_TEMPLATES": {
+      "TITLE": "Aucun modèle disponible",
+      "DESCRIPTION": "Commencez dès maintenant en créant votre premier modèle !",
+      "BUTTON": "Commencer"
+    },
+    "CARD": {
+      "UNTITLED": "Modèle sans nom",
+      "CREATED_ON": "Créé le:",
+      "SECTIONS": "sections",
+      "PREVIEW": "Prévisualiser",
+      "DELETE": "Effacer ce modèle"
+    },
+    "MESSAGES": {
+      "FAILED_LOAD_TEMPLATES": {
+        "TEXT": "Échec du chargement des modèles",
+        "TITLE": "Erreur"
+      },
+      "FAILED_LOAD_PDF": {
+        "TEXT": "Échec du chargement du PDF",
+        "TITLE": "Erreur"
+      },
+      "CANNOT_DELETE_NO_ID": {
+        "TEXT": "Impossible de supprimer le modèle - ID manquant",
+        "TITLE": "Erreur"
+      },
+      "FAILED_DELETE_TEMPLATE": {
+        "TEXT": "Échec de la suppression du modèle",
+        "TITLE": "Erreur"
+      },
+      "TEMPLATE_DELETED": {
+        "TEXT": "Modèle supprimé avec succès",
+        "TITLE": "Succès"
+      },
+      "CONFIRM_DELETE": "Êtes-vous sûr de vouloir supprimer \"{{name}}\" ?",
+      "TEMPLATE_SAVED": {
+        "TEXT": "Modèle sauvegardé avec succès",
+        "TITLE": "Succès"
+      },
+      "ERROR_SAVING_TEMPLATE": {
+        "TEXT": "Erreur lors de la sauvegarde",
+        "TITLE": "Erreur"
+      }
+    }
+  
     } ,
     
   "PAGINATOR": {
@@ -169,7 +396,18 @@
   "CONFIRM": {
     "VALIDATE_TEXT": "Voulez-vous vraiment valider ce partenaire ?",
     "DELETE_TEXT": "Voulez-vous vraiment supprimer ce partenaire ?"
-  }
+  },
+
+  "Invoice": {
+    "options": "Options",
+    "Sauvegarder": "Sauvegarder",
+    "saveTooltip": "Sauvegarder le modèle",
+    "toggleTooltip": "Afficher/Masquer les options",
+    "saveAriaLabel": "Save model",
+    "toggleAriaLabel": "Toggle options panel"
+  
+}
+   
   
   
   

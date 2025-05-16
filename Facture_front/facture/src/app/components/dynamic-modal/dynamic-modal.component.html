@@ -1,67 +1,64 @@
 <div *ngIf="data.type === 'employe'" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
   <!-- Existing Employee Modal Code (unchanged) -->
-  <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-2xl w-full mx-auto border-t-4 border-[#FFD700] transform transition-all duration-300 animate-slideUp">
+   <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-2xl w-full mx-auto border-t-4 border-[#FFD700] transform transition-all duration-300 animate-slideUp">
     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-3xl font-bold text-gray-800">Ajouter un Employé</h2>
+      <h2 class="text-3xl font-bold text-gray-800" translate>employee.form.addTitle</h2>
       <button (click)="onClose()" class="text-gray-500 hover:text-gray-700 transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
     </div>
-    <!-- Existing Employee Form Fields (unchanged) -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="space-y-1">
-        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Nom *</label>
+        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>employee.form.name.label</label>
         <input matInput [(ngModel)]="employee.name" name="name" required
           class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
-          placeholder="Entrez le nom">
+          [placeholder]="'employee.form.name.placeholder' | translate">
       </div>
-      <!-- Other Employee Fields (unchanged) -->
       <div class="space-y-1">
-        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Prénom</label>
+        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>employee.form.secondName.label</label>
         <input matInput [(ngModel)]="employee.secondName" name="secondName"
           class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
-          placeholder="Entrez le prénom">
+          [placeholder]="'employee.form.secondName.placeholder' | translate">
       </div>
       <div class="space-y-1">
-        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Poste</label>
+        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>employee.form.job.label</label>
         <input matInput [(ngModel)]="employee.post" name="post"
           class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
-          placeholder="Entrez le poste">
+          [placeholder]="'employee.form.job.placeholder' | translate">
       </div>
       <div class="space-y-1">
-        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Téléphone *</label>
+        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>employee.form.phone.label</label>
         <input matInput [(ngModel)]="employee.tel" name="tel" required
           class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
-          placeholder="Entrez le numéro">
+          [placeholder]="'employee.form.phone.placeholder' | translate">
       </div>
       <div class="space-y-1 md:col-span-2">
-        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Email *</label>
+        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>employee.form.email.label</label>
         <input matInput type="email" [(ngModel)]="employee.email" name="email" required
           class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
-          placeholder="Entrez l'email">
+          [placeholder]="'employee.form.email.placeholder' | translate">
       </div>
       <div class="space-y-1 md:col-span-2">
-        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Département</label>
+        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>employee.form.department.label</label>
         <input matInput [(ngModel)]="employee.department" name="department"
           class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
-          placeholder="Entrez le département">
+          [placeholder]="'employee.form.department.placeholder' | translate">
       </div>
     </div>
-    <!-- Existing Employee Buttons (unchanged) -->
     <div class="flex justify-end space-x-4 mt-8 pt-4 border-t border-gray-100">
       <button type="button" (click)="onClose()" [disabled]="isLoading"
         class="px-6 py-3 text-gray-600 font-medium rounded-xl hover:bg-gray-100 transition-all duration-200 flex items-center space-x-2 disabled:opacity-50">
-        <span>Annuler</span>
+        <span translate>employee.form.buttons.cancel</span>
       </button>
       <button type="button" (click)="onSave()" [disabled]="isLoading"
         class="save-button px-8 py-3 bg-gradient-to-r from-[#FFD700] to-[#FFB600] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] flex items-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed">
         <svg *ngIf="!isLoading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
         </svg>
-        <span *ngIf="!isLoading">Enregistrer</span>
-        <span *ngIf="isLoading" class="loading">Enregistrement...</span>
+        <span *ngIf="!isLoading" translate>employee.form.buttons.addSave</span>
+        <span *ngIf="isLoading" class="loading" translate>employee.form.buttons.addSaving</span>
       </button>
     </div>
   </div>
@@ -71,7 +68,7 @@
 <div *ngIf="data.type === 'client'" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
   <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-2xl w-full mx-auto border-t-4 border-[#FFD700] transform transition-all duration-300 animate-slideUp">
     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-3xl font-bold text-gray-800">Ajouter un Client</h2>
+      <h2 class="text-3xl font-bold text-gray-800">{{ 'DYNAMIC_MODAL.CLIENT.form.addTitle' | translate }}</h2>
       <button (click)="onClose()" class="text-gray-500 hover:text-gray-700 transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -82,34 +79,34 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- Nom du Client -->
       <div class="space-y-1">
-        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Nom du Client *</label>
+        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">{{ 'CLIENTS_PAGE.CLIENT_NAME' | translate }} *</label>
         <input matInput [(ngModel)]="client.clientName" name="clientName" required
           class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
-          placeholder="Entrez le nom du client">
+          [placeholder]="'DYNAMIC_MODAL.CLIENT.form.clientName.placeholder' | translate">
       </div>
 
       <!-- Téléphone -->
       <div class="space-y-1">
-        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Téléphone *</label>
+        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">{{ 'CLIENTS_PAGE.PHONE' | translate }} *</label>
         <input matInput [(ngModel)]="client.clientPhone" name="clientPhone" required
           class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
-          placeholder="Entrez le numéro">
+          [placeholder]="'DYNAMIC_MODAL.CLIENT.form.phone.placeholder' | translate">
       </div>
 
       <!-- Adresse -->
       <div class="space-y-1 md:col-span-2">
-        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Adresse</label>
+        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">{{ 'CLIENTS_PAGE.ADDRESS' | translate }} *</label>
         <input matInput [(ngModel)]="client.clientAddress" name="clientAddress"
           class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
-          placeholder="Entrez l'adresse">
+          [placeholder]="'DYNAMIC_MODAL.CLIENT.form.address.placeholder' | translate">
       </div>
 
       <!-- RIB -->
       <div class="space-y-1 md:col-span-2">
-        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">RIB</label>
+        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">{{ 'CLIENTS_PAGE.RIB' | translate }} *</label>
         <input matInput [(ngModel)]="client.rib" name="rib"
           class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
-          placeholder="Entrez le RIB">
+          [placeholder]="'DYNAMIC_MODAL.CLIENT.form.rib.placeholder' | translate">
       </div>
     </div>
 
@@ -117,15 +114,15 @@
     <div class="flex justify-end space-x-4 mt-8 pt-4 border-t border-gray-100">
       <button type="button" (click)="onClose()" [disabled]="isLoading"
         class="px-6 py-3 text-gray-600 font-medium rounded-xl hover:bg-gray-100 transition-all duration-200 flex items-center space-x-2 disabled:opacity-50">
-        <span>Annuler</span>
+        <span>{{ 'DYNAMIC_MODAL.CLIENT.form.buttons.cancel' | translate }}</span>
       </button>
       <button type="button" (click)="onSave()" [disabled]="isLoading"
         class="save-button px-8 py-3 bg-gradient-to-r from-[#FFD700] to-[#FFB600] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] flex items-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed">
         <svg *ngIf="!isLoading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
         </svg>
-        <span *ngIf="!isLoading">Enregistrer</span>
-        <span *ngIf="isLoading" class="loading">Enregistrement...</span>
+     <span *ngIf="!isLoading">{{ 'DYNAMIC_MODAL.CLIENT.form.buttons.save' | translate }}</span>
+        <span *ngIf="isLoading" class="loading">{{ 'DYNAMIC_MODAL.CLIENT.form.buttons.saving' | translate }}</span>
       </button>
     </div>
   </div>
@@ -134,7 +131,7 @@
 <div *ngIf="data.type === 'service'" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
   <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-2xl w-full mx-auto border-t-4 border-[#FFD700] transform transition-all duration-300 animate-slideUp">
     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-3xl font-bold text-gray-800">Ajouter un Service</h2>
+        <h2 class="text-3xl font-bold text-gray-800" translate>SERVICES_PAGE.form.addTitle</h2>
       <button (click)="onClose()" class="text-gray-500 hover:text-gray-700 transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -145,34 +142,34 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- Référence -->
       <div class="space-y-1">
-        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Référence *</label>
+            <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>SERVICES_PAGE.form.ref.label</label>
         <input matInput [(ngModel)]="service.ref" name="ref" required
           class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
-          placeholder="Entrez la référence">
+              [placeholder]="'SERVICES_PAGE.form.ref.placeholder' | translate">
       </div>
 
       <!-- Nom du Service -->
       <div class="space-y-1">
-        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Nom du Service *</label>
+            <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>SERVICES_PAGE.form.serviceName.label</label>
         <input matInput [(ngModel)]="service.serviceName" name="serviceName" required
           class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
-          placeholder="Entrez le nom du service">
+              [placeholder]="'SERVICES_PAGE.form.serviceName.placeholder' | translate">
       </div>
 
       <!-- Quantité -->
       <div class="space-y-1">
-        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Quantité *</label>
+            <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>SERVICES_PAGE.form.serviceQuantity.label</label>
         <input matInput type="number" [(ngModel)]="service.serviceQuantity" name="serviceQuantity" required min="1"
           class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
-          placeholder="Entrez la quantité">
+              [placeholder]="'SERVICES_PAGE.form.serviceQuantity.placeholder' | translate">
       </div>
 
       <!-- Prix -->
       <div class="space-y-1">
-        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Prix *</label>
+            <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>SERVICES_PAGE.form.servicePrice.label</label>
         <input matInput type="number" [(ngModel)]="service.servicePrice" name="servicePrice" required min="0" step="0.01"
           class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
-          placeholder="Entrez le prix">
+              [placeholder]="'SERVICES_PAGE.form.servicePrice.placeholder' | translate">
       </div>
     </div>
 
@@ -180,15 +177,15 @@
     <div class="flex justify-end space-x-4 mt-8 pt-4 border-t border-gray-100">
       <button type="button" (click)="onClose()" [disabled]="isLoading"
         class="px-6 py-3 text-gray-600 font-medium rounded-xl hover:bg-gray-100 transition-all duration-200 flex items-center space-x-2 disabled:opacity-50">
-        <span>Annuler</span>
+            <span translate>SERVICES_PAGE.form.buttons.cancel</span>
       </button>
       <button type="button" (click)="onSave()" [disabled]="isLoading"
         class="save-button px-8 py-3 bg-gradient-to-r from-[#FFD700] to-[#FFB600] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] flex items-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed">
         <svg *ngIf="!isLoading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
         </svg>
-        <span *ngIf="!isLoading">Enregistrer</span>
-        <span *ngIf="isLoading" class="loading">Enregistrement...</span>
+    <span *ngIf="!isLoading" translate>SERVICES_PAGE.form.buttons.addSave</span>
+            <span *ngIf="isLoading" class="loading" translate>SERVICES_PAGE.form.buttons.addSaving</span>
       </button>
     </div>
   </div>

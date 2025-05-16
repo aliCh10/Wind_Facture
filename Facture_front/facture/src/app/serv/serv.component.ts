@@ -7,6 +7,7 @@ import { DynamicModalComponent } from '../components/dynamic-modal/dynamic-modal
 import { UpdateServiceModalComponent } from '../components/update-service-modal/update-service-modal.component';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-serv',
@@ -24,8 +25,12 @@ export class ServComponent implements OnInit {
   constructor(
     private serservice: SerService,
     private dialog: MatDialog,
-    private toastr: ToastrService
-  ) {}
+    private toastr: ToastrService,
+    private translate: TranslateService
+  ) {
+    // this.translate.setDefaultLang('en');
+    // this.translate.use('fr'); // Default to French
+  }
 
   ngOnInit(): void {
     this.loadServices();
@@ -42,8 +47,11 @@ export class ServComponent implements OnInit {
         // }
       },
       error: (err) => {
-        console.error('Erreur lors du chargement des services', err);
-        this.toastr.error('Impossible de charger les services', 'Erreur');
+        console.error('Error loading services', err);
+        this.toastr.error(
+          this.translate.instant('SERVICES_PAGE.ERROR.LOAD_FAILED'),
+          this.translate.instant('SERVICES_PAGE.ERROR.TITLE')
+        );
       }
     });
   }
@@ -53,15 +61,21 @@ export class ServComponent implements OnInit {
   }
 
   delete(id: number): void {
-    if (confirm('Voulez-vous vraiment supprimer ce service ?')) {
+    if (confirm(this.translate.instant('SERVICES_PAGE.CONFIRM.DELETE_TEXT'))) {
       this.serservice.deleteService(id).subscribe({
         next: () => {
-          this.toastr.success('Service supprimé avec succès', 'Succès');
+          this.toastr.success(
+            this.translate.instant('SERVICES_PAGE.SUCCESS.DELETE'),
+            this.translate.instant('SERVICES_PAGE.SUCCESS.TITLE')
+          );
           this.loadServices();
         },
         error: (err) => {
-          console.error('Erreur lors de la suppression', err);
-          this.toastr.error('Une erreur est survenue lors de la suppression', 'Erreur');
+          console.error('Error deleting service', err);
+          this.toastr.error(
+            this.translate.instant('SERVICES_PAGE.ERROR.DELETE_FAILED'),
+            this.translate.instant('SERVICES_PAGE.ERROR.TITLE')
+          );
         }
       });
     }
@@ -75,7 +89,10 @@ export class ServComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result?.success) {
-        this.toastr.success(result.message || 'Service ajouté', 'Succès');
+        this.toastr.success(
+          result.message || this.translate.instant('SERVICES_PAGE.SUCCESS.ADD'),
+          this.translate.instant('SERVICES_PAGE.SUCCESS.TITLE')
+        );
         this.loadServices();
       }
     });
@@ -84,7 +101,10 @@ export class ServComponent implements OnInit {
   openUpdateServiceDialog(service: Service): void {
     if (!service.id) {
       console.error('Service ID is undefined:', service);
-      this.toastr.error('Impossible d\'ouvrir la modification : ID du service manquant', 'Erreur');
+      this.toastr.error(
+        this.translate.instant('SERVICES_PAGE.ERROR.UPDATE_OPEN_FAILED'),
+        this.translate.instant('SERVICES_PAGE.ERROR.TITLE')
+      );
       return;
     }
     const dialogRef = this.dialog.open(UpdateServiceModalComponent, {
@@ -94,7 +114,10 @@ export class ServComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result?.success) {
-        this.toastr.success(result.message || 'Service mis à jour', 'Succès');
+        // this.toastr.success(
+        //   result.message || this.translate.instant('SERVICES_PAGE.SUCCESS.UPDATE'),
+        //   this.translate.instant('SERVICES_PAGE.SUCCESS.TITLE')
+        // );
         this.loadServices();
       }
     });

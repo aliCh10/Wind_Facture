@@ -30,8 +30,7 @@ export class EmployeeComponent implements OnInit {
     private translate: TranslateService
   ) {
     // Set default language to French
-    this.translate.setDefaultLang('fr');
-    this.translate.use('fr');
+  
   }
 
   ngOnInit(): void {
@@ -45,8 +44,8 @@ export class EmployeeComponent implements OnInit {
   fetchEmployees(): void {
     if (!this.partnerId) {
       this.toastr.error(
-        this.translate.instant('EMPLOYEE.ERROR.NO_PARTNER_ID'),
-        this.translate.instant('EMPLOYEE.ERROR.TITLE')
+        this.translate.instant('employee.ERROR.NO_PARTNER_ID'),
+        this.translate.instant('employee.ERROR.TITLE')
       );
       return;
     }
@@ -61,8 +60,8 @@ export class EmployeeComponent implements OnInit {
       },
       error: () => {
         this.toastr.error(
-          this.translate.instant('EMPLOYEE.ERROR.LOAD_FAILED'),
-          this.translate.instant('EMPLOYEE.ERROR.TITLE')
+          this.translate.instant('employee.ERROR.LOAD_FAILED'),
+          this.translate.instant('employee.ERROR.TITLE')
         );
       }
     });
@@ -75,8 +74,8 @@ export class EmployeeComponent implements OnInit {
   openUpdateModal(employee: any) {
     if (!employee.id) {
       this.toastr.error(
-        this.translate.instant('EMPLOYEE.ERROR.MISSING_ID'),
-        this.translate.instant('EMPLOYEE.ERROR.TITLE')
+        this.translate.instant('employee.ERROR.MISSING_ID'),
+        this.translate.instant('employee.ERROR.TITLE')
       );
       return;
     }
@@ -84,32 +83,22 @@ export class EmployeeComponent implements OnInit {
       width: '400px',
       data: { employee }
     });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result?.success) {
-        this.toastr.success(
-          result.message || this.translate.instant('EMPLOYEE.SUCCESS.UPDATE'),
-          this.translate.instant('EMPLOYEE.SUCCESS.TITLE')
-        );
-        this.fetchEmployees();
-      }
-    });
   }
 
   deleteEmployee(employeeId: number): void {
-    if (confirm(this.translate.instant('EMPLOYEE.CONFIRM.DELETE_TEXT'))) {
+    if (confirm(this.translate.instant('employee.CONFIRM.DELETE_TEXT'))) {
       this.employeeService.deleteEmployee(employeeId).subscribe({
         next: () => {
           this.toastr.success(
-            this.translate.instant('EMPLOYEE.SUCCESS.DELETE'),
-            this.translate.instant('EMPLOYEE.SUCCESS.TITLE')
+            this.translate.instant('employee.SUCCESS.DELETE'),
+            this.translate.instant('employee.SUCCESS.TITLE')
           );
           this.fetchEmployees();
         },
         error: () => {
           this.toastr.error(
-            this.translate.instant('EMPLOYEE.ERROR.DELETE_FAILED'),
-            this.translate.instant('EMPLOYEE.ERROR.TITLE')
+            this.translate.instant('employee.ERROR.DELETE_FAILED'),
+            this.translate.instant('employee.ERROR.TITLE')
           );
         }
       });

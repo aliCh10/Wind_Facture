@@ -1,8 +1,7 @@
-```html
 <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
   <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-2xl w-full mx-auto border-t-4 border-[#FFD700] transform transition-all duration-300 animate-slideUp">
     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-3xl font-bold text-gray-800">Modifier l'Employé</h2>
+      <h2 class="text-3xl font-bold text-gray-800" translate>employee.form.title</h2>
       <button (click)="closeDialog()" class="text-gray-500 hover:text-gray-700 transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -14,7 +13,7 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Nom -->
         <div class="space-y-1">
-          <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Nom *</label>
+          <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>employee.form.name.label</label>
           <input formControlName="name" required
             class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
             placeholder="Entrez le nom">
@@ -25,7 +24,7 @@
 
         <!-- Prénom -->
         <div class="space-y-1">
-          <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Prénom</label>
+          <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>employee.form.secondName.label</label>
           <input formControlName="secondName"
             class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
             placeholder="Entrez le prénom">
@@ -36,7 +35,7 @@
 
         <!-- Poste -->
         <div class="space-y-1">
-          <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Poste</label>
+          <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>employee.form.job.label</label>
           <input formControlName="post"
             class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
             placeholder="Entrez le poste">
@@ -47,7 +46,7 @@
 
         <!-- Téléphone -->
         <div class="space-y-1">
-          <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Téléphone *</label>
+          <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>employee.form.phone.label</label>
           <input formControlName="tel" required
             class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
             placeholder="Entrez le numéro">
@@ -58,7 +57,7 @@
 
         <!-- Email -->
         <div class="space-y-1 md:col-span-2">
-          <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Email *</label>
+          <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>employee.form.email.label</label>
           <input formControlName="email" type="email" required
             class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
             placeholder="Entrez l'email">
@@ -69,7 +68,7 @@
 
         <!-- Département -->
         <div class="space-y-1 md:col-span-2">
-          <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider">Département</label>
+          <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>employee.form.department.label</label>
           <input formControlName="department"
             class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
             placeholder="Entrez le département">
@@ -83,15 +82,15 @@
       <div class="flex justify-end space-x-4 mt-8 pt-4 border-t border-gray-100">
         <button type="button" (click)="closeDialog()" [disabled]="isLoading"
           class="px-6 py-3 text-gray-600 font-medium rounded-xl hover:bg-gray-100 transition-all duration-200 flex items-center space-x-2 disabled:opacity-50">
-          <span>Annuler</span>
+        <span translate>employee.form.buttons.cancel</span>
         </button>
         <button type="submit" [disabled]="isLoading"
           class="save-button px-8 py-3 bg-gradient-to-r from-[#FFD700] to-[#FFB600] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] flex items-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed">
           <svg *ngIf="!isLoading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
           </svg>
-          <span *ngIf="!isLoading">Sauvegarder</span>
-          <span *ngIf="isLoading" class="loading">Sauvegarde...</span>
+          <span *ngIf="!isLoading" translate>employee.form.buttons.addSave</span>
+        <span *ngIf="isLoading" class="loading" translate>employee.form.buttons.addSaving</span>
         </button>
       </div>
     </form>

@@ -4,6 +4,7 @@ import { Service, ServiceDTO } from '../../models/service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { SerService } from '../../services/ser.service';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-update-service-modal',
@@ -20,7 +21,8 @@ export class UpdateServiceModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: Service,
     private fb: FormBuilder,
     private serService: SerService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {
     this.serviceForm = this.fb.group({
       ref: ['', Validators.required],
@@ -39,7 +41,10 @@ export class UpdateServiceModalComponent implements OnInit {
         servicePrice: this.data.servicePrice
       });
     } else {
-      this.toastr.error('Données du service invalides ou ID manquant', 'Erreur');
+      this.toastr.error(
+        this.translate.instant('SERVICES_PAGE.ERROR.INVALID_DATA'),
+        this.translate.instant('SERVICES_PAGE.ERROR.TITLE')
+      );
       this.closeDialog();
     }
   }
@@ -57,17 +62,26 @@ export class UpdateServiceModalComponent implements OnInit {
   onSave(): void {
     if (this.serviceForm.invalid) {
       this.serviceForm.markAllAsTouched();
-      this.toastr.error('Veuillez remplir tous les champs requis', 'Erreur');
+      this.toastr.error(
+        this.translate.instant('SERVICES_PAGE.ERROR.INVALID_FIELDS'),
+        this.translate.instant('SERVICES_PAGE.ERROR.TITLE')
+      );
       return;
     }
 
     if (!this.data.id) {
-      this.toastr.error('ID du service manquant', 'Erreur');
+      this.toastr.error(
+        this.translate.instant('SERVICES_PAGE.ERROR.MISSING_ID'),
+        this.translate.instant('SERVICES_PAGE.ERROR.TITLE')
+      );
       return;
     }
 
     if (!this.hasChanges()) {
-      this.toastr.info('Aucun changement à enregistrer', 'Info');
+      this.toastr.info(
+        this.translate.instant('SERVICES_PAGE.INFO.NO_CHANGES'),
+        this.translate.instant('SERVICES_PAGE.INFO.TITLE')
+      );
       this.closeDialog();
       return;
     }
@@ -78,12 +92,21 @@ export class UpdateServiceModalComponent implements OnInit {
 
     this.serService.updateService(this.data.id, serviceDTO).subscribe({
       next: () => {
-        this.toastr.success('Service mis à jour avec succès', 'Succès');
-        this.dialogRef.close({ success: true, message: 'Service mis à jour avec succès' });
+        this.toastr.success(
+          this.translate.instant('SERVICES_PAGE.SUCCESS.UPDATE'),
+          // this.translate.instant('SERVICES_PAGE.SUCCESS.TITLE')
+        );
+        this.dialogRef.close({ 
+          success: true, 
+          // message: this.translate.instant('SERVICES_PAGE.SUCCESS.CUSTOM_UPDATE') 
+        });
         this.isLoading = false;
       },
       error: (error) => {
-        this.toastr.error(error.message || 'Échec de la mise à jour du service', 'Erreur');
+        this.toastr.error(
+          error.message || this.translate.instant('SERVICES_PAGE.ERROR.UPDATE_FAILED'),
+          this.translate.instant('SERVICES_PAGE.ERROR.TITLE')
+        );
         this.isLoading = false;
       }
     });
