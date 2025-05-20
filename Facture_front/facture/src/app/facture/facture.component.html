@@ -1,10 +1,7 @@
-<!-- parent.component.html -->
 <div class="a4-layout">
-  
   <div #a4Page class="a4-page">
     <div class="page-content">
       <app-logo [containerRef]="mainContent" [boundaryElement]="a4Page" (openOptions)="onOpenOptions($event)"></app-logo>
-
       <app-table [containerRef]="mainContent" [boundaryElement]="a4Page" (openOptions)="onOpenOptions($event)"></app-table>
       <app-calendar [boundaryElement]="a4Page" (openOptions)="onOpenOptions($event)"></app-calendar>
       <app-info-company [boundaryElement]="a4Page" (openOptions)="onOpenOptions($event)"></app-info-company>
@@ -20,14 +17,16 @@
     </app-options>
   </div>
 
+  <!-- Bouton Sauvegarder -->
   <button class="save-btn bg-amber-300 text-white py-2 px-4 rounded-sm" 
     [matTooltip]="'Invoice.saveTooltip' | translate"
     [attr.aria-label]="'Invoice.saveAriaLabel' | translate"
-    (click)="saveModeleFacture()">
+    (click)="openSaveModal()">
     <mat-icon>save</mat-icon>
     <span class="btn-text">{{ 'Invoice.Sauvegarder' | translate }}</span>
   </button>
 
+  <!-- Bouton Options -->
   <button class="toggle-options-btn" (click)="toggleOptions()" 
     [matTooltip]="'Invoice.toggleTooltip' | translate"
     matTooltipPosition="left" 
@@ -35,4 +34,39 @@
     <mat-icon>settings</mat-icon>
     <span class="btn-text">{{ 'Invoice.options' | translate }}</span>
   </button>
+
+  <!-- Modale pour le nom du modèle -->
+<!-- Modale pour le nom du modèle -->
+<div *ngIf="showSaveModal" class="modal-overlay">
+  <div class="modal-content">
+    <h2 class="text-lg font-semibold mb-4">{{ 'INVOICE_TEMPLATES.SAVE_MODAL.TITLE' | translate }}</h2>
+    <label for="templateName" class="block text-sm font-medium text-gray-700 mb-2">
+      {{ 'INVOICE_TEMPLATES.SAVE_MODAL.TEMPLATE_NAME' | translate }}
+    </label>
+    <input
+      id="templateName"
+      type="text"
+      [(ngModel)]="templateName"
+      class="p-2 border rounded w-full mb-4"
+      placeholder="{{ 'INVOICE_TEMPLATES.SAVE_MODAL.TEMPLATE_NAME_PLACEHOLDER' | translate }}"
+      aria-required="true"
+      required
+    />
+    <div class="flex justify-end gap-2">
+      <button
+        class="bg-gray-300 text-black py-2 px-4 rounded-sm"
+        (click)="closeSaveModal()"
+        [attr.aria-label]="'INVOICE_TEMPLATES.SAVE_MODAL.CANCEL_ARIA_LABEL' | translate">
+        {{ 'INVOICE_TEMPLATES.SAVE_MODAL.CANCEL' | translate }}
+      </button>
+      <button
+        class="bg-amber-300 text-white py-2 px-4 rounded-sm"
+        (click)="confirmSave()"
+        [disabled]="!templateName.trim()"
+        [attr.aria-label]="'INVOICE_TEMPLATES.SAVE_MODAL.CONFIRM_SAVE_ARIA_LABEL' | translate">
+        {{ 'INVOICE_TEMPLATES.SAVE_MODAL.CONFIRM_SAVE' | translate }}
+      </button>
+    </div>
+  </div>
+</div>
 </div>

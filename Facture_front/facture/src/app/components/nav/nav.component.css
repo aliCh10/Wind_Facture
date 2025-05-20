@@ -1,5 +1,5 @@
 .modern-navbar {
-  background:#252437;
+  background: #252437;
   height: 60px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: fixed;
@@ -38,15 +38,6 @@
   cursor: pointer;
   z-index: 1001;
   display: none;
-}
-
-@media (max-width: 768px) {
-  .hamburger {
-    display: block;
-  }
-  .modern-navbar {
-    left: 0;
-  }
 }
 
 .navbar-right {
@@ -116,12 +107,12 @@
 .user-account {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px; /* Increased from 10px for better spacing */
   cursor: pointer;
   position: relative;
   order: 1;
-  padding: 5px 10px;
-  border-radius: 20px;
+  padding: 8px 12px; /* Increased padding for larger avatar */
+  border-radius: 50px;
   transition: all 0.3s ease;
   
   &:hover {
@@ -129,11 +120,12 @@
   }
   
   .user-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    object-fit: cover;
+    width: 48px; /* Increased from 36px */
+    height: 48px; /* Increased from 36px */
+    border-radius: 50%; /* Changed to slightly rounded for logos */
+    object-fit: contain; /* Changed to show full logo */
     border: 2px solid rgba(255, 215, 0, 0.5);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Added for visual depth */
   }
   
   .user-name {
@@ -159,7 +151,7 @@
 
 .user-dropdown {
   position: absolute;
-  top: 50px;
+  top: 60px; /* Adjusted to account for larger avatar */
   right: 0;
   background: white;
   border-radius: 8px;
@@ -198,6 +190,14 @@
 
 /* Styles pour les écrans mobiles */
 @media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+  
+  .modern-navbar {
+    left: 0;
+  }
+  
   .user-name {
     display: none;
   }
@@ -208,5 +208,14 @@
   
   .user-account {
     padding: 5px;
+  }
+  
+  .user-avatar {
+    width: 40px; /* Slightly smaller for mobile */
+    height: 40px;
+  }
+  
+  .user-dropdown {
+    top: 50px; /* Adjusted for mobile */
   }
 }

@@ -27,7 +27,6 @@ export class UpdateServiceModalComponent implements OnInit {
     this.serviceForm = this.fb.group({
       ref: ['', Validators.required],
       serviceName: ['', Validators.required],
-      serviceQuantity: [0, [Validators.required, Validators.min(0)]],
       servicePrice: [0, [Validators.required, Validators.min(0)]]
     });
   }
@@ -37,7 +36,6 @@ export class UpdateServiceModalComponent implements OnInit {
       this.serviceForm.patchValue({
         ref: this.data.ref,
         serviceName: this.data.serviceName,
-        serviceQuantity: this.data.serviceQuantity,
         servicePrice: this.data.servicePrice
       });
     } else {
@@ -54,7 +52,6 @@ export class UpdateServiceModalComponent implements OnInit {
     return (
       formValues.ref !== this.data.ref ||
       formValues.serviceName !== this.data.serviceName ||
-      formValues.serviceQuantity !== this.data.serviceQuantity ||
       formValues.servicePrice !== this.data.servicePrice
     );
   }

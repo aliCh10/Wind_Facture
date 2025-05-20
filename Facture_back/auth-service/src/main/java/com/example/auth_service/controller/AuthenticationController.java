@@ -1,9 +1,11 @@
 package com.example.auth_service.controller;
 
+import com.example.auth_service.Repository.PartnerRepository;
 import com.example.auth_service.config.JwtService;
 import com.example.auth_service.dto.AuthentificationRequest;
 import com.example.auth_service.dto.RegisterRequest;
 import com.example.auth_service.dto.UpdateProfileRequest;
+import com.example.auth_service.model.Partner;
 import com.example.auth_service.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +30,7 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final UserDetailsService userDetailsService; 
     private final JwtService jwtService; 
+        private final PartnerRepository partnerRepository;
 
   @PostMapping(value = "/register", consumes = {"multipart/form-data"})
 public ResponseEntity<?> register(@ModelAttribute RegisterRequest request, 
@@ -86,6 +90,23 @@ public ResponseEntity<?> authenticate(@RequestBody AuthentificationRequest authe
             return ResponseEntity.status(401).body("Token validation failed: " + e.getMessage());
         }
     }
+    @GetMapping("/company-info")
+@PreAuthorize("hasAuthority('ROLE_PARTNER')")
+public ResponseEntity<Map<String, String>> getCompanyInfo(@RequestHeader("Authorization") String token) {
+    String email = jwtService.extractUsername(token.replace("Bearer ", ""));
+    Partner partner = partnerRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Partner not found"));
+    
+    Map<String, String> response = new HashMap<>();
+    response.put("companyName", partner.getCompanyName());
+    response.put("address", partner.getAddress());
+    response.put("tel", partner.getTel());
+    response.put("email", partner.getEmail());
+    response.put("companyType", partner.getCompanyType());
+    response.put("logoUrl", partner.getLogoUrl());
+    
+    return ResponseEntity.ok(response);
+}
     
     
     

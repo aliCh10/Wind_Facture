@@ -75,4 +75,10 @@ deleteModeleFacture(id: number): Observable<void> {
       responseType: 'blob'
     });
 }
+
+    getModeleThumbnail(id: number): Observable<Blob> {
+        return this.http.get(`${this.apiUrl}/${id}/thumbnail`, {
+            responseType: 'blob'
+        });
+    }
 }

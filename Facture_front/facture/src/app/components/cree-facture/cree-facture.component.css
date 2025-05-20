@@ -1,0 +1,70 @@
+/* Center and style the mat-form-field */
+mat-form-field.w-full {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Style the mat-select trigger for elegance */
+.elegant-select .mat-mdc-select-trigger {
+  background: #fff;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+  color: #1a237e;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.elegant-select .mat-mdc-select-trigger:hover {
+  border-color: #ffd700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Style the mat-option for a polished look */
+.template-option:hover {
+  background-color: #f9fafb;
+  transform: scale(1.02);
+}
+
+/* Ensure the select panel (dropdown) is styled consistently */
+.mat-mdc-select-panel {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 8px;
+  max-width: 600px;
+}
+
+/* Style the mat-option text and icons */
+mat-option {
+  padding: 0 !important;
+  border-radius: 8px;
+  margin: 4px 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .template-option {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+  }
+
+  .template-option > div:first-child {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1.414;
+    max-width: 120px;
+    margin-bottom: 8px;
+  }
+
+  .elegant-select .mat-mdc-select-trigger {
+    padding: 10px;
+    font-size: 12px;
+  }
+}
+
+/* Ensure spinner aligns with the centered layout */
+mat-spinner {
+  margin: 0 auto;
+}

@@ -38,10 +38,11 @@ export class SerService {
       .pipe(catchError(this.handleError));
   }
 
-  createService(service: ServiceDTO): Observable<Service> {
-    return this.http.post<Service>(this.apiUrl, service, { headers: this.getHeaders() })
-      .pipe(catchError(this.handleError));
-  }
+// In your ser.service.ts
+createService(service: ServiceDTO): Observable<Service> {
+  return this.http.post<Service>(this.apiUrl, service, { headers: this.getHeaders() })
+    .pipe(catchError(this.handleError));
+}
 
   updateService(id: number, service: ServiceDTO): Observable<Service> {
     return this.http.put<Service>(`${this.apiUrl}/${id}`, service, { headers: this.getHeaders() })

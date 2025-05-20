@@ -32,8 +32,9 @@ export class FactureComponent implements AfterViewInit {
   @ViewChild(FooterComponent) footerComponent!: FooterComponent;
 
   showOptions = false;
+  showSaveModal = false; // Contrôle l'affichage de la modale
   modeleFactureId: number | null = null;
-  templateName = 'Default Template';
+  templateName: string = ''; // Nom du modèle, initialisé à vide
   activeComponent: string = '';
   private sectionRegistry: Section[] = [];
 
@@ -88,6 +89,32 @@ export class FactureComponent implements AfterViewInit {
     this.styleManager.updateStyles(event.component, event.styles, 'FactureComponent');
   }
 
+  // Ouvre la modale pour saisir le nom du modèle
+  openSaveModal() {
+    this.templateName = ''; // Réinitialiser le champ
+    this.showSaveModal = true;
+  }
+
+  // Ferme la modale sans sauvegarder
+  closeSaveModal() {
+    this.showSaveModal = false;
+    this.templateName = '';
+  }
+
+  // Confirme la sauvegarde après saisie du nom
+  confirmSave() {
+    if (!this.templateName.trim()) {
+      this.toastr.error(
+        this.translate.instant('INVOICE_TEMPLATES.MESSAGES.TEMPLATE_NAME_REQUIRED.TEXT'),
+        this.translate.instant('INVOICE_TEMPLATES.MESSAGES.TEMPLATE_NAME_REQUIRED.TITLE')
+      );
+      return;
+    }
+
+    this.saveModeleFacture();
+    this.closeSaveModal(); // Ferme la modale après sauvegarde
+  }
+
   saveModeleFacture() {
     this.sectionRegistry.forEach(section => {
       if (section && (section as any).getCurrentPosition) {
@@ -99,7 +126,7 @@ export class FactureComponent implements AfterViewInit {
 
     const sections = this.sectionDataCollector.collectSectionData(this.sectionRegistry);
     const request: CreateModeleFactureRequest = {
-      name: this.templateName,
+      name: this.templateName.trim(), // Utiliser le nom saisi
       sections: sections.map(section => ({
         ...section,
         styles: this.formatStylesForBackend(section.styles)
@@ -148,7 +175,7 @@ export class FactureComponent implements AfterViewInit {
   loadModeleFacture(id: number) {
     this.modeleFactureService.getModeleFacture(id).subscribe({
       next: (modeleFacture) => {
-        this.templateName = modeleFacture.nameModel;
+        this.templateName = modeleFacture.nameModel; // Charger le nom du modèle
         console.log(
           this.translate.instant('INVOICE_TEMPLATES.MESSAGES.LOADED_TEMPLATE'),
           modeleFacture

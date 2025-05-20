@@ -6,7 +6,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -24,10 +23,6 @@ public class Service {
     private String ref;
 
     @Column(nullable = false)
-    @Min(value = 0, message = "Quantity cannot be negative")
-    private Integer serviceQuantity;
-
-    @Column(nullable = false)
     @NotBlank(message = "Service name cannot be empty")
     private String serviceName;
 
@@ -36,6 +31,5 @@ public class Service {
     private BigDecimal servicePrice;
 
     @Column(nullable = false)
-    private Long tenantId; // Ajout du tenantId
-  
+    private Long tenantId;
 }

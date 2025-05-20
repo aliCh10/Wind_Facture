@@ -77,8 +77,11 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { NgxMatColorPickerModule } from 'ngx-mat-color-picker';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { FacturePreviewModalComponent } from './components/facture-preview-modal/facture-preview-modal.component';
 import { CustomMatPaginatorIntlService } from './services/custom-mat-paginator-intl.service';
+import { CreeFactureComponent } from './components/cree-facture/cree-facture.component';
+import { MatStepperModule } from '@angular/material/stepper';
+import { FacturePreviewModalComponent } from './components/facture-preview-modal/facture-preview-modal.component';
+import { SafeHtmlPipe } from './shared/pipes/safe-html.pipe';
 
 
 
@@ -119,6 +122,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     FooterComponent,
     NewFactureComponent,
     FacturePreviewModalComponent,
+    CreeFactureComponent,
+    SafeHtmlPipe,
   ],
   imports: [
     MatInputModule,   
@@ -152,6 +157,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ToolbarModule,
     SplitButtonModule,
     MatSelectModule,
+    MatStepperModule,
     MatSliderModule,
     MatSlideToggleModule,
     MatExpansionModule,

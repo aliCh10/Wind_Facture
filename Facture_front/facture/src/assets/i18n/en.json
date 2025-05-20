@@ -282,6 +282,10 @@
       "INFO": {
         "NO_CHANGES": "No changes to save"
       },
+      "WARNING": {
+      "INVALID_DATA": "Invalid client data detected",
+      "TITLE": "Warning"
+    },
       "CONFIRM": {
         "DELETE_CONFIRM": "Are you sure you want to delete this client?"
       },
@@ -322,6 +326,7 @@
           "required": "RIB is required"
         }
       }
+      
     }
   
   },
@@ -358,7 +363,7 @@
         "TITLE": "Error"
       },
       "TEMPLATE_DELETED": {
-       "TEXT": "Template deleted successfully",
+        "TEXT": "Template deleted successfully",
         "TITLE": "Success"
       },
       "CONFIRM_DELETE": "Are you sure you want to delete \"{{name}}\"?",
@@ -369,10 +374,22 @@
       "ERROR_SAVING_TEMPLATE": {
         "TEXT": "Error saving template",
         "TITLE": "Error"
+      },
+      "TEMPLATE_NAME_REQUIRED": {
+        "TEXT": "Template name is required",
+        "TITLE": "Error"
       }
+    },
+    "SAVE_MODAL": {
+      "TITLE": "Save Template",
+      "TEMPLATE_NAME": "Template Name",
+      "TEMPLATE_NAME_PLACEHOLDER": "Enter template name",
+      "CANCEL": "Cancel",
+      "CONFIRM_SAVE": "Confirm",
+      "CANCEL_ARIA_LABEL": "Cancel button",
+      "CONFIRM_SAVE_ARIA_LABEL": "Confirm save button"
     }
-  
-  },
+},
     
   "PAGINATOR": {
     "ITEMS_PER_PAGE": "Items per page:",
@@ -407,7 +424,82 @@
     "saveAriaLabel": "Save model",
     "toggleAriaLabel": "Toggle settings panel"
   
-}
+},
+
+  "CREATE_INVOICE": {
+    "STEPS": {
+      "CLIENT_INFORMATION": "Client Information",
+      "COMPANY_INFORMATION": "Company Information",
+      "SERVICES": "Services",
+      "DATES": "Dates"
+    },
+    "LABELS": {
+      "SELECT_INVOICE_TEMPLATE": "Select Invoice Template",
+      "CLIENT": "Client",
+      "CLIENT_PHONE": "Client Phone",
+      "CLIENT_ADDRESS": "Client Address",
+      "CLIENT_RIB": "Client RIB",
+      "COMPANY_NAME": "Company Name",
+      "COMPANY_ADDRESS": "Company Address",
+      "COMPANY_TYPE": "Company Type",
+      "COMPANY_LOGO": "Company Logo",
+      "SERVICE": "Service",
+      "SERVICE_NAME": "Service Name",
+      "SERVICE_PRICE": "Service Price ($)",
+      "SERVICE_REFERENCE": "Service Reference",
+      "CREATION_DATE": "Creation Date",
+      "DUE_DATE": "Due Date",
+      "CREATED": "Created",
+      "SECTIONS": "Sections",
+      "NO_PREVIEW_AVAILABLE": "No preview available"
+    },
+    "PLACEHOLDERS": {
+      "CHOOSE_TEMPLATE": "Choose a template",
+      "SELECT_CLIENT": "Select a client",
+      "SELECT_SERVICE": "Select a service"
+    },
+    "BUTTONS": {
+      "NEXT": "Next",
+      "BACK": "Back",
+      "SUBMIT": "Submit"
+    },
+    "ERRORS": {
+      "SELECT_TEMPLATE_REQUIRED": "Please select an invoice template",
+      "SELECT_CLIENT_REQUIRED": "Please select a client",
+      "SELECT_SERVICE_REQUIRED": "Please select a service",
+      "PHONE_REQUIRED": "Phone number is required",
+      "PHONE_INVALID": "Invalid phone number format (8-15 digits, optional +)",
+      "ADDRESS_REQUIRED": "Address is required",
+      "RIB_REQUIRED": "RIB is required",
+      "RIB_INVALID": "Invalid RIB format (20-34 alphanumeric characters)",
+      "COMPANY_NAME_REQUIRED": "Company name is required",
+      "COMPANY_ADDRESS_REQUIRED": "Company address is required",
+      "COMPANY_TYPE_REQUIRED": "Company type is required",
+      "COMPANY_LOGO_REQUIRED": "Company logo URL is required",
+      "SERVICE_NAME_REQUIRED": "Service name is required",
+      "SERVICE_PRICE_REQUIRED": "Service price is required",
+      "SERVICE_PRICE_NEGATIVE": "Service price cannot be negative",
+      "CREATION_DATE_REQUIRED": "Creation date is required",
+      "DUE_DATE_REQUIRED": "Due date is required"
+    }
+  },
+  "INVOICE_TEMPLATES": {
+    "MESSAGES": {
+      "FAILED_LOAD_TEMPLATES": {
+        "TEXT": "Failed to load templates",
+        "TITLE": "Error"
+      },
+      "FAILED_PARSE_CONTENT": {
+        "TEXT": "Failed to parse template content",
+        "TITLE": "Error"
+      },
+      "INVALID_FORM": {
+        "TEXT": "Please fill in all required fields correctly",
+        "TITLE": "Error"
+      }
+    }
+  }
+ 
 }
   
 

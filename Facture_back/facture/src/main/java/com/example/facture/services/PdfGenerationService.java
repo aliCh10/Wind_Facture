@@ -19,11 +19,16 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.PDFRenderer;
 import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Map;
@@ -80,6 +85,29 @@ public class PdfGenerationService {
         }
     }
 
+    public byte[] generateThumbnailFromModele(ModeleFacture modeleFacture, Map<String, String> clientData) {
+        try {
+            // Generate PDF bytes
+            byte[] pdfBytes = generatePdfFromModele(modeleFacture, clientData);
+
+            // Load PDF into PDFBox
+            try (PDDocument document = PDDocument.load(new ByteArrayInputStream(pdfBytes))) {
+                PDFRenderer pdfRenderer = new PDFRenderer(document);
+                // Render first page at 100 DPI (adjust for thumbnail size)
+                BufferedImage image = pdfRenderer.renderImageWithDPI(0, 100);
+                
+                // Convert to PNG
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write(image, "png", baos);
+                document.close();
+                return baos.toByteArray();
+            }
+        } catch (Exception e) {
+            logger.error("Failed to generate thumbnail for model: {}", modeleFacture.getNameModel(), e);
+            throw new RuntimeException("Error generating thumbnail", e);
+        }
+    }
+
     private String processHtmlContent(Section section) {
         String html = section.getContent().getContentData();
         Map<String, String> styles = section.getStyles();
@@ -87,7 +115,6 @@ public class PdfGenerationService {
 
         logger.debug("Styles for section {}: {}", section.getSectionName(), styles);
 
-        // Nettoyer le HTML pour les tableaux
         if (!doc.select("table").isEmpty()) {
             processTableHtml(doc, styles);
             styleTableElements(doc, styles);
@@ -103,38 +130,30 @@ public class PdfGenerationService {
         return doc.body().html();
     }
 
-private String replacePlaceholders(String html, Map<String, String> clientData) {
-    if (clientData == null) return html;
-    
-    for (Map.Entry<String, String> entry : clientData.entrySet()) {
-        String placeholder = "#" + entry.getKey();
-        String value = entry.getValue();
-        // Ne remplace que si la valeur n'est pas vide, sinon conserve le placeholder
-        if (value != null && !value.trim().isEmpty()) {
-            html = html.replace(placeholder, value);
+    private String replacePlaceholders(String html, Map<String, String> clientData) {
+        if (clientData == null) return html;
+        
+        for (Map.Entry<String, String> entry : clientData.entrySet()) {
+            String placeholder = "#" + entry.getKey();
+            String value = entry.getValue();
+            if (value != null && !value.trim().isEmpty()) {
+                html = html.replace(placeholder, value);
+            }
         }
+        
+        return html;
     }
-    
-    return html;
-}
+
     private void processTableHtml(org.jsoup.nodes.Document doc, Map<String, String> styles) {
         doc.select("table").forEach(table -> {
-            // Supprimer les div englobants inutiles
             table.parents().select("div.relative, div.overflow-x-auto").forEach(div -> div.unwrap());
-
-            // Nettoyer les en-têtes
             table.select("th").forEach(th -> {
-                // Supprimer les colonnes vides
                 if (th.text().isEmpty() && th.children().isEmpty()) {
                     th.remove();
                 }
-                // Supprimer les classes inutiles
                 th.removeClass("px-4 py-3 text-left font-medium text-gray-800 tracking-wider");
             });
-
-            // Nettoyer les cellules
             table.select("td").forEach(td -> {
-                // Remplacer les inputs par leur valeur
                 td.select("input").forEach(input -> {
                     String value = input.attr("ng-reflect-model");
                     if (value.isEmpty()) {
@@ -142,15 +161,11 @@ private String replacePlaceholders(String html, Map<String, String> clientData) 
                     }
                     input.replaceWith(doc.createElement("span").text(value));
                 });
-                // Supprimer les colonnes vides ou avec bindings
                 if (td.html().contains("<!--bindings") || (td.text().isEmpty() && td.children().isEmpty())) {
                     td.remove();
                 }
-                // Supprimer les classes inutiles
                 td.removeClass("px-4 py-3 whitespace-nowrap");
             });
-
-            // Supprimer les attributs Angular
             table.select("*").forEach(element -> {
                 element.attributes().forEach(attr -> {
                     if (attr.getKey().startsWith("ng-")) {
@@ -158,9 +173,6 @@ private String replacePlaceholders(String html, Map<String, String> clientData) 
                     }
                 });
             });
-
-        
-            // Supprimer les lignes vides
             table.select("tr").forEach(tr -> {
                 if (tr.select("td, th").isEmpty()) {
                     tr.remove();
@@ -173,7 +185,6 @@ private String replacePlaceholders(String html, Map<String, String> clientData) 
         org.jsoup.nodes.Element container = doc.selectFirst(".content-row");
         if (container != null) {
             container.attr("style", "display: flex; flex-direction: row; align-items: center; gap: 20px;");
-
             doc.select("mat-form-field").forEach(field -> {
                 field.attr("style", "flex: 1; min-width: 100px; max-width: 200px; margin: 0;");
                 String label = field.selectFirst("mat-label").text();
@@ -187,46 +198,38 @@ private String replacePlaceholders(String html, Map<String, String> clientData) 
                     appendStyle(divStyle, styles, "color", "color", "");
                 }
                 divStyle.append("font-weight: normal;");
-
                 field.html(String.format("<div style='%s'>%s: %s</div>", divStyle.toString(), label, value));
             });
-
             doc.select(".mat-mdc-select-arrow-wrapper, .mat-datepicker-toggle").remove();
         }
     }
 
-  private void processInfoClientHtml(org.jsoup.nodes.Document doc, Map<String, String> styles) {
-    doc.select("tr").forEach(tr -> {
-        tr.tagName("div");
-        tr.attr("style", "display: block; margin-bottom: 10px;");
-    });
-
-    doc.select("td").forEach(td -> {
-        td.tagName("div");
-        String placeholder = td.select(".input-field").attr("data-placeholder");
-        String value = td.select(".input-field").text();
-        
-        StringBuilder spanStyle = new StringBuilder();
-        if (styles != null) {
-            appendStyle(spanStyle, styles, "font-family", "font-family", "");
-            appendStyle(spanStyle, styles, "font-size", "font-size", "");
-            appendStyle(spanStyle, styles, "color", "color", "");
-        }
-        spanStyle.append("font-weight: normal;");
-
-        // Display the value followed by the placeholder with '#'
-        String displayText = value + "  :  " + placeholder;
-        td.html(String.format("<span style='%s'>%s</span>", spanStyle.toString(), displayText));
-        td.attr("style", "display: block; padding: 8px;");
-    });
-
-    doc.select(".input-container, .input-icon").remove();
-    doc.select("table").attr("style", "width: 100%; display: block;");
-    doc.select("tbody").unwrap();
-}
+    private void processInfoClientHtml(org.jsoup.nodes.Document doc, Map<String, String> styles) {
+        doc.select("tr").forEach(tr -> {
+            tr.tagName("div");
+            tr.attr("style", "display: block; margin-bottom: 10px;");
+        });
+        doc.select("td").forEach(td -> {
+            td.tagName("div");
+            String placeholder = td.select(".input-field").attr("data-placeholder");
+            String value = td.select(".input-field").text();
+            StringBuilder spanStyle = new StringBuilder();
+            if (styles != null) {
+                appendStyle(spanStyle, styles, "font-family", "font-family", "");
+                appendStyle(spanStyle, styles, "font-size", "font-size", "");
+                appendStyle(spanStyle, styles, "color", "color", "");
+            }
+            spanStyle.append("font-weight: normal;");
+            String displayText = value + " : " + placeholder;
+            td.html(String.format("<span style='%s'>%s</span>", spanStyle.toString(), displayText));
+            td.attr("style", "display: block; padding: 8px;");
+        });
+        doc.select(".input-container, .input-icon").remove();
+        doc.select("table").attr("style", "width: 100%; display: block;");
+        doc.select("tbody").unwrap();
+    }
 
     private void styleTableElements(org.jsoup.nodes.Document doc, Map<String, String> styles) {
-        // Apply table styles
         doc.select("table").forEach(table -> {
             String currentStyle = table.attr("style");
             currentStyle = currentStyle == null ? "" : currentStyle;
@@ -234,8 +237,6 @@ private String replacePlaceholders(String html, Map<String, String> clientData) 
             table.attr("style", currentStyle + tableStyle);
             logger.debug("Table style applied: {}", currentStyle + tableStyle);
         });
-
-        // Apply cell styles
         doc.select("td").forEach(cell -> {
             String currentStyle = cell.attr("style");
             currentStyle = currentStyle == null ? "" : currentStyle;
@@ -243,8 +244,6 @@ private String replacePlaceholders(String html, Map<String, String> clientData) 
             cell.attr("style", currentStyle + cellStyle);
             logger.debug("TD style applied: {}", currentStyle + cellStyle);
         });
-
-        // Apply header styles
         doc.select("th").forEach(header -> {
             String currentStyle = header.attr("style");
             currentStyle = currentStyle == null ? "" : currentStyle;
@@ -252,8 +251,6 @@ private String replacePlaceholders(String html, Map<String, String> clientData) 
             header.attr("style", currentStyle + headerStyle);
             logger.debug("TH style applied: {}", currentStyle + headerStyle);
         });
-
-        // Apply alternate row coloring if specified
         if (styles != null && styles.containsKey("alternate-row-color")) {
             String styleTag = "<style>tr:nth-child(even) { background-color: " + styles.get("alternate-row-color") + "; }</style>";
             doc.head().append(styleTag);
@@ -365,31 +362,30 @@ private String replacePlaceholders(String html, Map<String, String> clientData) 
         );
     }
 
-   private void addElementsToContainer(Div container, List<IElement> elements, Map<String, String> styles) {
-    for (IElement element : elements) {
-        if (element instanceof Table) {
-            Table table = (Table) element;
-            float cellHeight = styles != null && styles.containsKey("cell-height")
-                    ? parseSize(styles, "cell-height", 100) * PX_TO_PT
-                    : 100 * PX_TO_PT;
+    private void addElementsToContainer(Div container, List<IElement> elements, Map<String, String> styles) {
+        for (IElement element : elements) {
+            if (element instanceof Table) {
+                Table table = (Table) element;
+                float cellHeight = styles != null && styles.containsKey("cell-height")
+                        ? parseSize(styles, "cell-height", 100) * PX_TO_PT
+                        : 100 * PX_TO_PT;
 
-            // Apply styles to all cells
-            for (IElement childElement : table.getChildren()) {
-                if (childElement instanceof Cell) {
-                    Cell cell = (Cell) childElement;
-                    cell.setMinHeight(cellHeight); // Apply uniform height (CSS handles <th> vs <td>)
-                    cell.setBorder(new SolidBorder(1));
-                    cell.setPadding(8);
+                for (IElement childElement : table.getChildren()) {
+                    if (childElement instanceof Cell) {
+                        Cell cell = (Cell) childElement;
+                        cell.setMinHeight(cellHeight);
+                        cell.setBorder(new SolidBorder(1));
+                        cell.setPadding(8);
+                    }
                 }
+                container.add(table);
+            } else if (element instanceof BlockElement) {
+                container.add((BlockElement<?>) element);
+            } else {
+                container.add(new Paragraph().add((com.itextpdf.layout.element.IBlockElement) element));
             }
-            container.add(table);
-        } else if (element instanceof BlockElement) {
-            container.add((BlockElement<?>) element);
-        } else {
-            container.add(new Paragraph().add((com.itextpdf.layout.element.IBlockElement) element));
         }
     }
-}
 
     private Color parseColor(String colorStr) {
         if (colorStr == null || colorStr.isEmpty()) {

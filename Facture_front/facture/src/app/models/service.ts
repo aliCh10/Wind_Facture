@@ -1,16 +1,15 @@
+// service.model.ts
 export class Service {
   constructor(
-    public id: number,
+    public id: number | null,  // Make id nullable for new creations
     public ref: string,
-    public serviceQuantity: number,
     public serviceName: string,
-    public servicePrice: number,
-    public tenantId?: number // Optional, included if backend returns it
+    public servicePrice: string | number  // Handle both string and number
   ) {}
 }
+
 export interface ServiceDTO {
   ref: string;
-  serviceQuantity: number;
   serviceName: string;
-  servicePrice: number;
+  servicePrice: string;  // Send as string to match BigDecimal
 }

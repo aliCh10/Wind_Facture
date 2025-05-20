@@ -11,6 +11,7 @@ import { EmployeeComponent } from './employee/employee.component';
 import { ClientsComponent } from './clients/clients.component';
 import { ServComponent } from './serv/serv.component';
 import { NewFactureComponent } from './list-models/new-facture.component';
+import { CreeFactureComponent } from './components/cree-facture/cree-facture.component';
 
 const routes: Routes = [
   {
@@ -30,6 +31,7 @@ const routes: Routes = [
       { path: 'clients', component: ClientsComponent, canActivate: [AuthGuard] },
       { path: 'services', component: ServComponent, canActivate: [AuthGuard] },
       { path: 'models', component: NewFactureComponent, canActivate: [AuthGuard] },
+      {path:'creer-facture', component: CreeFactureComponent, canActivate: [AuthGuard] },
     ]
   },
   { path: '404', component: PageNotFoundComponent }, 

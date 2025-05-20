@@ -284,6 +284,10 @@
       "INFO": {
         "NO_CHANGES": "Aucun changement à enregistrer"
       },
+      "worning": {
+        "Invalid_data": "Données invalides. Vérifiez les informations saisies.",
+        "TITLE": "Attention"
+      },
       "CONFIRM": {
         "DELETE_CONFIRM": "Voulez-vous vraiment supprimer ce client ?"
       },
@@ -327,19 +331,19 @@
     }
   
   },
-   "INVOICE_TEMPLATES": {
+"INVOICE_TEMPLATES": {
     "TITLE": "Modèles de facture",
     "NO_TEMPLATES": {
       "TITLE": "Aucun modèle disponible",
-      "DESCRIPTION": "Commencez dès maintenant en créant votre premier modèle !",
+      "DESCRIPTION": "Commencez par créer votre premier modèle !",
       "BUTTON": "Commencer"
     },
     "CARD": {
-      "UNTITLED": "Modèle sans nom",
-      "CREATED_ON": "Créé le:",
+      "UNTITLED": "Modèle sans titre",
+      "CREATED_ON": "Créé le :",
       "SECTIONS": "sections",
-      "PREVIEW": "Prévisualiser",
-      "DELETE": "Effacer ce modèle"
+      "PREVIEW": "Aperçu",
+      "DELETE": "Supprimer le modèle"
     },
     "MESSAGES": {
       "FAILED_LOAD_TEMPLATES": {
@@ -354,7 +358,7 @@
         "TEXT": "Impossible de supprimer le modèle - ID manquant",
         "TITLE": "Erreur"
       },
-      "FAILED_DELETE_TEMPLATE": {
+      "FAILDELETE_TEMPLATE": {
         "TEXT": "Échec de la suppression du modèle",
         "TITLE": "Erreur"
       },
@@ -364,16 +368,28 @@
       },
       "CONFIRM_DELETE": "Êtes-vous sûr de vouloir supprimer \"{{name}}\" ?",
       "TEMPLATE_SAVED": {
-        "TEXT": "Modèle sauvegardé avec succès",
+        "TEXT": "Modèle enregistré avec succès",
         "TITLE": "Succès"
       },
       "ERROR_SAVING_TEMPLATE": {
-        "TEXT": "Erreur lors de la sauvegarde",
+        "TEXT": "Erreur lors de l'enregistrement du modèle",
+        "TITLE": "Erreur"
+      },
+      "TEMPLATE_NAME_REQUIRED": {
+        "TEXT": "Le nom du modèle est requis",
         "TITLE": "Erreur"
       }
+    },
+    "SAVE_MODAL": {
+      "TITLE": "Enregistrer le modèle",
+      "TEMPLATE_NAME": "Nom du modèle",
+      "TEMPLATE_NAME_PLACEHOLDER": "Entrez le nom du modèle",
+      "CANCEL": "Annuler",
+      "CONFIRM_SAVE": "Confirmer",
+      "CANCEL_ARIA_LABEL": "Bouton d'annulation",
+      "CONFIRM_SAVE_ARIA_LABEL": "Bouton de confirmation d'enregistrement"
     }
-  
-    } ,
+},
     
   "PAGINATOR": {
     "ITEMS_PER_PAGE": "Éléments par page :",
@@ -406,8 +422,84 @@
     "saveAriaLabel": "Save model",
     "toggleAriaLabel": "Toggle options panel"
   
-}
-   
+},
+
+  "CREATE_INVOICE": {
+    "STEPS": {
+      "CLIENT_INFORMATION": "Informations sur le client",
+      "COMPANY_INFORMATION": "Informations sur l'entreprise",
+      "SERVICES": "Services",
+      "DATES": "Dates"
+    },
+    "LABELS": {
+      "SELECT_INVOICE_TEMPLATE": "Sélectionner un modèle de facture",
+      "CLIENT": "Client",
+      "CLIENT_PHONE": "Téléphone du client",
+      "CLIENT_ADDRESS": "Adresse du client",
+      "CLIENT_RIB": "RIB du client",
+      "COMPANY_NAME": "Nom de l'entreprise",
+      "COMPANY_ADDRESS": "Adresse de l'entreprise",
+      "COMPANY_TYPE": "Type d'entreprise",
+      "COMPANY_LOGO": "Logo de l'entreprise",
+      "SERVICE": "Service",
+      "SERVICE_NAME": "Nom du service",
+      "SERVICE_REFERENCE": "Reference du service",
+      "SERVICE_PRICE": "Prix du service (€)",
+      "CREATION_DATE": "Date de création",
+      "DUE_DATE": "Date d'échéance",
+      "CREATED": "Créé le",
+      "SECTIONS": "Sections",
+      "NO_PREVIEW_AVAILABLE": "Aucun aperçu disponible"
+    },
+    "PLACEHOLDERS": {
+      "CHOOSE_TEMPLATE": "Choisir un modèle",
+      "SELECT_CLIENT": "Sélectionner un client",
+      "SELECT_SERVICE": "Sélectionner un service"
+    },
+    "BUTTONS": {
+      "NEXT": "Suivant",
+      "BACK": "Précédent",
+      "SUBMIT": "Soumettre"
+    },
+    "ERRORS": {
+      "SELECT_TEMPLATE_REQUIRED": "Veuillez sélectionner un modèle de facture",
+      "SELECT_CLIENT_REQUIRED": "Veuillez sélectionner un client",
+      "SELECT_SERVICE_REQUIRED": "Veuillez sélectionner un service",
+      "PHONE_REQUIRED": "Le numéro de téléphone est requis",
+      "PHONE_INVALID": "Format de numéro de téléphone invalide (8 à 15 chiffres, + optionnel)",
+      "ADDRESS_REQUIRED": "L'adresse est requise",
+      "RIB_REQUIRED": "Le RIB est requis",
+      "RIB_INVALID": "Format de RIB invalide (20 à 34 caractères alphanumériques)",
+      "COMPANY_NAME_REQUIRED": "Le nom de l'entreprise est requis",
+      "COMPANY_ADDRESS_REQUIRED": "L'adresse de l'entreprise est requise",
+      "COMPANY_TYPE_REQUIRED": "Le type d'entreprise est requis",
+      "COMPANY_LOGO_REQUIRED": "L'URL du logo de l'entreprise est requise",
+      "SERVICE_NAME_REQUIRED": "Le nom du service est requis",
+      "SERVICE_PRICE_REQUIRED": "Le prix du service est requis",
+      "SERVICE_PRICE_NEGATIVE": "Le prix du service ne peut pas être négatif",
+      "CREATION_DATE_REQUIRED": "La date de création est requise",
+      "DUE_DATE_REQUIRED": "La date d'échéance est requise"
+    }
+  },
+  "INVOICE_TEMPLATES": {
+    "CARD": {
+      "UNTITLED": "Modèle sans titre"
+    },
+    "MESSAGES": {
+      "FAILED_LOAD_TEMPLATES": {
+        "TEXT": "Échec du chargement des modèles",
+        "TITLE": "Erreur"
+      },
+      "FAILED_PARSE_CONTENT": {
+        "TEXT": "Échec de l'analyse du contenu du modèle",
+        "TITLE": "Erreur"
+      },
+      "INVALID_FORM": {
+        "TEXT": "Veuillez remplir correctement tous les champs requis",
+        "TITLE": "Erreur"
+      }
+    }
+  }
   
   
   

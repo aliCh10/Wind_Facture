@@ -1,0 +1,248 @@
+<div class="w-full bg-white p-6 sm:p-8">
+  <!-- Stepper -->
+  <mat-stepper orientation="vertical" class="w-full max-w-3xl mx-auto">
+    <!-- Step 1: Client Information (with Template Selection) -->
+    <mat-step [stepControl]="clientStepControls" [label]="'CREATE_INVOICE.STEPS.CLIENT_INFORMATION' | translate">
+      <form [formGroup]="clientForm" class="space-y-4">
+        <!-- Template Selection -->
+        <div class="mb-6">
+          <label class="block text-gray-600 font-medium mb-2" translate>CREATE_INVOICE.LABELS.SELECT_INVOICE_TEMPLATE</label>
+          <mat-form-field class="w-full max-w-3xl">
+            <mat-label translate>CREATE_INVOICE.PLACEHOLDERS.CHOOSE_TEMPLATE</mat-label>
+            <mat-select formControlName="selectedModele" (selectionChange)="onTemplateChange($event.value)">
+              <mat-option *ngFor="let modele of modeles" [value]="modele">
+                <div style="display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); transition: transform 0.3s;"
+                     onmouseover="this.style.transform='scale(1.02)';" onmouseout="this.style.transform='scale(1)';">
+                  <!-- A4 Thumbnail Preview -->
+                  <div style="width: 100px; height: 141px; border: 1px solid #FFD700; background: #fff; overflow: hidden;">
+                    <img [src]="getThumbnailUrl(modele)" style="width: 100%; height: 100%; object-fit: cover;" alt="Template Preview"
+                         (error)="handleImageError($event, modele)">
+                    <div *ngIf="!getThumbnailUrl(modele)" style="font-size: 8px; color: #6b7280; padding: 8px;" translate>
+                      CREATE_INVOICE.LABELS.NO_PREVIEW_AVAILABLE
+                    </div>
+                  </div>
+                  <!-- Template Name and Info -->
+                  <div style="flex: 1;">
+                    <div style="font-weight: 600; font-size: 12px; color: #1A237E;">
+                      {{ modele.nameModel || ('INVOICE_TEMPLATES.CARD.UNTITLED' | translate) }}
+                    </div>
+                    <div style="color: #4B0082; font-size: 10px; display: flex; align-items: center; margin-top: 4px;">
+                      <mat-icon style="font-size: 14px; color: #FFD700; margin-right: 4px;">event</mat-icon>
+                      {{ 'CREATE_INVOICE.LABELS.CREATED' | translate }}: {{ modele.createdAt | date:'dd/MM/yyyy' }}
+                    </div>
+                    <div style="color: #6b7280; font-size: 10px; margin-top: 4px;">
+                      {{ 'CREATE_INVOICE.LABELS.SECTIONS' | translate }}: {{ modele.sections.length }}
+                    </div>
+                  </div>
+                </div>
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="clientForm.get('selectedModele')?.hasError('required') && clientForm.get('selectedModele')?.touched" translate>
+              CREATE_INVOICE.ERRORS.SELECT_TEMPLATE_REQUIRED
+            </mat-error>
+          </mat-form-field>
+          <div *ngIf="loading" class="text-center mt-4">
+            <mat-spinner diameter="40" style="margin: 0 auto; color: #FFD700;"></mat-spinner>
+          </div>
+        </div>
+
+        <!-- Client Information Fields -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="flex items-center gap-2">
+            <div class="w-full">
+              <label class="block text-gray-600 font-medium mb-1" translate>CREATE_INVOICE.LABELS.CLIENT</label>
+              <mat-form-field class="w-full">
+                <mat-label translate>CREATE_INVOICE.PLACEHOLDERS.SELECT_CLIENT</mat-label>
+                <mat-select formControlName="selectedClient" (selectionChange)="onClientChange($event.value)">
+                  <mat-option *ngFor="let client of clients" [value]="client">
+                    {{ client.clientName }}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="clientForm.get('selectedClient')?.hasError('required') && clientForm.get('selectedClient')?.touched" translate>
+                  CREATE_INVOICE.ERRORS.SELECT_CLIENT_REQUIRED
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <button mat-icon-button (click)="openClientModal()"
+                    class="bg-yellow-400 hover:bg-yellow-500 text-gray-800 rounded-full w-10 h-10 flex items-center justify-center transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+            </button>
+          </div>
+          <div>
+            <label class="block text-gray-600 font-medium mb-1" translate>CREATE_INVOICE.LABELS.CLIENT_PHONE</label>
+            <input type="text" formControlName="clientPhone" required readonly
+                   class="w-full border-2 border-gray-300 rounded-lg bg-gray-100 p-3 min-h-12 cursor-not-allowed">
+            <div *ngIf="clientForm.get('clientPhone')?.hasError('required') && clientForm.get('clientPhone')?.touched"
+                 class="text-red-500 text-sm mt-1" translate>CREATE_INVOICE.ERRORS.PHONE_REQUIRED</div>
+            <div *ngIf="clientForm.get('clientPhone')?.hasError('pattern') && clientForm.get('clientPhone')?.touched"
+                 class="text-red-500 text-sm mt-1" translate>CREATE_INVOICE.ERRORS.PHONE_INVALID</div>
+          </div>
+          <div>
+            <label class="block text-gray-600 font-medium mb-1" translate>CREATE_INVOICE.LABELS.CLIENT_ADDRESS</label>
+            <input type="text" formControlName="clientAddress" required readonly
+                   class="w-full border-2 border-gray-300 rounded-lg bg-gray-100 p-3 min-h-12 cursor-not-allowed">
+            <div *ngIf="clientForm.get('clientAddress')?.hasError('required') && clientForm.get('clientAddress')?.touched"
+                 class="text-red-500 text-sm mt-1" translate>CREATE_INVOICE.ERRORS.ADDRESS_REQUIRED</div>
+          </div>
+          <div>
+            <label class="block text-gray-600 font-medium mb-1" translate>CREATE_INVOICE.LABELS.CLIENT_RIB</label>
+            <input type="text" formControlName="clientRIB" required readonly
+                   class="w-full border-2 border-gray-300 rounded-lg bg-gray-100 p-3 min-h-12 cursor-not-allowed">
+            <div *ngIf="clientForm.get('clientRIB')?.hasError('required') && clientForm.get('clientRIB')?.touched"
+                 class="text-red-500 text-sm mt-1" translate>CREATE_INVOICE.ERRORS.RIB_REQUIRED</div>
+            <div *ngIf="clientForm.get('clientRIB')?.hasError('pattern') && clientForm.get('clientRIB')?.touched"
+                 class="text-red-500 text-sm mt-1" translate>CREATE_INVOICE.ERRORS.RIB_INVALID</div>
+          </div>
+        </div>
+        <div class="flex justify-end">
+          <button matStepperNext [disabled]="!clientStepControls.valid"
+                  class="bg-yellow-400 hover:bg-yellow-500 text-gray-800 px-6 py-2 rounded-full font-medium transition-colors" translate>
+            CREATE_INVOICE.BUTTONS.NEXT
+          </button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Step 2: Company Information -->
+  <mat-step [stepControl]="companyStepControls" [label]="'CREATE_INVOICE.STEPS.COMPANY_INFORMATION' | translate">
+  <form [formGroup]="clientForm" class="space-y-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-gray-600 font-medium mb-1" translate>CREATE_INVOICE.LABELS.COMPANY_NAME</label>
+        <input type="text" formControlName="companyName" required readonly
+               class="w-full border-2 border-gray-300 rounded-lg bg-gray-100 p-3 min-h-12 cursor-not-allowed">
+        <div *ngIf="clientForm.get('companyName')?.hasError('required') && clientForm.get('companyName')?.touched"
+             class="text-red-500 text-sm mt-1" translate>CREATE_INVOICE.ERRORS.COMPANY_NAME_REQUIRED</div>
+      </div>
+      <div>
+        <label class="block text-gray-600 font-medium mb-1" translate>CREATE_INVOICE.LABELS.COMPANY_ADDRESS</label>
+        <input type="text" formControlName="companyAddress" required readonly
+               class="w-full border-2 border-gray-300 rounded-lg bg-gray-100 p-3 min-h-12 cursor-not-allowed">
+        <div *ngIf="clientForm.get('companyAddress')?.hasError('required') && clientForm.get('companyAddress')?.touched"
+             class="text-red-500 text-sm mt-1" translate>CREATE_INVOICE.ERRORS.COMPANY_ADDRESS_REQUIRED</div>
+      </div>
+      <div>
+        <label class="block text-gray-600 font-medium mb-1" translate>CREATE_INVOICE.LABELS.COMPANY_TYPE</label>
+        <input type="text" formControlName="companyType" required readonly
+               class="w-full border-2 border-gray-300 rounded-lg bg-gray-100 p-3 min-h-12 cursor-not-allowed">
+        <div *ngIf="clientForm.get('companyType')?.hasError('required') && clientForm.get('companyType')?.touched"
+             class="text-red-500 text-sm mt-1" translate>CREATE_INVOICE.ERRORS.COMPANY_TYPE_REQUIRED</div>
+      </div>
+      <div>
+        <label class="block text-gray-600 font-medium mb-1" translate>CREATE_INVOICE.LABELS.COMPANY_LOGO</label>
+        <div class="w-full border-2 border-gray-300 rounded-lg bg-gray-100 p-3 min-h-12 flex items-center justify-center">
+          <img *ngIf="clientForm.get('companyLogo')?.value" [src]="clientForm.get('companyLogo')?.value" 
+               class="max-h-20 max-w-full object-contain" alt="Company Logo"
+               (error)="handleLogoError()">
+          <span *ngIf="!clientForm.get('companyLogo')?.value" class="text-gray-500 text-sm" translate>
+            CREATE_INVOICE.LABELS.NO_LOGO_AVAILABLE
+          </span>
+        </div>
+        <div *ngIf="clientForm.get('companyLogo')?.hasError('required') && clientForm.get('companyLogo')?.touched"
+             class="text-red-500 text-sm mt-1" translate>CREATE_INVOICE.ERRORS.COMPANY_LOGO_REQUIRED</div>
+      </div>
+    </div>
+    <div class="flex justify-between">
+      <button matStepperPrevious
+              class="bg-yellow-400 hover:bg-yellow-500 text-gray-800 px-6 py-2 rounded-full font-medium transition-colors" translate>
+        CREATE_INVOICE.BUTTONS.BACK
+      </button>
+      <button matStepperNext [disabled]="!companyStepControls.valid"
+              class="bg-yellow-400 hover:bg-yellow-500 text-gray-800 px-6 py-2 rounded-full font-medium transition-colors" translate>
+        CREATE_INVOICE.BUTTONS.NEXT
+      </button>
+    </div>
+  </form>
+</mat-step>
+
+    <!-- Step 3: Services -->
+    <mat-step [stepControl]="servicesStepControls" [label]="'CREATE_INVOICE.STEPS.SERVICES' | translate">
+      <form [formGroup]="servicesForm" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="flex items-center gap-2">
+            <div class="w-full">
+              <label class="block text-gray-600 font-medium mb-1" translate>CREATE_INVOICE.LABELS.SERVICE</label>
+              <mat-form-field class="w-full">
+                <mat-label translate>CREATE_INVOICE.PLACEHOLDERS.SELECT_SERVICE</mat-label>
+                <mat-select formControlName="selectedService" (selectionChange)="onServiceChange($event.value)">
+                  <mat-option *ngFor="let service of services" [value]="service">
+                    {{ service.serviceName }}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="servicesForm.get('selectedService')?.hasError('required') && servicesForm.get('selectedService')?.touched" translate>
+                  CREATE_INVOICE.ERRORS.SELECT_SERVICE_REQUIRED
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <button mat-icon-button (click)="openServiceModal()"
+                    class="bg-yellow-400 hover:bg-yellow-500 text-gray-800 rounded-full w-10 h-10 flex items-center justify-center transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+            </button>
+          </div>
+          <div>
+            <label class="block text-gray-600 font-medium mb-1" translate>CREATE_INVOICE.LABELS.SERVICE_REFERENCE</label>
+            <input type="text" formControlName="serviceReference" required readonly
+                   class="w-full border-2 border-gray-300 rounded-lg bg-gray-100 p-3 min-h-12 cursor-not-allowed">
+            <div *ngIf="servicesForm.get('serviceReference')?.hasError('required') && servicesForm.get('serviceReference')?.touched"
+                 class="text-red-500 text-sm mt-1" translate>CREATE_INVOICE.ERRORS.SERVICE_NAME_REQUIRED</div>
+          </div>
+          <div>
+            <label class="block text-gray-600 font-medium mb-1" translate>CREATE_INVOICE.LABELS.SERVICE_PRICE</label>
+            <input type="number" formControlName="servicePrice" required readonly
+                   class="w-full border-2 border-gray-300 rounded-lg bg-gray-100 p-3 min-h-12 cursor-not-allowed">
+            <div *ngIf="servicesForm.get('servicePrice')?.hasError('required') && servicesForm.get('servicePrice')?.touched"
+                 class="text-red-500 text-sm mt-1" translate>CREATE_INVOICE.ERRORS.SERVICE_PRICE_REQUIRED</div>
+            <div *ngIf="servicesForm.get('servicePrice')?.hasError('min') && servicesForm.get('servicePrice')?.touched"
+                 class="text-red-500 text-sm mt-1" translate>CREATE_INVOICE.ERRORS.SERVICE_PRICE_NEGATIVE</div>
+          </div>
+        </div>
+        <div class="flex justify-between">
+          <button matStepperPrevious
+                  class="bg-yellow-400 hover:bg-yellow-500 text-gray-800 px-6 py-2 rounded-full font-medium transition-colors" translate>
+            CREATE_INVOICE.BUTTONS.BACK
+          </button>
+          <button matStepperNext [disabled]="!servicesStepControls.valid"
+                  class="bg-yellow-400 hover:bg-yellow-500 text-gray-800 px-6 py-2 rounded-full font-medium transition-colors" translate>
+            CREATE_INVOICE.BUTTONS.NEXT
+          </button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Step 4: Dates -->
+    <mat-step [stepControl]="datesForm" [label]="'CREATE_INVOICE.STEPS.DATES' | translate">
+      <form [formGroup]="datesForm" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-gray-600 font-medium mb-1" translate>CREATE_INVOICE.LABELS.CREATION_DATE</label>
+            <input type="date" formControlName="creationDate" required
+                   class="w-full border-2 border-gray-300 rounded-lg bg-gray-50 p-3 min-h-12">
+            <div *ngIf="datesForm.get('creationDate')?.hasError('required') && datesForm.get('creationDate')?.touched"
+                 class="text-red-500 text-sm mt-1" translate>CREATE_INVOICE.ERRORS.CREATION_DATE_REQUIRED</div>
+          </div>
+          <div>
+            <label class="block text-gray-600 font-medium mb-1" translate>CREATE_INVOICE.LABELS.DUE_DATE</label>
+            <input type="date" formControlName="dueDate" required
+                   class="w-full border-2 border-gray-300 rounded-lg bg-gray-50 p-3 min-h-12">
+            <div *ngIf="datesForm.get('dueDate')?.hasError('required') && datesForm.get('dueDate')?.touched"
+                 class="text-red-500 text-sm mt-1" translate>CREATE_INVOICE.ERRORS.DUE_DATE_REQUIRED</div>
+          </div>
+        </div>
+        <div class="flex justify-between">
+          <button matStepperPrevious
+                  class="bg-yellow-400 hover:bg-yellow-500 text-gray-800 px-6 py-2 rounded-full font-medium transition-colors" translate>
+            CREATE_INVOICE.BUTTONS.BACK
+          </button>
+          <button (click)="onSubmit()" [disabled]="!datesForm.valid"
+                  class="bg-yellow-400 hover:bg-yellow-500 text-gray-800 px-6 py-2 rounded-full font-medium transition-colors" translate>
+            CREATE_INVOICE.BUTTONS.SUBMIT
+          </button>
+        </div>
+      </form>
+    </mat-step>
+  </mat-stepper>
+</div>

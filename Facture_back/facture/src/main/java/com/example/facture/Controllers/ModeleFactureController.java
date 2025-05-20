@@ -87,4 +87,25 @@ public ResponseEntity<byte[]> getModeleFacturePdf(@PathVariable Long id) {
             })
             .orElse(ResponseEntity.notFound().build());
 }
+ @GetMapping("/{id}/thumbnail")
+    @Operation(summary = "Generate thumbnail for invoice template", description = "Generates and returns a PNG thumbnail of the first page of the invoice template")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Thumbnail generated successfully"),
+            @ApiResponse(responseCode = "404", description = "Template not found"),
+            @ApiResponse(responseCode = "500", description = "Error generating thumbnail")
+    })
+    public ResponseEntity<byte[]> getModeleThumbnail(@PathVariable Long id) {
+        try {
+            byte[] thumbnailBytes = modeleFactureService.generateModeleFactureThumbnail(id);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.IMAGE_PNG);
+            headers.setContentDispositionFormData("inline", "thumbnail-" + id + ".png");
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(thumbnailBytes);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 }

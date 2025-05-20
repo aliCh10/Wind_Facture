@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -89,4 +90,19 @@ public class ModeleFactureService {
         throw new RuntimeException("ModeleFacture with ID " + id + " not found");
     }
 }
+public ModeleFacture getModeleFacture(Long id) {
+    return modeleFactureRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("ModeleFacture not found with id: " + id));
+}
+  public byte[] generateModeleFactureThumbnail(Long id) {
+        logger.info("Generating thumbnail for ModeleFacture ID: {}", id);
+        Optional<ModeleFacture> modeleFacture = getModeleFactureById(id);
+        if (modeleFacture.isPresent()) {
+            return pdfGenerationService.generateThumbnailFromModele(modeleFacture.get(), Collections.emptyMap());
+        } else {
+            logger.error("ModeleFacture with ID {} not found", id);
+            throw new RuntimeException("ModeleFacture with ID " + id + " not found");
+        }
+    }
+
 }

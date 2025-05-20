@@ -1,18 +1,19 @@
 <nav class="modern-navbar">
   <div class="navbar-container">
     <div class="navbar-brand">
-      <button class="hamburger" (click)="toggleSidebar()" [class.hidden]="!isMobile">&#9776;</button>
+      <button class="hamburger" (click)="toggleSidebar()" [class.hidden]="!isMobile">☰</button>
     </div>
 
     <div class="navbar-right">
       <div class="user-account" (click)="toggleUserDropdown()">
         <span class="user-name">{{userName}}</span>
-        <img [src]="userAvatar" alt="User" class="user-avatar">
+        <img [src]="userAvatar" alt="Company Logo" class="user-avatar">
         <div class="user-dropdown" *ngIf="showUserDropdown">
           <a routerLink="" class="dropdown-item"><i class="fas fa-user"></i> Profile</a>
           <a routerLink="/profile" class="dropdown-item"><i class="fas fa-cog"></i> Settings <i class="fas fa-chevron-right dropdown-submenu-icon"></i></a>
-        <div class="dropdown-divider"></div>
-        <a class="dropdown-item" (click)="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>        </div>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" (click)="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
       </div>
       <div class="language-switcher-container">
         <app-language-switcher></app-language-switcher>

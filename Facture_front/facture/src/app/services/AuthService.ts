@@ -8,10 +8,9 @@ import { Router } from '@angular/router';
 })
 export class AuthService {
   private apiUrl = 'http://localhost:8090/public'; 
-  private logo: File | null = null; // Add this line
+  private logo: File | null = null;
 
-
-  constructor(private http: HttpClient,private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   register(user: FormData): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, user);
@@ -23,13 +22,12 @@ export class AuthService {
   }
 
   login(credentials: { email: string, password: string }) {
-    return this.http.post<{ token: string; role: string; name?: string ; id?: number}>(
+    return this.http.post<{ token: string; role: string; name?: string; id?: number }>(
       `${this.apiUrl}/login`,
       credentials
     ).pipe(
       tap(response => {
-        console.log(response);
-        console.log('🔍 Réponse API:', response); 
+        console.log('🔍 Réponse API:', response);
         if (response.token) {
           localStorage.setItem('token', response.token);
         }
@@ -46,16 +44,14 @@ export class AuthService {
       })
     );
   }
-  
-  
+
   getUserRole(): string | null {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('role');
     }
     return null;
   }
-  
-  
+
   setLogo(logo: File | null): void {
     this.logo = logo;
   }
@@ -72,35 +68,41 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/reset-password?email=${email}&code=${code}&newPassword=${newPassword}`, {});
   }
 
+  // New method to fetch company information
+  getCompanyInfo(): Observable<{ companyName: string; address: string; tel: string; email: string; companyType: string; logoUrl: string }> {
+    const headers = this.createHeaders();
+    return this.http.get<{ companyName: string; address: string; tel: string; email: string; companyType: string; logoUrl: string }>(
+      `${this.apiUrl}/company-info`,
+      { headers }
+    );
+  }
+
   private createHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
     let headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
-    
+
     if (token) {
       headers = headers.set('Authorization', `Bearer ${token}`);
     }
-    
+
     return headers;
   }
+
   isAuthenticated(): boolean {
     if (typeof window !== 'undefined' && window.localStorage) {
       const token = localStorage.getItem('token');
-      return !!token; 
+      return !!token;
     }
-    return false; 
+    return false;
   }
+
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
     localStorage.removeItem('name');
-
     this.router.navigate(['/signin']);
-
     console.log('🔴 Utilisateur déconnecté');
   }
-  
-  
-  
 }

@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { EmployeeService } from '../../services/employee.service';
 import { Employee } from '../../models/User';
 import { Client } from '../../models/Client';
-import { Service } from '../../models/service';
+import { Service, ServiceDTO } from '../../models/service';
 import { SerService } from '../../services/ser.service';
 import { ClientService } from '../../services/ClientService';
 import { ToastrService } from 'ngx-toastr';
@@ -27,9 +27,10 @@ export class DynamicModalComponent {
   });
 
   client: Client = new Client('', '', '', '');
-  service: Service = new Service(0, '', 0, '', 0);
+  service: Service = new Service(0, '',  '', 0);
   isLoading = false;
     serviceForm: FormGroup;
+    clientForm: FormGroup;
 
 
   constructor(
@@ -43,12 +44,16 @@ export class DynamicModalComponent {
     private toastr: ToastrService,
     private translate: TranslateService
   ) {
-    console.log('Modal opened with type:', this.data.type, 'and partnerId:', this.data.partnerId);
      this.serviceForm = this.fb.group({
       ref: ['', Validators.required],
       serviceName: ['', Validators.required],
-      serviceQuantity: [0, [Validators.required, Validators.min(0)]],
       servicePrice: [0, [Validators.required, Validators.min(0)]]
+    });
+    this.clientForm = this.fb.group({
+      clientName: ['', Validators.required],
+      clientPhone: ['', [Validators.required, Validators.pattern(/^\+?\d{8,15}$/)]],
+      clientAddress: ['', Validators.required],
+      clientRIB: ['', Validators.required]
     });
   }
 
@@ -66,7 +71,7 @@ export class DynamicModalComponent {
     }
   }
 
- private saveService(): void {
+private saveService(): void {
   if (!this.isServiceFormValid()) {
     this.toastr.error(
       this.translate.instant('DYNAMIC_MODAL.SERVICE.ERROR.INVALID'),
@@ -74,8 +79,16 @@ export class DynamicModalComponent {
     );
     return;
   }
+
+  // Create a clean DTO without id for new service
+  const serviceDTO: ServiceDTO = {
+    ref: this.service.ref,
+    serviceName: this.service.serviceName,
+    servicePrice: this.service.servicePrice.toString()
+  };
+
   this.isLoading = true;
-  this.serService.createService(this.service).subscribe({
+  this.serService.createService(serviceDTO).subscribe({
     next: (response) => {
       this.isLoading = false;
       this.toastr.success(
@@ -90,7 +103,7 @@ export class DynamicModalComponent {
     },
     error: (error) => {
       this.isLoading = false;
-      console.error('Error:', error);
+      console.error('Error details:', error);
       this.handleError(error);
     }
   });
@@ -144,6 +157,12 @@ export class DynamicModalComponent {
       );
       return;
     }
+    this.client = new Client(
+      this.clientForm.get('clientName')?.value,
+      this.clientForm.get('clientPhone')?.value,
+      this.clientForm.get('clientAddress')?.value,
+      this.clientForm.get('clientRIB')?.value
+    );
 
     this.isLoading = true;
 
@@ -171,13 +190,12 @@ export class DynamicModalComponent {
   private isEmployeeFormValid(): boolean {
     return !!this.employee.name && !!this.employee.email && !!this.employee.tel;
   }
-
-  private isClientFormValid(): boolean {
-    return !!this.client.clientName && !!this.client.clientPhone;
+private isClientFormValid(): boolean {
+    return this.clientForm.valid;
   }
 
   private isServiceFormValid(): boolean {
-    return !!this.service.ref && !!this.service.serviceName && this.service.serviceQuantity > 0 && this.service.servicePrice > 0;
+  return !!this.service.ref && !!this.service.serviceName && Number(this.service.servicePrice) > 0;
   }
 
   private handleError(error: any): void {
