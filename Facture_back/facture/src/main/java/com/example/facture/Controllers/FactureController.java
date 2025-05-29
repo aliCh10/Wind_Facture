@@ -1,41 +1,55 @@
+// FactureController.java
 package com.example.facture.Controllers;
 
 import com.example.facture.DTO.CreateFactureRequest;
+import com.example.facture.models.Facture;
+import com.example.facture.models.ModeleFacture;
 import com.example.facture.services.FactureService;
+import com.example.facture.services.ModeleFactureService;
+import com.example.facture.services.PdfGenerationService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/factures")
 public class FactureController {
 
     private final FactureService factureService;
+    private final PdfGenerationService pdfGenerationService;
+    private final ModeleFactureService modeleFactureService;
 
-    public FactureController(FactureService factureService) {
+    public FactureController(FactureService factureService, PdfGenerationService pdfGenerationService, ModeleFactureService modeleFactureService) {
         this.factureService = factureService;
+        this.pdfGenerationService = pdfGenerationService;
+        this.modeleFactureService = modeleFactureService;
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<byte[]> createFacture(
-            @Valid @RequestBody CreateFactureRequest request,
-            @RequestHeader("Authorization") String authorizationHeader) {
-        // Extract JWT token from Authorization header
-        String jwtToken = authorizationHeader.replace("Bearer ", "");
+    @PostMapping
+    public ResponseEntity<Facture> createFacture(@Valid @RequestBody CreateFactureRequest request) {
+        Facture facture = factureService.createFacture(request);
+        return ResponseEntity.ok(facture);
+    }
 
-        // Call FactureService to create facture and generate PDF
-        byte[] pdfBytes = factureService.createFacture(request, jwtToken);
+    @PostMapping("/{id}/preview")
+    public ResponseEntity<byte[]> generatePdfPreview(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> clientData
+    ) {
+        ModeleFacture modele = modeleFactureService.getModeleFactureById(id)    
+                .orElseThrow(() -> new RuntimeException("ModeleFacture not found with id: " + id));
 
-        // Set response headers
+        byte[] pdfBytes = pdfGenerationService.generatePdfFromModele(modele, clientData);
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("attachment", "facture_" + System.currentTimeMillis() + ".pdf");
+        headers.setContentDispositionFormData("inline", "preview.pdf");
 
-        // Return PDF as response
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(pdfBytes);
+        return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
 }

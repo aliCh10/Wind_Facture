@@ -3,6 +3,9 @@ package com.example.facture.services;
 import com.example.facture.models.ModeleFacture;
 import com.example.facture.models.Section;
 import com.itextpdf.html2pdf.HtmlConverter;
+import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.image.ImageData;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.PageSize;
@@ -17,8 +20,14 @@ import com.itextpdf.layout.element.BlockElement;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IElement;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.jsoup.Jsoup;
@@ -30,6 +39,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.net.URL;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -39,9 +50,20 @@ public class PdfGenerationService {
     private static final Logger logger = LoggerFactory.getLogger(PdfGenerationService.class);
     private static final float PX_TO_PT = 0.75f;
     private static final PageSize PAGE_SIZE = PageSize.A4;
+    private Map<String, String> factureData;
 
-    public byte[] generatePdfFromModele(ModeleFacture modeleFacture, Map<String, String> clientData) {
+    public byte[] generatePdfFromModele(ModeleFacture modeleFacture, Map<String, String> factureData) {
         logger.info("Generating PDF for model: {}", modeleFacture.getNameModel());
+        try {
+            logger.info("Processing sections: {}", modeleFacture.getSections().size());
+            for (Section section : modeleFacture.getSections()) {
+                logger.info("Section: id={}, name={}", section.getId(), section.getSectionName());
+            }
+        } catch (Exception e) {
+            logger.warn("Failed to log sections: {}", e.getMessage());
+        }
+        this.factureData = factureData;
+
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             PdfDocument pdf = new PdfDocument(new PdfWriter(baos));
             pdf.setDefaultPageSize(PAGE_SIZE);
@@ -50,34 +72,38 @@ public class PdfGenerationService {
             float pageHeight = PAGE_SIZE.getHeight();
             for (Section section : modeleFacture.getSections()) {
                 if (section.getContent() == null || section.getContent().getContentData() == null) {
-                    logger.debug("Skipping empty section: {}", section.getSectionName());
+                    logger.warn("Skipping empty section: {}", section.getSectionName());
                     continue;
                 }
 
-                float width = parseSize(section.getStyles(), "width", 300) * PX_TO_PT;
-                float height = parseSize(section.getStyles(), "height", 200) * PX_TO_PT;
+                float width = parseSize(section.getStyles(), "width", 0) * PX_TO_PT;
+                float height = parseSize(section.getStyles(), "height", 0) * PX_TO_PT;
                 float x = section.getX() * PX_TO_PT;
                 float y = pageHeight - (section.getY() * PX_TO_PT) - height;
 
                 logger.debug("Positioning section {} at x={}pt, y={}pt, width={}pt, height={}pt",
                         section.getSectionName(), x, y, width, height);
 
-                String processedHtml = processHtmlContent(section);
-                processedHtml = replacePlaceholders(processedHtml, clientData);
+                if (section.getSectionName().equalsIgnoreCase("logo")) {
+                    processLogoSection(section, document, x, y, width, height);
+                } else {
+                    String processedHtml = processHtmlContent(section, factureData);
+                    processedHtml = replacePlaceholders(processedHtml, factureData);
+                    String wrappedHtml = wrapHtml(processedHtml, width, height, section.getSectionName(), section.getStyles());
+                    logger.debug("Final HTML for section {}: {}", section.getSectionName(), wrappedHtml);
+                    List<IElement> elements = HtmlConverter.convertToElements(wrappedHtml);
 
-                String wrappedHtml = wrapHtml(processedHtml, width, height, section.getSectionName(), section.getStyles());
-                logger.debug("Final HTML for section {}: {}", section.getSectionName(), wrappedHtml);
-                List<IElement> elements = HtmlConverter.convertToElements(wrappedHtml);
+                    Div container = createStyledContainer(section, x, y, width, height);
+                    Div contentContainer = new Div().setPadding(parseSize(section.getStyles(), "padding", 10));
+                    addElementsToContainer(contentContainer, elements, section.getStyles());
 
-                Div container = createStyledContainer(section, x, y, width, height);
-                Div contentContainer = new Div().setPadding(parseSize(section.getStyles(), "padding", 10));
-                addElementsToContainer(contentContainer, elements, section.getStyles());
-
-                container.add(contentContainer);
-                document.add(container);
+                    container.add(contentContainer);
+                    document.add(container);
+                }
             }
 
             document.close();
+            logger.info("PDF generated successfully");
             return baos.toByteArray();
         } catch (Exception e) {
             logger.error("Failed to generate PDF for model: {}", modeleFacture.getNameModel(), e);
@@ -85,21 +111,93 @@ public class PdfGenerationService {
         }
     }
 
-    public byte[] generateThumbnailFromModele(ModeleFacture modeleFacture, Map<String, String> clientData) {
-        try {
-            // Generate PDF bytes
-            byte[] pdfBytes = generatePdfFromModele(modeleFacture, clientData);
+    private void processLogoSection(Section section, Document document, float x, float y, float width, float height) {
+        String html = section.getContent().getContentData();
+        logger.debug("Logo section HTML: {}", html);
+        org.jsoup.nodes.Document doc = Jsoup.parse(html);
+        org.jsoup.nodes.Element imgElement = doc.selectFirst("img.uploaded-image");
 
-            // Load PDF into PDFBox
+        if (imgElement == null || imgElement.attr("src").isEmpty()) {
+            logger.warn("No image found in logo section or src is empty for section: {}", section.getSectionName());
+            return;
+        }
+
+        String imageUrl = imgElement.attr("src");
+        logger.debug("Processing logo image with URL: {}", imageUrl);
+        try {
+            ImageData imageData;
+            byte[] imageBytes;
+
+            if (imageUrl.startsWith("data:image/")) {
+                String base64String = imageUrl.split(",")[1];
+                imageBytes = Base64.getDecoder().decode(base64String);
+                imageData = ImageDataFactory.create(imageBytes);
+                logger.debug("Successfully decoded base64 image");
+            } else {
+                try (CloseableHttpClient client = HttpClients.createDefault()) {
+                    HttpGet request = new HttpGet(imageUrl);
+                    try (CloseableHttpResponse response = client.execute(request)) {
+                        if (response.getStatusLine().getStatusCode() != 200) {
+                            throw new IOException("Failed to fetch image, status code: " + response.getStatusLine().getStatusCode());
+                        }
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        response.getEntity().writeTo(baos);
+                        imageBytes = baos.toByteArray();
+                        logger.debug("Fetched image bytes, size: {} bytes", imageBytes.length);
+                    }
+                }
+
+                if (imageUrl.toLowerCase().endsWith(".webp")) {
+                    logger.debug("Detected WebP image, attempting to convert to PNG");
+                    try (ByteArrayInputStream bais = new ByteArrayInputStream(imageBytes)) {
+                        BufferedImage bufferedImage = ImageIO.read(bais);
+                        if (bufferedImage == null) {
+                            logger.warn("ImageIO failed to read WebP image, attempting direct processing");
+                            try {
+                                imageData = ImageDataFactory.create(imageBytes);
+                                logger.debug("Direct WebP processing successful");
+                            } catch (Exception e) {
+                                logger.error("Direct WebP processing failed, image may be corrupted or unsupported");
+                                throw new IOException("Failed to process WebP image directly", e);
+                            }
+                        } else {
+                            ByteArrayOutputStream pngBaos = new ByteArrayOutputStream();
+                            ImageIO.write(bufferedImage, "png", pngBaos);
+                            imageBytes = pngBaos.toByteArray();
+                            imageData = ImageDataFactory.create(imageBytes);
+                            logger.debug("Converted WebP to PNG, size: {} bytes", imageBytes.length);
+                        }
+                    }
+                } else {
+                    imageData = ImageDataFactory.create(imageBytes);
+                    logger.debug("Successfully created image data from non-WebP URL");
+                }
+            }
+
+            Image pdfImage = new Image(imageData);
+            pdfImage.setWidth(width);
+            pdfImage.setHeight(height);
+            pdfImage.scaleToFit(width, height);
+
+            Div container = createStyledContainer(section, x, y, width, height);
+            container.add(pdfImage);
+
+            document.add(container);
+            logger.debug("Added logo image at x={}pt, y={}pt, width={}pt, height={}pt", x, y, width, height);
+        } catch (Exception e) {
+            logger.error("Failed to process logo image for section {} with URL {}: {}", 
+                         section.getSectionName(), imageUrl, e.getMessage(), e);
+        }
+    }
+
+    public byte[] generateThumbnailFromModele(ModeleFacture modeleFacture, Map<String, String> factureData) {
+        try {
+            byte[] pdfBytes = generatePdfFromModele(modeleFacture, factureData);
             try (PDDocument document = PDDocument.load(new ByteArrayInputStream(pdfBytes))) {
                 PDFRenderer pdfRenderer = new PDFRenderer(document);
-                // Render first page at 100 DPI (adjust for thumbnail size)
                 BufferedImage image = pdfRenderer.renderImageWithDPI(0, 100);
-                
-                // Convert to PNG
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ImageIO.write(image, "png", baos);
-                document.close();
                 return baos.toByteArray();
             }
         } catch (Exception e) {
@@ -108,127 +206,335 @@ public class PdfGenerationService {
         }
     }
 
-    private String processHtmlContent(Section section) {
+    private String processHtmlContent(Section section, Map<String, String> factureData) {
         String html = section.getContent().getContentData();
         Map<String, String> styles = section.getStyles();
         org.jsoup.nodes.Document doc = Jsoup.parse(html);
 
-        logger.debug("Styles for section {}: {}", section.getSectionName(), styles);
+        logger.debug("Processing section {} with styles: {}", section.getSectionName(), styles);
+        logger.debug("Input HTML for section {}: {}", section.getSectionName(), doc.html());
 
-        if (!doc.select("table").isEmpty()) {
-            processTableHtml(doc, styles);
-            styleTableElements(doc, styles);
-        }
-
-        if (section.getSectionName().equalsIgnoreCase("info-client")) {
-            processInfoClientHtml(doc, styles);
-        } else if (section.getSectionName().equalsIgnoreCase("calendar")) {
-            processCalendarHtml(doc, styles);
-        }
-
-        logger.debug("Processed HTML for section {}: {}", section.getSectionName(), doc.body().html());
-        return doc.body().html();
-    }
-
-    private String replacePlaceholders(String html, Map<String, String> clientData) {
-        if (clientData == null) return html;
-        
-        for (Map.Entry<String, String> entry : clientData.entrySet()) {
-            String placeholder = "#" + entry.getKey();
-            String value = entry.getValue();
-            if (value != null && !value.trim().isEmpty()) {
-                html = html.replace(placeholder, value);
-            }
-        }
-        
-        return html;
-    }
-
-    private void processTableHtml(org.jsoup.nodes.Document doc, Map<String, String> styles) {
-        doc.select("table").forEach(table -> {
-            table.parents().select("div.relative, div.overflow-x-auto").forEach(div -> div.unwrap());
-            table.select("th").forEach(th -> {
-                if (th.text().isEmpty() && th.children().isEmpty()) {
-                    th.remove();
-                }
-                th.removeClass("px-4 py-3 text-left font-medium text-gray-800 tracking-wider");
-            });
-            table.select("td").forEach(td -> {
-                td.select("input").forEach(input -> {
-                    String value = input.attr("ng-reflect-model");
-                    if (value.isEmpty()) {
-                        value = input.attr("placeholder") != null ? input.attr("placeholder") : "N/A";
-                    }
-                    input.replaceWith(doc.createElement("span").text(value));
-                });
-                if (td.html().contains("<!--bindings") || (td.text().isEmpty() && td.children().isEmpty())) {
-                    td.remove();
-                }
-                td.removeClass("px-4 py-3 whitespace-nowrap");
-            });
-            table.select("*").forEach(element -> {
-                element.attributes().forEach(attr -> {
-                    if (attr.getKey().startsWith("ng-")) {
-                        element.removeAttr(attr.getKey());
-                    }
-                });
-            });
-            table.select("tr").forEach(tr -> {
-                if (tr.select("td, th").isEmpty()) {
-                    tr.remove();
+        doc.select("*").forEach(element -> {
+            element.attributes().forEach(attr -> {
+                if (attr.getKey().startsWith("ng-") || attr.getKey().startsWith("_ng") || attr.getKey().startsWith("cdk")) {
+                    element.removeAttr(attr.getKey());
                 }
             });
         });
+
+        switch (section.getSectionName().toLowerCase()) {
+            case "tablecontainer":
+                if (!doc.select("div.relative div.overflow-x-auto table.min-w-full, table.min-w-full, table").isEmpty()) {
+                    html = processTableHtml(doc, styles, factureData);
+                    styleTableElements(doc, styles);
+                } else {
+                    logger.warn("No table found in tableContainer section");
+                }
+                break;
+            case "info-client":
+                processInfoClientHtml(doc, styles, factureData);
+                break;
+            case "calendar":
+                processCalendarHtml(doc, styles, factureData);
+                break;
+            case "footer":
+                processFooterHtml(doc, styles, factureData);
+                break;
+            default:
+                logger.debug("No specific processing for section: {}", section.getSectionName());
+        }
+
+        html = doc.body().html();
+        logger.debug("Processed HTML for section {}: {}", section.getSectionName(), html);
+        return html;
     }
 
-    private void processCalendarHtml(org.jsoup.nodes.Document doc, Map<String, String> styles) {
-        org.jsoup.nodes.Element container = doc.selectFirst(".content-row");
-        if (container != null) {
-            container.attr("style", "display: flex; flex-direction: row; align-items: center; gap: 20px;");
-            doc.select("mat-form-field").forEach(field -> {
-                field.attr("style", "flex: 1; min-width: 100px; max-width: 200px; margin: 0;");
-                String label = field.selectFirst("mat-label").text();
-                String value = field.selectFirst("mat-select .mat-mdc-select-value-text, input") != null
-                        ? field.selectFirst("mat-select .mat-mdc-select-value-text, input").text()
-                        : "";
-                StringBuilder divStyle = new StringBuilder();
-                if (styles != null) {
-                    appendStyle(divStyle, styles, "font-family", "font-family", "");
-                    appendStyle(divStyle, styles, "font-size", "font-size", "");
-                    appendStyle(divStyle, styles, "color", "color", "");
+    private String replacePlaceholders(String html, Map<String, String> factureData) {
+        if (factureData == null || html == null) {
+            logger.warn("Null factureData or html, returning original html");
+            return html;
+        }
+
+        logger.info("Input HTML: {}", html);
+        logger.info("factureData: {}", factureData);
+        String result = html;
+        for (Map.Entry<String, String> entry : factureData.entrySet()) {
+            String placeholder = "#" + entry.getKey();
+            String value = entry.getValue() != null ? entry.getValue() : "";
+            if (result.contains(placeholder) && !placeholder.equals("#footerText")) {
+                logger.debug("Replacing {} with {}", placeholder, value);
+                result = result.replace(placeholder, value);
+            } else {
+                logger.debug("Placeholder {} not found in HTML or skipped", placeholder);
+            }
+        }
+
+        logger.info("Processed HTML: {}", result);
+        return result;
+    }
+
+    private String processTableHtml(org.jsoup.nodes.Document doc, Map<String, String> styles, Map<String, String> factureData) {
+        logger.info("Processing table HTML for tableContainer with factureData: {}", factureData);
+        logger.debug("Input HTML: {}", doc.html());
+
+        org.jsoup.nodes.Element table = doc.selectFirst("table");
+        if (table == null) {
+            logger.error("No table found in tableContainer section. Creating a default table.");
+            table = doc.body().appendElement("table").addClass("min-w-full");
+            table.appendElement("thead").appendElement("tr");
+            table.appendElement("tbody");
+            table.appendElement("tfoot");
+        }
+
+        table.parents().select("div.relative, div.overflow-x-auto").forEach(div -> div.unwrap());
+
+        org.jsoup.nodes.Element thead = table.selectFirst("thead");
+        if (thead == null) {
+            logger.warn("No thead found, creating one");
+            thead = table.prependElement("thead");
+            org.jsoup.nodes.Element headerRow = thead.appendElement("tr");
+            String[] columns = {"Reference", "TVA", "Discount", "Quantity", "Price", "Total"};
+            for (String col : columns) {
+                headerRow.appendElement("th").text(col);
+            }
+        } else {
+            thead.select("tr th:last-child").remove();
+            logger.debug("Removed last th column (if any)");
+        }
+
+        org.jsoup.nodes.Element tbody = table.selectFirst("tbody");
+        if (tbody == null) {
+            logger.warn("No tbody found in table, creating one");
+            tbody = table.appendElement("tbody");
+        }
+
+        String[] columns = {"reference", "tva", "discount", "quantity", "price", "total"};
+        String[] mainServiceKeys = {"serviceReference", "tva", "discount", "quantity", "servicePrice", "serviceTotal"};
+        String[] additionalServiceKeys = {"reference", "tva", "discount", "quantity", "price", "total"};
+        String[] placeholders = {"#reference", "#tva", "#discount", "#quantity", "#price", "#total"};
+
+        tbody.select("tr").remove();
+        logger.debug("Cleared existing rows in tbody");
+
+        if (factureData != null && factureData.containsKey("serviceReference")) {
+            org.jsoup.nodes.Element row = tbody.appendElement("tr");
+            appendServiceRow(row, factureData, "", mainServiceKeys, placeholders);
+            logger.debug("Added main service row");
+        }
+
+        int rowCount = 1;
+        while (factureData != null && factureData.containsKey("service_" + rowCount + "_reference")) {
+            org.jsoup.nodes.Element row = tbody.appendElement("tr");
+            appendServiceRow(row, factureData, "service_" + rowCount + "_", additionalServiceKeys, placeholders);
+            logger.debug("Added additional service row {} with prefix service_{}_", rowCount, rowCount);
+            rowCount++;
+        }
+
+        if ((factureData == null || factureData.isEmpty() || (!factureData.containsKey("serviceReference") && rowCount == 1))) {
+            logger.debug("No valid service data found, adding placeholder row");
+            org.jsoup.nodes.Element row = tbody.appendElement("tr");
+            for (String placeholder : placeholders) {
+                row.appendElement("td").appendElement("span").text(placeholder);
+            }
+        }
+
+        if (factureData != null && factureData.containsKey("subtotal")) {
+            org.jsoup.nodes.Element tfoot = table.selectFirst("tfoot");
+            if (tfoot == null) {
+                tfoot = table.appendElement("tfoot");
+            } else {
+                tfoot.select("tr").remove();
+            }
+
+            org.jsoup.nodes.Element summaryRow = tfoot.appendElement("tr");
+            summaryRow.attr("style", "background-color: #f3f4f6; font-weight: bold;");
+
+            org.jsoup.nodes.Element summaryCell = summaryRow.appendElement("td");
+            summaryCell.attr("colspan", String.valueOf(columns.length));
+            summaryCell.attr("style", buildCellStyle(styles) + "text-align: right; padding: 12px;");
+
+            org.jsoup.nodes.Element summaryContent = summaryCell.appendElement("div");
+            summaryContent.attr("style", "display: flex; flex-direction: column; align-items: flex-end;");
+
+            org.jsoup.nodes.Element subtotalSpan = summaryContent.appendElement("span");
+            subtotalSpan.attr("style", "margin-bottom: 4px;");
+            subtotalSpan.text("Subtotal: " + factureData.getOrDefault("subtotal", "0.00"));
+
+            org.jsoup.nodes.Element taxesSpan = summaryContent.appendElement("span");
+            taxesSpan.attr("style", "margin-bottom: 4px;");
+            taxesSpan.text("Taxes: " + factureData.getOrDefault("taxes", "0.00"));
+
+            org.jsoup.nodes.Element totalSpan = summaryContent.appendElement("span");
+            totalSpan.attr("style", "color: #2563eb; font-weight: bold;");
+            totalSpan.text("Total: " + factureData.getOrDefault("totalAmount", "0.00"));
+
+            logger.debug("Added summary row with subtotal: {}, taxes: {}, total: {}",
+                    factureData.get("subtotal"), factureData.get("taxes"), factureData.get("totalAmount"));
+        }
+
+        table.select("*").forEach(element -> {
+            element.attributes().forEach(attr -> {
+                if (attr.getKey().startsWith("ng-") || attr.getKey().startsWith("_ng") || attr.getKey().startsWith("cdk")) {
+                    element.removeAttr(attr.getKey());
                 }
-                divStyle.append("font-weight: normal;");
-                field.html(String.format("<div style='%s'>%s: %s</div>", divStyle.toString(), label, value));
             });
-            doc.select(".mat-mdc-select-arrow-wrapper, .mat-datepicker-toggle").remove();
+        });
+
+        table.attr("style", buildTableStyle(styles));
+        table.select("td").forEach(td -> td.attr("style", buildCellStyle(styles)));
+        table.select("th").forEach(th -> th.attr("style", buildHeaderStyle(styles)));
+
+        String result = doc.body().html();
+        logger.info("Processed table HTML: {}", result);
+        return result;
+    }
+
+    private void appendServiceRow(org.jsoup.nodes.Element row, Map<String, String> factureData, String prefix, String[] factureKeys, String[] placeholders) {
+        for (int i = 0; i < factureKeys.length; i++) {
+            String factureKey = prefix + factureKeys[i];
+            String placeholder = placeholders[i];
+            String value = factureData.getOrDefault(factureKey, placeholder);
+            row.appendElement("td").appendElement("span").text(value);
+            logger.debug("Appending table column {} with value {}", factureKey, value);
         }
     }
 
-    private void processInfoClientHtml(org.jsoup.nodes.Document doc, Map<String, String> styles) {
+    private void processCalendarHtml(org.jsoup.nodes.Document doc, Map<String, String> styles, Map<String, String> factureData) {
+        logger.info("Processing calendar HTML with factureData: {}", factureData);
+        org.jsoup.nodes.Element container = doc.selectFirst("div");
+        if (container == null) {
+            logger.warn("No container found in calendar section");
+            return;
+        }
+
+        container.html("");
+        container.attr("style", "display: flex; flex-direction: column; gap: 10px;");
+
+        String creationDate = factureData != null ? factureData.get("creationDate") : null;
+        String dueDate = factureData != null ? factureData.get("dueDate") : null;
+
+        String creationText = (creationDate != null && !creationDate.equals("N/A")) 
+            ? String.format("#creationDate:%s", creationDate) 
+            : "#creationDate";
+        org.jsoup.nodes.Element creationSpan = createStyledSpan(creationText, styles);
+        org.jsoup.nodes.Element creationDiv = new org.jsoup.nodes.Element("div").appendChild(creationSpan);
+        container.appendChild(creationDiv);
+        logger.debug("Added creationDate: {}", creationText);
+
+        String dueText = (dueDate != null && !dueDate.equals("N/A")) 
+            ? String.format("#dueDate:%s", dueDate) 
+            : "#dueDate";
+        org.jsoup.nodes.Element dueSpan = createStyledSpan(dueText, styles);
+        org.jsoup.nodes.Element dueDiv = new org.jsoup.nodes.Element("div").appendChild(dueSpan);
+        container.appendChild(dueDiv);
+        logger.debug("Added dueDate: {}", dueText);
+
+        container.select("mat-form-field, mat-label, mat-select, mat-option, mat-datepicker-toggle, mat-datepicker").remove();
+        logger.debug("Processed calendar HTML: {}", doc.html());
+    }
+
+    private void processInfoClientHtml(org.jsoup.nodes.Document doc, Map<String, String> styles, Map<String, String> factureData) {
+        logger.info("Processing info-client HTML with factureData: {}", factureData);
+        logger.debug("Input HTML: {}", doc.html());
+
         doc.select("tr").forEach(tr -> {
             tr.tagName("div");
             tr.attr("style", "display: block; margin-bottom: 10px;");
         });
+
         doc.select("td").forEach(td -> {
             td.tagName("div");
-            String placeholder = td.select(".input-field").attr("data-placeholder");
-            String value = td.select(".input-field").text();
-            StringBuilder spanStyle = new StringBuilder();
-            if (styles != null) {
-                appendStyle(spanStyle, styles, "font-family", "font-family", "");
-                appendStyle(spanStyle, styles, "font-size", "font-size", "");
-                appendStyle(spanStyle, styles, "color", "color", "");
+            org.jsoup.nodes.Element inputField = td.selectFirst(".input-field");
+            String value = null;
+            String placeholder = null;
+
+            if (inputField != null && !inputField.attr("data-placeholder").isEmpty()) {
+                placeholder = inputField.attr("data-placeholder");
+                if (placeholder.startsWith("#")) {
+                    String key = placeholder.substring(1);
+                    value = (factureData == null || factureData.isEmpty()) 
+                        ? placeholder 
+                        : factureData.getOrDefault(key, placeholder);
+                    logger.debug("Found data-placeholder: #{} with value: {}", key, value);
+                } else {
+                    td.remove();
+                    logger.debug("Removed td with invalid placeholder: {}", placeholder);
+                    return;
+                }
+            } else {
+                String text = td.text().trim();
+                if (text.startsWith("#")) {
+                    placeholder = text;
+                    String key = text.substring(1);
+                    value = (factureData == null || factureData.isEmpty()) 
+                        ? placeholder 
+                        : factureData.getOrDefault(key, placeholder);
+                    logger.debug("Found text placeholder: #{} with value: {}", key, value);
+                } else {
+                    td.remove();
+                    logger.debug("Removed td without valid input-field or placeholder: {}", td.html());
+                    return;
+                }
             }
-            spanStyle.append("font-weight: normal;");
-            String displayText = value + " : " + placeholder;
-            td.html(String.format("<span style='%s'>%s</span>", spanStyle.toString(), displayText));
-            td.attr("style", "display: block; padding: 8px;");
+
+            org.jsoup.nodes.Element span = createStyledSpan(value, styles);
+            td.html(span.outerHtml());
+            td.attr("style", "display: block; padding: 8px; border: 1px solid #000;");
+
+            logger.debug("Info-client value: {}", value);
         });
+
         doc.select(".input-container, .input-icon").remove();
         doc.select("table").attr("style", "width: 100%; display: block;");
         doc.select("tbody").unwrap();
+
+        doc.select("div").forEach(div -> {
+            if (div.children().isEmpty() || 
+                div.children().stream().allMatch(child -> child.text().trim().isEmpty())) {
+                div.remove();
+                logger.debug("Removed empty or invalid div (formerly tr)");
+            }
+        });
+
+        logger.info("Processed HTML: {}", doc.html());
     }
 
+    private void processFooterHtml(org.jsoup.nodes.Document doc, Map<String, String> styles, Map<String, String> factureData) {
+    logger.info("Processing footer HTML with factureData: {}", factureData);
+    org.jsoup.nodes.Element container = doc.selectFirst("div");
+    if (container == null) {
+        logger.warn("No container found in footer section");
+        return;
+    }
+
+    container.html("");
+    container.attr("style", "display: flex; flex-direction: column; gap: 10px;");
+
+    String footerText = factureData != null ? factureData.get("footerText") : null;
+    String footerContent = (footerText != null && !footerText.equals("N/A") && !footerText.trim().isEmpty()) 
+        ? footerText 
+        : "#footerText";
+
+    org.jsoup.nodes.Element footerSpan = createStyledSpan(footerContent, styles);
+    org.jsoup.nodes.Element footerDiv = new org.jsoup.nodes.Element("div").appendChild(footerSpan);
+    container.appendChild(footerDiv);
+    logger.debug("Added footerText: {}", footerContent);
+
+    container.select("h3, .footer-title, .footer-section, .footer-text").remove();
+    logger.debug("Processed footer HTML: {}", doc.html());
+}
+
+private org.jsoup.nodes.Element createStyledSpan(String content, Map<String, String> styles) {
+    StringBuilder spanStyle = new StringBuilder();
+    appendStyle(spanStyle, styles, "font-family", "font-family", "Inter, sans-serif");
+    appendStyle(spanStyle, styles, "font-size", "font-size", "16px");
+    appendStyle(spanStyle, styles, "color", "color", "#000000");
+    spanStyle.append("font-weight: normal;");
+
+    return new org.jsoup.nodes.Element("span")
+            .html(content)
+            .attr("style", spanStyle.toString());
+}
     private void styleTableElements(org.jsoup.nodes.Document doc, Map<String, String> styles) {
         doc.select("table").forEach(table -> {
             String currentStyle = table.attr("style");
@@ -424,10 +730,12 @@ public class PdfGenerationService {
     }
 
     private void appendStyle(StringBuilder style, Map<String, String> styles, String key, String cssProperty, String defaultValue) {
-        if (styles.containsKey(key)) {
+        if (styles != null && styles.containsKey(key)) {
             style.append(cssProperty).append(": ").append(styles.get(key)).append("; ");
         } else if (!defaultValue.isEmpty()) {
             style.append(cssProperty).append(": ").append(defaultValue).append("; ");
         }
     }
 }
+
+

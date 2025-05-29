@@ -81,4 +81,9 @@ deleteModeleFacture(id: number): Observable<void> {
             responseType: 'blob'
         });
     }
+
+    // ModeleFactureService.ts
+// ModeleFactureService.ts
+
+
 }

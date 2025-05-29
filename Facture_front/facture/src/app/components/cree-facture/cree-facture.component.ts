@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
@@ -12,6 +12,11 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Service } from '../../models/service';
 import { SerService } from '../../services/ser.service';
 import { AuthService } from '../../services/AuthService';
+import { FactureServiceService } from '../../services/facture-service.service';
+import { CreateFactureRequest, ServiceRequest } from '../../models/CreateFactureRequest';
+import { Subscription } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-cree-facture',
@@ -19,16 +24,22 @@ import { AuthService } from '../../services/AuthService';
   templateUrl: './cree-facture.component.html',
   styleUrls: ['./cree-facture.component.css'],
 })
-export class CreeFactureComponent implements OnInit {
+export class CreeFactureComponent implements OnInit, OnDestroy {
   clientForm: FormGroup;
   servicesForm: FormGroup;
+  serviceForms: FormGroup[] = [];
   datesForm: FormGroup;
+  footerForm: FormGroup;
   modeles: ModeleFacture[] = [];
   clients: Client[] = [];
   services: Service[] = [];
-  loading = false;
-  selectedModele: ModeleFacture | null = null;
   thumbnailUrls: { [key: number]: SafeUrl | string } = {};
+  loading = false;
+  subtotal = 0;
+  taxes = 0;
+  totalAmount = 0;
+
+  private formValueSubscription = new Subscription();
 
   constructor(
     private fb: FormBuilder,
@@ -39,31 +50,70 @@ export class CreeFactureComponent implements OnInit {
     private toastr: ToastrService,
     private translate: TranslateService,
     private sanitizer: DomSanitizer,
-    private authService: AuthService
+    private authService: AuthService,
+    private invoiceService: FactureServiceService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
+    // Initialize forms
     this.clientForm = this.fb.group({
       selectedClient: [null, Validators.required],
       selectedModele: [null, Validators.required],
-      clientName: ['', Validators.required],
-      clientPhone: ['', [Validators.required, Validators.pattern(/^\+?\d{8,15}$/)]],
-      clientAddress: ['', Validators.required],
-      clientRIB: ['', [Validators.required]],
-      companyName: ['', Validators.required],
-      companyAddress: ['', Validators.required],
-      companyType: ['', Validators.required],
-      companyLogo: ['', Validators.required]
+      clientName: [{ value: '', disabled: true }, Validators.required],
+      clientPhone: [{ value: '', disabled: true }, [Validators.required, Validators.pattern(/^\+?\d{8,15}$/)]],
+      clientAddress: [{ value: '', disabled: true }, Validators.required],
+      clientRIB: [{ value: '', disabled: true }, Validators.required],
+      companyName: [{ value: '', disabled: true }, Validators.required],
+      companyAddress: [{ value: '', disabled: true }, Validators.required],
+      companyPhone: [{ value: '', disabled: true }, [Validators.required, Validators.pattern(/^\+?\d{8,15}$/)]],
+      companyLogo: ['', Validators.required],
     });
 
     this.servicesForm = this.fb.group({
       selectedService: [null, Validators.required],
-      serviceReference: ['', Validators.required],
-      serviceName: ['', Validators.required],
-      servicePrice: [0, [Validators.required, Validators.min(0)]]
+      serviceReference: [{ value: '', disabled: true }, Validators.required],
+      serviceName: [{ value: '', disabled: true }, Validators.required],
+      servicePrice: [{ value: 0, disabled: true }, [Validators.required, Validators.min(0)]],
+      quantity: [1, [Validators.required, Validators.min(1)]],
+      tva: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
+      discount: [0, [Validators.required, Validators.min(0)]],
     });
 
     this.datesForm = this.fb.group({
       creationDate: [new Date().toISOString().split('T')[0], Validators.required],
-      dueDate: ['', Validators.required]
+      dueDate: ['', Validators.required],
+    });
+
+    this.footerForm = this.fb.group({
+      footerText: ['', [Validators.required, Validators.maxLength(500)]],
+    });
+  }
+
+  // Step control groups
+  get clientStepControls(): FormGroup {
+    return this.fb.group({
+      selectedClient: this.clientForm.get('selectedClient'),
+      selectedModele: this.clientForm.get('selectedModele'),
+    });
+  }
+
+  get companyStepControls(): FormGroup {
+    return this.fb.group({
+      companyName: this.clientForm.get('companyName'),
+      companyAddress: this.clientForm.get('companyAddress'),
+      companyPhone: this.clientForm.get('companyPhone'),
+      companyLogo: this.clientForm.get('companyLogo'),
+    });
+  }
+
+  get servicesStepControls(): FormGroup {
+    return this.fb.group({
+      selectedService: this.servicesForm.get('selectedService'),
+      serviceReference: this.servicesForm.get('serviceReference'),
+      serviceName: this.servicesForm.get('serviceName'),
+      servicePrice: this.servicesForm.get('servicePrice'),
+      quantity: this.servicesForm.get('quantity'),
+      tva: this.servicesForm.get('tva'),
+      discount: this.servicesForm.get('discount'),
     });
   }
 
@@ -72,71 +122,132 @@ export class CreeFactureComponent implements OnInit {
     this.loadClients();
     this.loadServices();
     this.loadCompanyInfo();
+
+    // Subscribe to form changes
+    this.formValueSubscription.add(
+      this.servicesForm.valueChanges.pipe(debounceTime(300)).subscribe(() => this.updateCalculations())
+    );
+
+    this.serviceForms.forEach((form) =>
+      this.formValueSubscription.add(
+        form.valueChanges.pipe(debounceTime(300)).subscribe(() => this.updateCalculations())
+      )
+    );
+
+    this.updateCalculations();
   }
 
-  loadCompanyInfo(): void {
+  ngOnDestroy(): void {
+    this.formValueSubscription.unsubscribe();
+  }
+
+  addServiceBlock(): void {
+    const newServiceForm = this.fb.group({
+      selectedService: [null, Validators.required],
+      serviceReference: [{ value: '', disabled: true }, Validators.required],
+      serviceName: [{ value: '', disabled: true }, Validators.required],
+      servicePrice: [{ value: 0, disabled: true }, [Validators.required, Validators.min(0)]],
+      quantity: [1, [Validators.required, Validators.min(1)]],
+      tva: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
+      discount: [0, [Validators.required, Validators.min(0)]],
+    });
+
+    this.formValueSubscription.add(
+      newServiceForm.valueChanges.pipe(debounceTime(300)).subscribe(() => this.updateCalculations())
+    );
+
+    this.serviceForms.push(newServiceForm);
+    this.updateCalculations();
+  }
+
+  removeServiceBlock(index: number): void {
+    this.serviceForms.splice(index, 1);
+    this.updateCalculations();
+  }
+
+  private calculateBlockAmounts(form: FormGroup): { subtotal: number; taxes: number; total: number } {
+    const servicePrice = Number(form.get('servicePrice')?.value) || 0;
+    const quantity = Number(form.get('quantity')?.value) || 1;
+    const tvaPercentage = Number(form.get('tva')?.value) || 0;
+    const discountPercentage = Number(form.get('discount')?.value) || 0;
+
+    const subtotal = servicePrice * quantity;
+    const discountAmount = subtotal * (discountPercentage / 100);
+    const amountAfterDiscount = subtotal - discountAmount;
+    const taxes = amountAfterDiscount * (tvaPercentage / 100);
+    const total = amountAfterDiscount + taxes;
+
+    return {
+      subtotal: Number(subtotal.toFixed(2)),
+      taxes: Number(taxes.toFixed(2)),
+      total: Number(total.toFixed(2)),
+    };
+  }
+
+  get mainServiceAmounts(): { subtotal: number; taxes: number; total: number } {
+    return this.calculateBlockAmounts(this.servicesForm);
+  }
+
+  getBlockAmounts(index: number): { subtotal: number; taxes: number; total: number } {
+    return this.calculateBlockAmounts(this.serviceForms[index]);
+  }
+
+  private updateCalculations(): void {
+    this.subtotal = 0;
+    this.taxes = 0;
+    this.totalAmount = 0;
+
+    if (this.servicesForm.get('selectedService')?.value) {
+      const mainAmounts = this.calculateBlockAmounts(this.servicesForm);
+      this.subtotal += mainAmounts.subtotal;
+      this.taxes += mainAmounts.taxes;
+      this.totalAmount += mainAmounts.total;
+    }
+
+    this.serviceForms.forEach((serviceForm) => {
+      if (serviceForm.get('selectedService')?.value) {
+        const amounts = this.calculateBlockAmounts(serviceForm);
+        this.subtotal += amounts.subtotal;
+        this.taxes += amounts.taxes;
+        this.totalAmount += amounts.total;
+      }
+    });
+
+    this.subtotal = Number(this.subtotal.toFixed(2));
+    this.taxes = Number(this.taxes.toFixed(2));
+    this.totalAmount = Number(this.totalAmount.toFixed(2));
+  }
+
+  private loadCompanyInfo(): void {
     this.loading = true;
     this.authService.getCompanyInfo().subscribe({
       next: (companyInfo) => {
         this.clientForm.patchValue({
           companyName: companyInfo.companyName || '',
           companyAddress: companyInfo.address || '',
-          companyType: companyInfo.companyType || '',
-          companyLogo: companyInfo.logoUrl || ''
+          companyPhone: companyInfo.tel || '',
+          companyLogo: companyInfo.logoUrl || '',
         });
         this.loading = false;
       },
       error: (error) => {
         this.loading = false;
-        let errorMessage = this.translate.instant('DYNAMIC_MODAL.ERROR.FETCH_FAILED');
-        if (error.status === 401) {
-          errorMessage = this.translate.instant('AUTH.ERROR.INVALID_TOKEN');
-        } else if (error.status === 403) {
-          errorMessage = this.translate.instant('AUTH.ERROR.FORBIDDEN');
-        } else if (error.status === 404) {
-          errorMessage = this.translate.instant('AUTH.ERROR.PARTNER_NOT_FOUND');
-        }
-        this.toastr.error(errorMessage, this.translate.instant('DYNAMIC_MODAL.ERROR.TITLE'));
+        this.toastr.error(
+          this.translate.instant('AUTH.ERROR.GENERIC'),
+          this.translate.instant('DYNAMIC_MODAL.ERROR.TITLE')
+        );
         console.error('Failed to load company info:', error);
-        // Set companyLogo to empty string on error to trigger fallback UI
         this.clientForm.patchValue({ companyLogo: '' });
-      }
+      },
     });
   }
 
-  // Handle image loading errors
   handleLogoError(): void {
-    console.warn('Failed to load company logo');
     this.toastr.warning(
       this.translate.instant('CREATE_INVOICE.ERRORS.LOGO_LOAD_FAILED'),
       this.translate.instant('DYNAMIC_MODAL.WARNING.TITLE')
     );
     this.clientForm.patchValue({ companyLogo: '' });
-  }
-
-  get clientStepControls() {
-    return this.fb.group({
-      selectedClient: this.clientForm.get('selectedClient'),
-      selectedModele: this.clientForm.get('selectedModele')
-    });
-  }
-
-  get companyStepControls() {
-    return this.fb.group({
-      companyName: this.clientForm.get('companyName'),
-      companyAddress: this.clientForm.get('companyAddress'),
-      companyType: this.clientForm.get('companyType'),
-      companyLogo: this.clientForm.get('companyLogo')
-    });
-  }
-
-  get servicesStepControls() {
-    return this.fb.group({
-      selectedService: this.servicesForm.get('selectedService'),
-      serviceReference: this.servicesForm.get('serviceReference'),
-      serviceName: this.servicesForm.get('serviceName'),
-      servicePrice: this.servicesForm.get('servicePrice')
-    });
   }
 
   loadClients(): void {
@@ -146,14 +257,13 @@ export class CreeFactureComponent implements OnInit {
         this.clients = clients;
         this.loading = false;
       },
-      error: (error) => {
-        console.error(this.translate.instant('DYNAMIC_MODAL.CLIENT.ERROR.FETCH_FAILED'), error);
+      error: () => {
         this.toastr.error(
           this.translate.instant('DYNAMIC_MODAL.CLIENT.ERROR.FETCH_FAILED'),
           this.translate.instant('DYNAMIC_MODAL.ERROR.TITLE')
         );
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -164,14 +274,13 @@ export class CreeFactureComponent implements OnInit {
         this.services = services;
         this.loading = false;
       },
-      error: (error) => {
-        console.error(this.translate.instant('SERVICES_PAGE.ERROR.LOAD_FAILED'), error);
+      error: () => {
         this.toastr.error(
           this.translate.instant('SERVICES_PAGE.ERROR.LOAD_FAILED'),
           this.translate.instant('SERVICES_PAGE.ERROR.TITLE')
         );
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -180,34 +289,32 @@ export class CreeFactureComponent implements OnInit {
     this.modeleFactureService.getAllModelesFacture().subscribe({
       next: (modeles) => {
         this.modeles = modeles;
-        this.modeles.forEach(modele => {
+        this.modeles.forEach((modele) => {
           if (modele.id) {
             this.loadThumbnail(modele.id);
           }
         });
         this.loading = false;
       },
-      error: (error) => {
-        console.error(this.translate.instant('INVOICE_TEMPLATES.MESSAGES.FAILED_LOAD_TEMPLATES.TEXT'), error);
-        this.loading = false;
+      error: () => {
         this.toastr.error(
           this.translate.instant('INVOICE_TEMPLATES.MESSAGES.FAILED_LOAD_TEMPLATES.TEXT'),
           this.translate.instant('INVOICE_TEMPLATES.MESSAGES.FAILED_LOAD_TEMPLATES.TITLE')
         );
-      }
+        this.loading = false;
+      },
     });
   }
 
-  loadThumbnail(id: number): void {
+  private loadThumbnail(id: number): void {
     this.modeleFactureService.getModeleThumbnail(id).subscribe({
       next: (blob) => {
         const url = URL.createObjectURL(blob);
         this.thumbnailUrls[id] = this.sanitizer.bypassSecurityTrustUrl(url);
       },
-      error: (error) => {
-        console.error(`Failed to load thumbnail for modele ${id}:`, error);
+      error: () => {
         this.thumbnailUrls[id] = '';
-      }
+      },
     });
   }
 
@@ -216,21 +323,19 @@ export class CreeFactureComponent implements OnInit {
   }
 
   handleImageError(event: Event, modele: ModeleFacture): void {
-    console.warn(`Failed to load thumbnail for modele ${modele.id}`);
     if (modele.id) {
       this.thumbnailUrls[modele.id] = '';
     }
   }
 
   onClientChange(client: Client): void {
-    const clientData = {
+    this.clientForm.patchValue({
+      selectedClient: client,
       clientName: client.clientName || '',
       clientPhone: client.clientPhone || '',
       clientAddress: client.clientAddress || '',
-      clientRIB: client.rib || ''
-    };
-
-    this.clientForm.patchValue(clientData);
+      clientRIB: client.rib || '',
+    });
 
     const phoneControl = this.clientForm.get('clientPhone');
     const ribControl = this.clientForm.get('clientRIB');
@@ -242,149 +347,279 @@ export class CreeFactureComponent implements OnInit {
     }
   }
 
-  onServiceChange(service: Service): void {
-    this.servicesForm.patchValue({
+  onServiceChange(service: Service, form?: FormGroup): void {
+    const targetForm = form || this.servicesForm;
+    targetForm.patchValue({
+      selectedService: service,
       serviceReference: service.ref || '',
       serviceName: service.serviceName || '',
-      servicePrice: service.servicePrice || 0
+      servicePrice: Number(service.servicePrice) || 0,
+    });
+    this.updateCalculations();
+  }
+
+  openClientModal(): void {
+    const dialogRef = this.dialog.open(DynamicModalComponent, {
+      data: { type: 'client' },
+      width: 'max-w-2xl',
+      panelClass: 'custom-dialog-container',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.success && result.client) {
+        this.clients = [...this.clients, result.client];
+        this.onClientChange(result.client);
+        this.clientForm.get('selectedClient')?.updateValueAndValidity();
+      }
     });
   }
-
-  onTemplateChange(modele: ModeleFacture): void {
-    this.selectedModele = modele;
-    if (modele && Array.isArray(modele.sections)) {
-      const clientSection = modele.sections.find(s => s.sectionName.toLowerCase() === 'info-client');
-      const companySection = modele.sections.find(s => s.sectionName.toLowerCase() === 'company');
-      const serviceSection = modele.sections.find(s => s.sectionName.toLowerCase() === 'service');
-
-      const clientData = this.parseSectionContent(clientSection?.content?.contentData);
-      const companyData = this.parseSectionContent(companySection?.content?.contentData);
-      const serviceData = this.parseSectionContent(serviceSection?.content?.contentData);
-
-      this.clientForm.patchValue({
-        companyName: companyData?.companyName || this.clientForm.get('companyName')?.value || '',
-        companyAddress: companyData?.companyAddress || this.clientForm.get('companyAddress')?.value || '',
-        companyType: companyData?.companyType || this.clientForm.get('companyType')?.value || '',
-        companyLogo: companyData?.companyLogo || this.clientForm.get('companyLogo')?.value || ''
-      });
-
-      this.servicesForm.patchValue({
-        serviceReference: serviceData?.serviceReference || '',
-        serviceName: serviceData?.serviceName || '',
-        servicePrice: serviceData?.servicePrice || 0
-      });
-    } else {
-      this.clientForm.patchValue({
-        companyName: this.clientForm.get('companyName')?.value || '',
-        companyAddress: this.clientForm.get('companyAddress')?.value || '',
-        companyType: this.clientForm.get('companyType')?.value || '',
-        companyLogo: this.clientForm.get('companyLogo')?.value || ''
-      });
-      this.servicesForm.reset({
-        selectedService: null,
-        serviceReference: '',
-        serviceName: '',
-        servicePrice: 0
-      });
-      this.datesForm.patchValue({
-        creationDate: new Date().toISOString().split('T')[0],
-        dueDate: ''
-      });
-    }
-  }
-
-  private parseSectionContent(contentData: string | undefined): any {
-    if (!contentData) {
-      return {};
-    }
-
-    try {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(contentData, 'text/html');
-
-      const data: any = {};
-      const spans = doc.querySelectorAll('span');
-      spans.forEach(span => {
-        const text = span.textContent?.split(':')[0].trim() || '';
-        if (span.textContent?.includes('#clientName')) data.clientName = text;
-        if (span.textContent?.includes('#clientPhone')) data.clientPhone = text;
-        if (span.textContent?.includes('#clientAddress')) data.clientAddress = text;
-        if (span.textContent?.includes('#clientRIB')) data.clientRIB = text;
-        if (span.textContent?.includes('#companyName')) data.companyName = text;
-        if (span.textContent?.includes('#companyAddress')) data.companyAddress = text;
-        if (span.textContent?.includes('#companyType')) data.companyType = text;
-        if (span.textContent?.includes('#companyLogo')) data.companyLogo = text;
-        if (span.textContent?.includes('#serviceReference')) data.serviceReference = text;
-        if (span.textContent?.includes('#serviceName')) data.serviceName = text;
-        if (span.textContent?.includes('#servicePrice')) data.servicePrice = parseFloat(text) || 0;
-      });
-
-      return data;
-    } catch (error) {
-      console.error('Failed to parse section content:', error);
-      this.toastr.error(
-        this.translate.instant('INVOICE_TEMPLATES.MESSAGES.FAILED_PARSE_CONTENT.TEXT'),
-        this.translate.instant('INVOICE_TEMPLATES.MESSAGES.FAILED_PARSE_CONTENT.TITLE')
-      );
-      return {};
-    }
-  }
-openClientModal(): void {
-  const dialogRef = this.dialog.open(DynamicModalComponent, {
-    data: { type: 'client' },
-    width: 'max-w-2xl',
-    panelClass: 'custom-dialog-container'
-  });
-
-  dialogRef.afterClosed().subscribe(result => {
-    if (result?.success && result.client) {
-      this.clientForm.patchValue({
-        selectedClient: result.client,
-        clientName: result.client.clientName,
-        clientPhone: result.client.clientPhone || '',
-        clientAddress: result.client.clientAddress,
-        clientRIB: result.client.rib || ''
-      });
-      this.loadClients(); // Reload clients to sync with server
-    }
-  });
-}
 
   openServiceModal(): void {
     const dialogRef = this.dialog.open(DynamicModalComponent, {
       data: { type: 'service' },
       width: 'max-w-2xl',
-      panelClass: 'custom-dialog-container'
+      panelClass: 'custom-dialog-container',
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result?.success && result.service) {
-        this.servicesForm.patchValue({
-          selectedService: result.service,
-          serviceReference: result.service.ref || '',
-          serviceName: result.service.serviceName || '',
-          servicePrice: result.service.servicePrice || 0
-        });
-        this.services.push(result.service);
+        this.services = [...this.services, result.service];
+        this.onServiceChange(result.service);
+        this.loadServices();
+        this.updateCalculations();
       }
     });
   }
 
-  onSubmit(): void {
-    if (this.clientForm.valid && this.servicesForm.valid && this.datesForm.valid) {
-      const formData = {
-        ...this.clientForm.value,
-        ...this.servicesForm.value,
-        ...this.datesForm.value,
-        templateId: this.selectedModele?.id
-      };
-      console.log('Form Submitted:', formData);
-      // Add logic to send formData to backend
-    } else {
+  async onSubmit(): Promise<void> {
+    if (!this.areAllFormsValid()) {
       this.toastr.error(
         this.translate.instant('INVOICE_TEMPLATES.MESSAGES.INVALID_FORM.TEXT'),
         this.translate.instant('INVOICE_TEMPLATES.MESSAGES.INVALID_FORM.TITLE')
       );
+      this.markFormsAsTouched();
+      return;
     }
+
+    const selectedClient = this.clientForm.get('selectedClient')?.value;
+    const selectedModele = this.clientForm.get('selectedModele')?.value;
+    const mainService = this.servicesForm.get('selectedService')?.value;
+
+    if (!selectedModele?.id || !selectedClient?.id || !mainService?.id) {
+      this.toastr.error(
+        this.translate.instant('INVOICE_TEMPLATES.MESSAGES.INVALID_FORM.TEXT'),
+        this.translate.instant('INVOICE_TEMPLATES.MESSAGES.INVALID_FORM.TITLE')
+      );
+      return;
+    }
+
+    const services: ServiceRequest[] = [
+      {
+        serviceId: Number(mainService.id),
+        servicePrice: Number(this.servicesForm.get('servicePrice')?.value) || 0,
+        quantity: Number(this.servicesForm.get('quantity')?.value) || 1,
+        tva: Number(this.servicesForm.get('tva')?.value) || 0,
+        discount: Number(this.servicesForm.get('discount')?.value) || 0,
+      },
+    ];
+
+    this.serviceForms.forEach((serviceForm) => {
+      const service = serviceForm.get('selectedService')?.value;
+      if (service?.id) {
+        services.push({
+          serviceId: Number(service.id),
+          servicePrice: Number(serviceForm.get('servicePrice')?.value) || 0,
+          quantity: Number(serviceForm.get('quantity')?.value) || 1,
+          tva: Number(serviceForm.get('tva')?.value) || 0,
+          discount: Number(serviceForm.get('discount')?.value) || 0,
+        });
+      }
+    });
+
+    const formData: CreateFactureRequest = {
+      templateId: Number(selectedModele.id),
+      clientId: Number(selectedClient.id),
+      services,
+      creationDate: this.datesForm.get('creationDate')?.value || new Date().toISOString().split('T')[0],
+      dueDate: this.datesForm.get('dueDate')?.value || '',
+    };
+
+    if (!formData.creationDate || !formData.dueDate) {
+      this.toastr.error(
+        this.translate.instant('INVOICE_TEMPLATES.MESSAGES.INVALID_DATES.TEXT'),
+        this.translate.instant('INVOICE_TEMPLATES.MESSAGES.INVALID_DATES.TITLE')
+      );
+      return;
+    }
+
+    this.loading = true;
+    this.invoiceService.createInvoice(formData).subscribe({
+      next: () => {
+        this.loading = false;
+        this.toastr.success(
+          this.translate.instant('CREATE_INVOICE.MESSAGES.INVOICE_CREATED.TEXT'),
+          this.translate.instant('CREATE_INVOICE.MESSAGES.INVOICE_CREATED.TITLE')
+        );
+        this.resetForms();
+      },
+      error: (error) => {
+        this.loading = false;
+        this.toastr.error(
+          this.translate.instant('INVOICE_TEMPLATES.MESSAGES.FAILED_CREATE_INVOICE.TEXT'),
+          this.translate.instant('INVOICE_TEMPLATES.MESSAGES.FAILED_CREATE_INVOICE.TITLE')
+        );
+        console.error('Failed to create invoice:', error);
+      },
+    });
   }
+
+  private resetForms(): void {
+    this.clientForm.reset({
+      selectedClient: null,
+      selectedModele: null,
+      clientName: '',
+      clientPhone: '',
+      clientAddress: '',
+      clientRIB: '',
+      companyName: '',
+      companyAddress: '',
+      companyPhone: '',
+      companyLogo: '',
+    });
+    this.servicesForm.reset({
+      selectedService: null,
+      serviceReference: '',
+      serviceName: '',
+      servicePrice: 0,
+      quantity: 1,
+      tva: 0,
+      discount: 0,
+    });
+    this.datesForm.reset({
+      creationDate: new Date().toISOString().split('T')[0],
+      dueDate: '',
+    });
+    this.footerForm.reset({ footerText: '' });
+    this.serviceForms = [];
+    this.updateCalculations();
+  }
+
+  private markFormsAsTouched(): void {
+    this.clientForm.markAllAsTouched();
+    this.servicesForm.markAllAsTouched();
+    this.datesForm.markAllAsTouched();
+    this.footerForm.markAllAsTouched();
+    this.serviceForms.forEach((form) => form.markAllAsTouched());
+  }
+
+ private prepareFactureData(): Map<string, string> {
+    const factureData = new Map<string, string>();
+
+    // Client Data
+ factureData.set('clientName', this.clientForm.get('clientName')?.value );
+    factureData.set('clientPhone', this.clientForm.get('clientPhone')?.value );
+    factureData.set('clientAddress', this.clientForm.get('clientAddress')?.value );
+    factureData.set('clientRIB', this.clientForm.get('clientRIB')?.value );
+
+    // Company Data
+    factureData.set('companyName', this.clientForm.get('companyName')?.value || 'N/A');
+    factureData.set('companyAddress', this.clientForm.get('companyAddress')?.value || 'N/A');
+    factureData.set('companyPhone', this.clientForm.get('companyPhone')?.value || 'N/A');
+    factureData.set('companyLogo', this.clientForm.get('companyLogo')?.value || '');
+
+    // Main Service
+   const mainService = this.servicesForm.get('selectedService')?.value;
+    if (mainService) {
+        factureData.set('serviceName', mainService.serviceName || '');
+        factureData.set('serviceReference', this.servicesForm.get('serviceReference')?.value || '');
+        factureData.set('servicePrice', this.servicesForm.get('servicePrice')?.value?.toString() || '0');
+        factureData.set('quantity', this.servicesForm.get('quantity')?.value?.toString() || '1');
+        factureData.set('tva', this.servicesForm.get('tva')?.value?.toString() || '0');
+        factureData.set('discount', this.servicesForm.get('discount')?.value?.toString() || '0');
+        factureData.set('serviceTotal', this.calculateBlockAmounts(this.servicesForm).total.toString());
+    }
+    // Additional services
+    this.serviceForms.forEach((serviceForm, index) => {
+        const service = serviceForm.get('selectedService')?.value;
+        if (service) {
+            const prefix = `service_${index + 1}_`;
+            factureData.set(`${prefix}name`, service.serviceName || '');
+            factureData.set(`${prefix}reference`, serviceForm.get('serviceReference')?.value || '');
+            factureData.set(`${prefix}price`, serviceForm.get('servicePrice')?.value?.toString() || '0');
+            factureData.set(`${prefix}quantity`, serviceForm.get('quantity')?.value?.toString() || '1');
+            factureData.set(`${prefix}tva`, serviceForm.get('tva')?.value?.toString() || '0');
+            factureData.set(`${prefix}discount`, serviceForm.get('discount')?.value?.toString() || '0');
+            factureData.set(`${prefix}total`, this.getBlockAmounts(index).total.toString());
+        }
+    });
+
+    // Dates
+    const creationDate = this.datesForm.get('creationDate')?.value;
+    const dueDate = this.datesForm.get('dueDate')?.value;
+    factureData.set('creationDate', creationDate ? new Date(creationDate).toLocaleDateString() : 'N/A');
+    factureData.set('dueDate', dueDate ? new Date(dueDate).toLocaleDateString() : 'N/A');
+
+    // Footer
+    factureData.set('footerText', this.footerForm.get('footerText')?.value || 'N/A');
+
+    // Totals
+    factureData.set('subtotal', this.subtotal.toFixed(2));
+    factureData.set('taxes', this.taxes.toFixed(2));
+    factureData.set('totalAmount', this.totalAmount.toFixed(2));
+
+    console.log('factureData:', Object.fromEntries(factureData)); // Debug
+    return factureData;
+}
+  areAllServiceFormsValid(): boolean {
+    return this.servicesForm.valid && this.serviceForms.every((form) => form.valid);
+  }
+
+  areAllFormsValid(): boolean {
+    return (
+      this.clientForm.valid &&
+      this.servicesForm.valid &&
+      this.datesForm.valid &&
+      this.footerForm.valid &&
+      this.areAllServiceFormsValid()
+    );
+  }
+previewInvoice(): void {
+    if (!this.areAllFormsValid()) {
+        this.toastr.error(
+            this.translate.instant('INVOICE_TEMPLATES.MESSAGES.INVALID_FORM.TEXT'),
+            this.translate.instant('INVOICE_TEMPLATES.MESSAGES.INVALID_FORM.TITLE')
+        );
+        this.markFormsAsTouched();
+        return;
+    }
+
+    const selectedModele = this.clientForm.get('selectedModele')?.value;
+    if (!selectedModele?.id) {
+        this.toastr.error(
+            this.translate.instant('INVOICE_TEMPLATES.MESSAGES.NO_TEMPLATE_SELECTED.TEXT'),
+            this.translate.instant('INVOICE_TEMPLATES.MESSAGES.NO_TEMPLATE_SELECTED.TITLE')
+        );
+        return;
+    }
+
+    this.loading = true;
+    const factureData = this.prepareFactureData();
+    this.invoiceService.generatePdfPreview(selectedModele.id, factureData).subscribe({
+        next: (pdfBlob: Blob) => {
+            const blobUrl = URL.createObjectURL(pdfBlob);
+            window.open(blobUrl, '_blank');
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+            this.loading = false;
+        },
+        error: (error) => {
+            console.error('Error generating PDF preview:', error);
+            this.toastr.error(
+                this.translate.instant('INVOICE_TEMPLATES.MESSAGES.FAILED_LOAD_PDF.TEXT'),
+                this.translate.instant('INVOICE_TEMPLATES.MESSAGES.FAILED_LOAD_PDF.TITLE')
+            );
+            this.loading = false;
+        }
+    });
+}
+
 }

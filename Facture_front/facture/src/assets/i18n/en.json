@@ -29,8 +29,6 @@
     "sas": "SAS",
     "eirl": "EIRL"
   },
-
-  
   "companyLogo": "Company Logo",
   "previous": "Previous",
   "createAccount": "Create Account",
@@ -44,35 +42,33 @@
   "companyAddress_error": "Company address is required",
   "companyType_error": "Company type is required",
   "logo_error": "Company logo is required",
-  "Partners List":"Partners List",
-  "Name":"Name",
-  "Status":"Status",
-  "Actions":"Actions",
- "It's a good day to simplify your invoicing!":"It's a good day to simplify your invoicing!",
- "Hello":"Hello",
- "Create my first invoice":"Create my first invoice",
- "Transform your management with ease":"Transform your management with ease",
- "New Invoice":"New Invoice",
- "No partner to validate":"No partner to validate",
- "Customize your invoice":"Customize your invoice",
-    "MENU": {
-      "HOME": "Home",
-      "DASHBOARD": "Dashboard",
-      "Modele": " Invoice Model",
-      "SERVICE": "Service",
-      "LOGOUT": "Logout",
-     "SETTINGS": "Settings",
-     "Partners":"Partners",
-     "Employé":"Employee",
-     "Client":"Client",
-     "SERVICES": "Services",
-     "models_list":"Models List",
-     "invoice":"Invoice",
-     "Create Invoice":"Create Invoice"
-    },
-    
-      "or click to select files": "or click to select files",
-  
+  "Partners List": "Partners List",
+  "Name": "Name",
+  "Status": "Status",
+  "Actions": "Actions",
+  "It's a good day to simplify your invoicing!": "It's a good day to simplify your invoicing!",
+  "Hello": "Hello",
+  "Create my first invoice": "Create my first invoice",
+  "Transform your management with ease": "Transform your management with ease",
+  "New Invoice": "New Invoice",
+  "No partner to validate": "No partner to validate",
+  "Customize your invoice": "Customize your invoice",
+  "MENU": {
+    "HOME": "Home",
+    "DASHBOARD": "Dashboard",
+    "Modele": "Invoice Model",
+    "SERVICE": "Service",
+    "LOGOUT": "Logout",
+    "SETTINGS": "Settings",
+    "Partners": "Partners",
+    "Employé": "Employee",
+    "Client": "Client",
+    "SERVICES": "Services",
+    "models_list": "Models List",
+    "invoice": "Invoice",
+    "Create Invoice": "Create Invoice"
+  },
+  "or click to select files": "or click to select files",
   "employee": {
     "List of Employees": "List of Employees",
     "Name": "Name",
@@ -83,7 +79,7 @@
     "Add Employee": "Add Employee",
     "Department": "Department",
     "Job": "Job",
-     "form": {
+    "form": {
       "addTitle": "Add Employee",
       "title": "Edit Employee",
       "name": {
@@ -120,7 +116,7 @@
         "cancel": "Cancel",
         "save": "Save",
         "saving": "Saving...",
-         "addSave": "Save",
+        "addSave": "Save",
         "addSaving": "Saving..."
       }
     },
@@ -139,9 +135,8 @@
     "CONFIRM": {
       "DELETE_TEXT": "Do you really want to delete this employee?"
     }
-  }
-,
-   "SERVICES_PAGE": {
+  },
+  "SERVICES_PAGE": {
     "TITLE": "Services List",
     "create_service": "Add Service",
     "REFERENCE": "Reference",
@@ -189,11 +184,11 @@
         "cancel": "Cancel",
         "save": "Save",
         "saving": "Saving...",
-          "addSave": "Save",
+        "addSave": "Save",
         "addSaving": "Saving..."
       }
     },
-     "ERROR": {
+    "ERROR": {
       "TITLE": "Error",
       "INVALID_DATA": "Invalid service data or missing ID",
       "INVALID_FIELDS": "Please fill in all required fields",
@@ -219,15 +214,15 @@
       "DELETE_TEXT": "Do you really want to delete this service?"
     }
   },
-    "TOOLBAR": {
-      "SEARCH_PLACEHOLDER": "Search...",
-      "CREATE_INVOICE": "Create Invoice",
-      "CREATE_EMPLOYEE": "Create Employee",
-      "CREATE_CLIENT": "Create Client",
-      "CREATE_SERVICE": "Create Service",
-      "CREATE_TEMPLATE": "Create Template"
-    },
- "CLIENTS_PAGE": {
+  "TOOLBAR": {
+    "SEARCH_PLACEHOLDER": "Search...",
+    "CREATE_INVOICE": "Create Invoice",
+    "CREATE_EMPLOYEE": "Create Employee",
+    "CREATE_CLIENT": "Create Client",
+    "CREATE_SERVICE": "Create Service",
+    "CREATE_TEMPLATE": "Create Template"
+  },
+  "CLIENTS_PAGE": {
     "TITLE": "Clients List",
     "CLIENT_NAME": "Client Name",
     "PHONE": "Phone",
@@ -283,9 +278,9 @@
         "NO_CHANGES": "No changes to save"
       },
       "WARNING": {
-      "INVALID_DATA": "Invalid client data detected",
-      "TITLE": "Warning"
-    },
+        "INVALID_DATA": "Invalid client data detected",
+        "TITLE": "Warning"
+      },
       "CONFIRM": {
         "DELETE_CONFIRM": "Are you sure you want to delete this client?"
       },
@@ -326,12 +321,9 @@
           "required": "RIB is required"
         }
       }
-      
     }
-  
   },
-    
- "INVOICE_TEMPLATES": {
+  "INVOICE_TEMPLATES": {
     "TITLE": "Invoice Templates",
     "NO_TEMPLATES": {
       "TITLE": "No templates available",
@@ -378,6 +370,14 @@
       "TEMPLATE_NAME_REQUIRED": {
         "TEXT": "Template name is required",
         "TITLE": "Error"
+      },
+      "FAILED_PARSE_CONTENT": {
+        "TEXT": "Failed to parse template content",
+        "TITLE": "Error"
+      },
+      "INVALID_FORM": {
+        "TEXT": "Please fill in all required fields correctly",
+        "TITLE": "Error"
       }
     },
     "SAVE_MODAL": {
@@ -389,8 +389,7 @@
       "CANCEL_ARIA_LABEL": "Cancel button",
       "CONFIRM_SAVE_ARIA_LABEL": "Confirm save button"
     }
-},
-    
+  },
   "PAGINATOR": {
     "ITEMS_PER_PAGE": "Items per page:",
     "NEXT_PAGE": "Next page",
@@ -398,9 +397,7 @@
     "FIRST_PAGE": "First page",
     "LAST_PAGE": "Last page",
     "RANGE": "{start} – {end} of {total}"
-  
-},
-
+  },
   "SUCCESS": {
     "TITLE": "Success",
     "VALIDATE_PARTNER": "Partner validated successfully",
@@ -415,7 +412,6 @@
     "VALIDATE_TEXT": "Do you really want to validate this partner?",
     "DELETE_TEXT": "Do you really want to delete this partner?"
   },
-
   "Invoice": {
     "options": "Settings",
     "Sauvegarder": "Save",
@@ -423,17 +419,18 @@
     "toggleTooltip": "Show/Hide settings",
     "saveAriaLabel": "Save model",
     "toggleAriaLabel": "Toggle settings panel"
-  
-},
-
+  },
+ 
   "CREATE_INVOICE": {
     "STEPS": {
       "CLIENT_INFORMATION": "Client Information",
       "COMPANY_INFORMATION": "Company Information",
       "SERVICES": "Services",
-      "DATES": "Dates"
+      "DATES": "Dates",
+      "FOOTER_CONTENT": "Footer Content"
     },
     "LABELS": {
+      "SUMMARY": "Summary",
       "SELECT_INVOICE_TEMPLATE": "Select Invoice Template",
       "CLIENT": "Client",
       "CLIENT_PHONE": "Client Phone",
@@ -443,25 +440,41 @@
       "COMPANY_ADDRESS": "Company Address",
       "COMPANY_TYPE": "Company Type",
       "COMPANY_LOGO": "Company Logo",
+      "COMPANY_PHONE": "Company Phone",
       "SERVICE": "Service",
       "SERVICE_NAME": "Service Name",
-      "SERVICE_PRICE": "Service Price ($)",
+      "SERVICE_PRICE": "Service Price",
       "SERVICE_REFERENCE": "Service Reference",
       "CREATION_DATE": "Creation Date",
       "DUE_DATE": "Due Date",
       "CREATED": "Created",
       "SECTIONS": "Sections",
-      "NO_PREVIEW_AVAILABLE": "No preview available"
+      "NO_PREVIEW_AVAILABLE": "No preview available",
+      "NO_LOGO_AVAILABLE": "No logo available",
+      "FOOTER_TEXT": "Footer Text",
+      "QUANTITY": "Quantity",
+      "TVA": "VAT (%)",
+      "DISCOUNT": "Discount (%)",
+      "SUBTOTAL": "Subtotal",
+      "TAXES": "Taxes",
+      "TOTAL_AMOUNT": "Total Amount",
+      "ADDITIONAL_SERVICE": "Additional Service"  
     },
     "PLACEHOLDERS": {
       "CHOOSE_TEMPLATE": "Choose a template",
       "SELECT_CLIENT": "Select a client",
-      "SELECT_SERVICE": "Select a service"
+      "SELECT_SERVICE": "Select a service",
+      "FOOTER_TEXT": "Enter footer text (e.g., terms, notes)",
+      "TVA": "Enter VAT percentage",
+      "DISCOUNT": "Enter discount percentage"
     },
     "BUTTONS": {
       "NEXT": "Next",
       "BACK": "Back",
-      "SUBMIT": "Submit"
+      "SUBMIT": "Submit",
+      "ADD_SERVICE": "Add Service", 
+      "REMOVE_SERVICE": "Remove Service" ,
+      "PREVIEW": "Preview"
     },
     "ERRORS": {
       "SELECT_TEMPLATE_REQUIRED": "Please select an invoice template",
@@ -476,30 +489,49 @@
       "COMPANY_ADDRESS_REQUIRED": "Company address is required",
       "COMPANY_TYPE_REQUIRED": "Company type is required",
       "COMPANY_LOGO_REQUIRED": "Company logo URL is required",
+      "COMPANY_PHONE_REQUIRED": "Company phone is required",
       "SERVICE_NAME_REQUIRED": "Service name is required",
       "SERVICE_PRICE_REQUIRED": "Service price is required",
       "SERVICE_PRICE_NEGATIVE": "Service price cannot be negative",
       "CREATION_DATE_REQUIRED": "Creation date is required",
-      "DUE_DATE_REQUIRED": "Due date is required"
-    }
-  },
-  "INVOICE_TEMPLATES": {
+      "DUE_DATE_REQUIRED": "Due date is required",
+      "LOGO_LOAD_FAILED": "Failed to load company logo",
+      "FOOTER_TEXT_REQUIRED": "Footer text is required",
+      "FOOTER_TEXT_TOO_LONG": "Footer text cannot exceed 500 characters",
+      "QUANTITY_REQUIRED": "Quantity is required",
+      "QUANTITY_INVALID": "Quantity must be at least 1",
+      "TVA_REQUIRED": "VAT is required",
+      "TVA_INVALID": "VAT must be between 0 and 100",
+      "DISCOUNT_REQUIRED": "Discount is required",
+      "DISCOUNT_INVALID": "Discount cannot be negative",
+      "INVALID_DATES": "Due date must be after creation date",
+      "RESOURCE_NOT_FOUND": "Requested resource not found"
+    },
     "MESSAGES": {
-      "FAILED_LOAD_TEMPLATES": {
-        "TEXT": "Failed to load templates",
+      "INVOICE_CREATED": {
+        "TEXT": "Invoice created successfully",
+        "TITLE": "Success"
+      },
+      "FAILED_CREATE_INVOICE": {
+        "TEXT": "Failed to create invoice",
         "TITLE": "Error"
       },
-      "FAILED_PARSE_CONTENT": {
-        "TEXT": "Failed to parse template content",
+      "INVALID_DATES": {
+        "TEXT": "Due date must be after creation date",
         "TITLE": "Error"
       },
-      "INVALID_FORM": {
-        "TEXT": "Please fill in all required fields correctly",
+      "INVALID_NUMERIC_VALUES": {
+        "TEXT": "Please check numeric values (must be positive)",
         "TITLE": "Error"
       }
     }
   }
- 
+,
+  "AUTH": {
+    "ERROR": {
+      "INVALID_TOKEN": "Invalid or expired authentication token",
+      "FORBIDDEN": "You do not have permission to access this resource",
+      "PARTNER_NOT_FOUND": "Company information not found"
+    }
+  }
 }
-  
-

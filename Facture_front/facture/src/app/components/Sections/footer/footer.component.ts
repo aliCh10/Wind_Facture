@@ -140,8 +140,6 @@ export class FooterComponent implements Section, AfterViewInit, OnDestroy {
     this.updateFooterPosition();
     this.positionChanged.emit({ x: this.x, y: this.y });
 
-    // Optional: Persist position
-    // this.styleManager.updatePosition(this.componentId, { x: this.x, y: this.y }, 'FooterComponent');
   }
 
   public updateFooterPosition(): void {
@@ -170,14 +168,39 @@ export class FooterComponent implements Section, AfterViewInit, OnDestroy {
   openOptionsPanel(): void {
     this.openOptions.emit(this.componentId);
   }
-  public getSectionContent(): SectionContent {
-    const tableEl = this.footerContainer?.nativeElement;
-    if (!tableEl) {
-        return { contentData: '' };
-    }
-    let htmlContent = tableEl.innerHTML;
-    // Nettoyer les attributs Angular si nécessaire
-    htmlContent = htmlContent.replace(/(_ngcontent-[a-zA-Z0-9-]+="")/g, '');
+public getSectionContent(): SectionContent {
+    const containerStyle = `
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        position: absolute;
+        left: ${this.x}px;
+        top: ${this.y}px;
+        width: ${this.width}px;
+        height: ${this.height}px;
+        background-color: ${this.backgroundColor};
+        border: ${this.borderWidth}px ${this.borderStyle} ${this.borderColor};
+        border-radius: ${this.borderRadius}px;
+        padding: 15px;
+        margin: 10px 0;
+    `;
+
+    const spanStyle = `
+        color: ${this.textColor};
+        font-family: ${this.fontFamily};
+        font-size: ${this.fontSize}px;
+        font-weight: normal;
+        margin: 5px 0;
+    `;
+
+    const htmlContent = `
+        <div style="${containerStyle}">
+            <div>
+                <span style="${spanStyle}" data-placeholder="#footerText">#footerText</span>
+            </div>
+        </div>
+    `;
+
     return { contentData: htmlContent };
 }
 }

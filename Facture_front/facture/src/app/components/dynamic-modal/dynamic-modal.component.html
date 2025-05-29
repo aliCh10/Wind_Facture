@@ -66,6 +66,7 @@
 
 <!-- New Client Modal -->
 <!-- Client Modal -->
+<!-- Client Modal -->
 <div *ngIf="data.type === 'client'" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
   <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-2xl w-full mx-auto border-t-4 border-[#FFD700] transform transition-all duration-300 animate-slideUp">
     <div class="flex justify-between items-center mb-6">
@@ -77,55 +78,73 @@
       </button>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <!-- Nom du Client -->
-      <div class="space-y-1">
-        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>CLIENTS_PAGE.CLIENT_NAME</label>
-        <input matInput [(ngModel)]="client.clientName" name="clientName" required
-          class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
-          [placeholder]="'DYNAMIC_MODAL.CLIENT.form.clientName.placeholder' | translate">
+    <form [formGroup]="clientForm">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Nom du Client -->
+        <div class="space-y-1">
+          <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>CLIENTS_PAGE.CLIENT_NAME</label>
+          <input matInput formControlName="clientName" required
+            class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
+            [placeholder]="'DYNAMIC_MODAL.CLIENT.form.clientName.placeholder' | translate">
+          <div *ngIf="clientForm.get('clientName')?.touched && clientForm.get('clientName')?.invalid" class="text-red-500 text-xs mt-1">
+            <span *ngIf="clientForm.get('clientName')?.hasError('required')" translate>DYNAMIC_MODAL.CLIENT.ERROR.NAME_REQUIRED</span>
+            <span *ngIf="clientForm.get('clientName')?.hasError('minlength')" translate>DYNAMIC_MODAL.CLIENT.ERROR.NAME_MINLENGTH</span>
+          </div>
+        </div>
+
+        <!-- Téléphone -->
+        <div class="space-y-1">
+          <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>CLIENTS_PAGE.PHONE</label>
+          <input matInput formControlName="clientPhone" required
+            class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
+            [placeholder]="'DYNAMIC_MODAL.CLIENT.form.phone.placeholder' | translate">
+          <div *ngIf="clientForm.get('clientPhone')?.touched && clientForm.get('clientPhone')?.invalid" class="text-red-500 text-xs mt-1">
+            <span *ngIf="clientForm.get('clientPhone')?.hasError('required')" translate>DYNAMIC_MODAL.CLIENT.ERROR.PHONE_REQUIRED</span>
+            <span *ngIf="clientForm.get('clientPhone')?.hasError('pattern')" translate>DYNAMIC_MODAL.CLIENT.ERROR.PHONE_INVALID</span>
+          </div>
+        </div>
+
+        <!-- Adresse -->
+        <div class="space-y-1 md:col-span-2">
+          <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>CLIENTS_PAGE.ADDRESS</label>
+          <input matInput formControlName="clientAddress" required
+            class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
+            [placeholder]="'DYNAMIC_MODAL.CLIENT.form.address.placeholder' | translate">
+          <div *ngIf="clientForm.get('clientAddress')?.touched && clientForm.get('clientAddress')?.invalid" class="text-red-500 text-xs mt-1">
+            <span *ngIf="clientForm.get('clientAddress')?.hasError('required')" translate>DYNAMIC_MODAL.CLIENT.ERROR.ADDRESS_REQUIRED</span>
+            <span *ngIf="clientForm.get('clientAddress')?.hasError('minlength')" translate>DYNAMIC_MODAL.CLIENT.ERROR.ADDRESS_MINLENGTH</span>
+          </div>
+        </div>
+
+        <!-- RIB -->
+        <div class="space-y-1 md:col-span-2">
+          <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>CLIENTS_PAGE.RIB</label>
+          <input matInput formControlName="clientRIB" required
+            class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
+            [placeholder]="'DYNAMIC_MODAL.CLIENT.form.rib.placeholder' | translate">
+          <div *ngIf="clientForm.get('clientRIB')?.touched && clientForm.get('clientRIB')?.invalid" class="text-red-500 text-xs mt-1">
+            <span *ngIf="clientForm.get('clientRIB')?.hasError('required')" translate>DYNAMIC_MODAL.CLIENT.ERROR.RIB_REQUIRED</span>
+            <span *ngIf="clientForm.get('clientRIB')?.hasError('pattern')" translate>DYNAMIC_MODAL.CLIENT.ERROR.RIB_INVALID</span>
+          </div>
+        </div>
       </div>
 
-      <!-- Téléphone -->
-      <div class="space-y-1">
-        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>CLIENTS_PAGE.PHONE</label>
-        <input matInput [(ngModel)]="client.clientPhone" name="clientPhone" required
-          class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
-          [placeholder]="'DYNAMIC_MODAL.CLIENT.form.phone.placeholder' | translate">
+      <!-- Boutons -->
+      <div class="flex justify-end space-x-4 mt-8 pt-4 border-t border-gray-100">
+        <button type="button" (click)="onClose()" [disabled]="isLoading"
+          class="px-6 py-3 text-gray-600 font-medium rounded-xl hover:bg-gray-100 transition-all duration-200 flex items-center space-x-2 disabled:opacity-50">
+          <span translate>DYNAMIC_MODAL.CLIENT.form.buttons.cancel</span>
+        </button>
+        <button type="button" (click)="onSave()" [disabled]="isLoading || clientForm.invalid"
+          class="save-button px-8 py-3 bg-gradient-to-r from-[#FFD700] to-[#FFB600] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] flex items-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed">
+          <svg *ngIf="!isLoading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+          <span *ngIf="!isLoading" translate>DYNAMIC_MODAL.CLIENT.form.buttons.save</span>
+          <span *ngIf="isLoading" class="loading" translate>DYNAMIC_MODAL.CLIENT.form.buttons.saving</span>
+        </button>
       </div>
-
-      <!-- Adresse -->
-      <div class="space-y-1 md:col-span-2">
-        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>CLIENTS_PAGE.ADDRESS</label>
-        <input matInput [(ngModel)]="client.clientAddress" name="clientAddress" required
-          class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
-          [placeholder]="'DYNAMIC_MODAL.CLIENT.form.address.placeholder' | translate">
-      </div>
-
-      <!-- RIB -->
-      <div class="space-y-1 md:col-span-2">
-        <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>CLIENTS_PAGE.RIB</label>
-        <input matInput [(ngModel)]="client.rib" name="clientRIB" required
-          class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
-          [placeholder]="'DYNAMIC_MODAL.CLIENT.form.rib.placeholder' | translate">
-      </div>
-    </div>
-
-    <!-- Boutons -->
-    <div class="flex justify-end space-x-4 mt-8 pt-4 border-t border-gray-100">
-      <button type="button" (click)="onClose()" [disabled]="isLoading"
-        class="px-6 py-3 text-gray-600 font-medium rounded-xl hover:bg-gray-100 transition-all duration-200 flex items-center space-x-2 disabled:opacity-50">
-        <span translate>DYNAMIC_MODAL.CLIENT.form.buttons.cancel</span>
-      </button>
-      <button type="button" (click)="onSave()" [disabled]="isLoading"
-        class="save-button px-8 py-3 bg-gradient-to-r from-[#FFD700] to-[#FFB600] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] flex items-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed">
-        <svg *ngIf="!isLoading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-        </svg>
-        <span *ngIf="!isLoading" translate>DYNAMIC_MODAL.CLIENT.form.buttons.save</span>
-        <span *ngIf="isLoading" class="loading" translate>DYNAMIC_MODAL.CLIENT.form.buttons.saving</span>
-      </button>
-    </div>
+    </form>
   </div>
 </div>
 <!-- Service Modal -->

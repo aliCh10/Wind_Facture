@@ -221,9 +221,10 @@ export class TableComponent implements Section, AfterViewInit, OnDestroy {
       'cell-height': '30px' // Add cell-height for <td> elements
     };
   }
-  public getSectionContent(): SectionContent {
+ getSectionContent(): SectionContent {
     const contentEl = this.tableContainer?.nativeElement;
     if (!contentEl) {
+        console.warn('Table container element not available');
         return { contentData: '' };
     }
 
@@ -231,18 +232,75 @@ export class TableComponent implements Section, AfterViewInit, OnDestroy {
     const clonedEl = contentEl.cloneNode(true) as HTMLElement;
 
     // Remove all <button> elements
-    const buttons = clonedEl.querySelectorAll('button');
-    buttons.forEach(button => {
+    clonedEl.querySelectorAll('button').forEach(button => {
         const parent = button.closest('td') || button.closest('div');
         if (parent) {
             parent.remove();
         }
     });
 
-    // Get the cleaned HTML content
+    // Remove the last <th> (Remove button column)
+    clonedEl.querySelectorAll('thead tr th:last-child').forEach(th => th.remove());
+
+    // Process each row in tbody
+    const rows = clonedEl.querySelectorAll('tbody tr');
+    rows.forEach((row, rowIndex) => {
+        // Remove the last <td> (Remove button column)
+        row.querySelectorAll('td:last-child').forEach(td => td.remove());
+
+        // Set data-placeholder attributes for inputs
+        const inputs = row.querySelectorAll('input');
+        const prefix = rowIndex === 0 ? '' : `service_${rowIndex}_`;
+        inputs.forEach((input, idx) => {
+            let field: string;
+            switch (idx) {
+                case 0: field = 'reference'; break;
+                case 1: field = 'tva'; break;
+                case 2: field = 'discount'; break;
+                case 3: field = 'quantity'; break;
+                case 4: field = 'price'; break;
+                default: return;
+            }
+            const placeholder = field === 'price' ? `${prefix}servicePrice` : `${prefix}${field}`;
+            input.setAttribute('data-placeholder', `#${placeholder}`);
+            input.removeAttribute('ng-model');
+
+            // Set value from items array
+            if (this.items[rowIndex]) {
+                const item = this.items[rowIndex];
+                let value: string;
+                switch (field) {
+                    case 'reference': value = item.ref || ''; break;
+                    case 'tva': value = item.tva?.toString() || '0'; break;
+                    case 'discount': value = item.remise?.toString() || '0'; break;
+                    case 'quantity': value = item.quantity?.toString() || '1'; break;
+                    case 'price': value = item.price?.toString() || '0'; break;
+                    default: value = '';
+                }
+                input.setAttribute('value', value);
+                input.removeAttribute('ng-reflect-model');
+            }
+        });
+
+        // Update total column
+        const totalTd = row.querySelector('td.line-total');
+        if (totalTd && this.items[rowIndex]) {
+            const item = this.items[rowIndex];
+            const total = (item.quantity * item.price * (1 - item.remise / 100) * (1 + item.tva / 100)).toFixed(2);
+            totalTd.innerHTML = `<span data-placeholder="#${prefix}serviceTotal">${total} dt</span>`;
+        }
+    });
+
+    // Clean up Angular-specific attributes
     let htmlContent = clonedEl.innerHTML;
     htmlContent = htmlContent.replace(/(_ngcontent-[a-zA-Z0-9-]+="")/g, '');
+    htmlContent = htmlContent.replace(/ng-reflect-[^"]*="[^"]*"/g, '');
+    htmlContent = htmlContent.replace(/<!--bindings=\{[^}]*\}-->/g, '');
+    htmlContent = htmlContent.replace(/cdkdrag[^"]*"/g, '');
+    htmlContent = htmlContent.replace(/\[(cdkDragBoundary|style\.[^"]*)\]="[^"]*"/g, '');
+    htmlContent = htmlContent.replace(/\((cdkDragEnded|click)\)="[^"]*"/g, '');
 
+    console.log('Generated Table HTML:', htmlContent);
     return { contentData: htmlContent };
 }
   openOptionsPanel() {

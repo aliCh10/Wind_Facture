@@ -1,8 +1,11 @@
 package com.example.facture.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "factures")
@@ -30,6 +33,16 @@ public class Facture {
     @Column(name = "total_amount", nullable = false)
     private double totalAmount;
 
+    @Column(name = "discount_amount", nullable = false)
+    private double discountAmount;
+
+    @Column(name = "client_id", nullable = false)
+    private Long clientId;
+
+    @OneToMany(mappedBy = "facture", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<FactureServicee> factureServices = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "modele_facture_id", nullable = false)
     private ModeleFacture modeleFacture;
@@ -39,6 +52,10 @@ public class Facture {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    // No-arg constructor
+    public Facture() {
+    }
 
     // Getters and Setters
     public Long getId() {
@@ -95,6 +112,30 @@ public class Facture {
 
     public void setTotalAmount(double totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public double getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(double discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    public Long getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Long clientId) {
+        this.clientId = clientId;
+    }
+
+    public List<FactureServicee> getFactureServices() {
+        return factureServices;
+    }
+
+    public void setFactureServices(List<FactureServicee> factureServices) {
+        this.factureServices = factureServices;
     }
 
     public ModeleFacture getModeleFacture() {

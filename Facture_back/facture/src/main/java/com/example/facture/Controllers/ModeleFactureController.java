@@ -107,5 +107,6 @@ public ResponseEntity<byte[]> getModeleFacturePdf(@PathVariable Long id) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+    
 
 }

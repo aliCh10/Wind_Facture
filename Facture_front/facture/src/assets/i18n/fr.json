@@ -42,51 +42,47 @@
   "companyAddress_error": "L'adresse de l'entreprise est requise",
   "companyType_error": "Le type d'entreprise est requis",
   "logo_error": "Le logo de l'entreprise est requis",
-  "Partners List":"Liste des Partenaires",
-  "Name":"Nom",
-  "Status":"Statu",
-  "Actions":"Actions",
-  "It's a good day to simplify your invoicing!":"C'est un bon jour pour simplifier votre facturation!",
-  "Hello":"Bonjour",
-  "Create my first invoice":"Créez votre première facture",
-  "Transform your management with ease":"Transformez votre gestion avec facilité",
-  "New Invoice":"Nouvelle facture",
-  "No partner to validate":"Aucun partenaire pour valider",
-  "Customize your invoice":"Personnalisez votre facture",
- 
-  
-    "MENU": {
-      "HOME": "Accueil",
-      "DASHBOARD": "Tableau de bord",
-      "Modele": "Modele  ",
-      "SERVICE": "Service",
-      "LOGOUT": "Se Déconnecter",
-      "SETTINGS": "Paramètres",
-      "Partners":"Partenaires",
-      "Employé":"Employé",
-      "Client":"Client",
-      "SERVICES": "Services",
-      "models_list":"Liste des Modeles",
-      "invoice":"Facture",
-      "Create Invoice":"Créer Facture"
-    },
-    "or click to select files": "ou cliquez pour sélectionner les fichiers",
-   "employee": {
-  "List of Employees": "Liste des Employés",
+  "Partners List": "Liste des Partenaires",
   "Name": "Nom",
-  "Second Name": "Prénom",
-  "Email": "EMAIL",
-  "Phone": "telephone",
+  "Status": "Statut",
   "Actions": "Actions",
-  "Add Employee": "Ajouter un Employé",
-  "Department": "Departement",
-  "Job": "Poste",
-
-   "form": {
+  "It's a good day to simplify your invoicing!": "C'est un bon jour pour simplifier votre facturation !",
+  "Hello": "Bonjour",
+  "Create my first invoice": "Créez votre première facture",
+  "Transform your management with ease": "Transformez votre gestion avec facilité",
+  "New Invoice": "Nouvelle facture",
+  "No partner to validate": "Aucun partenaire à valider",
+  "Customize your invoice": "Personnalisez votre facture",
+  "MENU": {
+    "HOME": "Accueil",
+    "DASHBOARD": "Tableau de bord",
+    "Modele": "Modèle de facture",
+    "SERVICE": "Service",
+    "LOGOUT": "Se Déconnecter",
+    "SETTINGS": "Paramètres",
+    "Partners": "Partenaires",
+    "Employé": "Employé",
+    "Client": "Client",
+    "SERVICES": "Services",
+    "models_list": "Liste des Modèles",
+    "invoice": "Facture",
+    "Create Invoice": "Créer Facture"
+  },
+  "or click to select files": "ou cliquez pour sélectionner les fichiers",
+  "employee": {
+    "List of Employees": "Liste des Employés",
+    "Name": "Nom",
+    "Second Name": "Prénom",
+    "Email": "Email",
+    "Phone": "Téléphone",
+    "Actions": "Actions",
+    "Add Employee": "Ajouter un Employé",
+    "Department": "Département",
+    "Job": "Poste",
+    "form": {
       "addTitle": "Ajouter un Employé",
       "title": "Modifier l'Employé",
       "editTitle": "Modifier l'Employé",
-
       "name": {
         "label": "Nom *",
         "placeholder": "Entrez le nom",
@@ -122,35 +118,26 @@
         "save": "Sauvegarder",
         "saving": "Sauvegarde...",
         "addSave": "Enregistrer",
-        "addSaving": "Enregistrement..."      }
+        "addSaving": "Enregistrement..."
+      }
     },
-  "ERROR": {
+    "ERROR": {
       "TITLE": "Erreur",
-      "INVALID_DATA": "Données du employé invalides ou ID manquant",
-      "INVALID_FIELDS": "Veuillez remplir tous les champs requis",
-      "MISSING_ID": "ID du employé manquant",
-      "UPDATE_FAILED": "Échec de la mise à jour du employé",
-      "ADD_FAILED": "Échec de l'ajout du employé",
-      "LOAD_FAILED": "Impossible de charger les employee",
-      "DELETE_FAILED": "Une erreur est survenue lors de la suppression",
-      "UPDATE_OPEN_FAILED": "Impossible d'ouvrir la modification : ID du employé manquant"
-    },
-    "INFO": {
-      "TITLE": "Info",
-      "NO_CHANGES": "Aucun changement à enregistrer"
+      "NO_PARTNER_ID": "Impossible de charger les employés sans partnerId",
+      "LOAD_FAILED": "Erreur lors du chargement des employés",
+      "MISSING_ID": "ID de l'employé manquant",
+      "DELETE_FAILED": "Impossible de supprimer l'employé"
     },
     "SUCCESS": {
       "TITLE": "Succès",
-      "UPDATE": "employé mis à jour avec succès",
-      "ADD": "employé ajouté avec succès",
-      "DELETE": "employé supprimé avec succès",
-      "CUSTOM_UPDATE": "employé mis à jour avec succès ! Super travail !"
+      "UPDATE": "Employé mis à jour avec succès",
+      "DELETE": "Employé supprimé avec succès"
     },
     "CONFIRM": {
-      "DELETE_TEXT": "Voulez-vous vraiment supprimer ce employé ?"
+      "DELETE_TEXT": "Voulez-vous vraiment supprimer cet employé ?"
     }
-},
-    "SERVICES_PAGE": {
+  },
+  "SERVICES_PAGE": {
     "TITLE": "Liste des Services",
     "create_service": "Ajouter un Service",
     "REFERENCE": "Référence",
@@ -207,7 +194,11 @@
       "INVALID_DATA": "Données du service invalides ou ID manquant",
       "INVALID_FIELDS": "Veuillez remplir tous les champs requis",
       "MISSING_ID": "ID du service manquant",
-      "UPDATE_FAILED": "Échec de la mise à jour du service"
+      "UPDATE_FAILED": "Échec de la mise à jour du service",
+      "ADD_FAILED": "Échec de l'ajout du service",
+      "LOAD_FAILED": "Impossible de charger les services",
+      "DELETE_FAILED": "Impossible de supprimer le service",
+      "UPDATE_OPEN_FAILED": "Impossible d'ouvrir la modification : ID du service manquant"
     },
     "INFO": {
       "TITLE": "Info",
@@ -215,21 +206,24 @@
     },
     "SUCCESS": {
       "TITLE": "Succès",
-      "UPDATE": "Service mis à jour avec succès"
+      "UPDATE": "Service mis à jour avec succès",
+      "ADD": "Service ajouté avec succès",
+      "DELETE": "Service supprimé avec succès",
+      "CUSTOM_UPDATE": "Service mis à jour avec succès ! Super travail !"
     },
-     "CONFIRM": {
+    "CONFIRM": {
       "DELETE_TEXT": "Voulez-vous vraiment supprimer ce service ?"
     }
   },
-    "TOOLBAR": {
-      "SEARCH_PLACEHOLDER": "Rechercher...",
-      "CREATE_INVOICE": "Créer Facture",
-      "CREATE_EMPLOYEE": "Créer Employé",
-      "CREATE_CLIENT": "Créer Client",
-      "CREATE_SERVICE": "Créer Service",
-      "CREATE_TEMPLATE": "Créer Modèle"
-    },
- "CLIENTS_PAGE": {
+  "TOOLBAR": {
+    "SEARCH_PLACEHOLDER": "Rechercher...",
+    "CREATE_INVOICE": "Créer Facture",
+    "CREATE_EMPLOYEE": "Créer Employé",
+    "CREATE_CLIENT": "Créer Client",
+    "CREATE_SERVICE": "Créer Service",
+    "CREATE_TEMPLATE": "Créer Modèle"
+  },
+  "CLIENTS_PAGE": {
     "TITLE": "Liste des Clients",
     "CLIENT_NAME": "Nom du Client",
     "PHONE": "Téléphone",
@@ -268,7 +262,7 @@
         "ADD": "Employé ajouté avec succès"
       }
     },
-   "CLIENT": {
+    "CLIENT": {
       "SUCCESS": {
         "ADD": "Client ajouté avec succès",
         "UPDATE": "Client mis à jour avec succès",
@@ -284,8 +278,8 @@
       "INFO": {
         "NO_CHANGES": "Aucun changement à enregistrer"
       },
-      "worning": {
-        "Invalid_data": "Données invalides. Vérifiez les informations saisies.",
+      "WARNING": {
+        "INVALID_DATA": "Données du client invalides détectées",
         "TITLE": "Attention"
       },
       "CONFIRM": {
@@ -329,9 +323,8 @@
         }
       }
     }
-  
   },
-"INVOICE_TEMPLATES": {
+  "INVOICE_TEMPLATES": {
     "TITLE": "Modèles de facture",
     "NO_TEMPLATES": {
       "TITLE": "Aucun modèle disponible",
@@ -358,7 +351,7 @@
         "TEXT": "Impossible de supprimer le modèle - ID manquant",
         "TITLE": "Erreur"
       },
-      "FAILDELETE_TEMPLATE": {
+      "FAILED_DELETE_TEMPLATE": {
         "TEXT": "Échec de la suppression du modèle",
         "TITLE": "Erreur"
       },
@@ -378,6 +371,14 @@
       "TEMPLATE_NAME_REQUIRED": {
         "TEXT": "Le nom du modèle est requis",
         "TITLE": "Erreur"
+      },
+      "FAILED_PARSE_CONTENT": {
+        "TEXT": "Échec de l'analyse du contenu du modèle",
+        "TITLE": "Erreur"
+      },
+      "INVALID_FORM": {
+        "TEXT": "Veuillez remplir correctement tous les champs requis",
+        "TITLE": "Erreur"
       }
     },
     "SAVE_MODAL": {
@@ -389,17 +390,16 @@
       "CANCEL_ARIA_LABEL": "Bouton d'annulation",
       "CONFIRM_SAVE_ARIA_LABEL": "Bouton de confirmation d'enregistrement"
     }
-},
-    
+  },
   "PAGINATOR": {
     "ITEMS_PER_PAGE": "Éléments par page :",
     "NEXT_PAGE": "Page suivante",
     "PREVIOUS_PAGE": "Page précédente",
     "FIRST_PAGE": "Première page",
     "LAST_PAGE": "Dernière page",
-"RANGE": "{start} – {end} sur {total}"  
-},
-"SUCCESS": {
+    "RANGE": "{start} – {end} sur {total}"
+  },
+  "SUCCESS": {
     "TITLE": "Succès",
     "VALIDATE_PARTNER": "Partenaire validé avec succès",
     "DELETE_PARTNER": "Partenaire supprimé avec succès"
@@ -413,25 +413,25 @@
     "VALIDATE_TEXT": "Voulez-vous vraiment valider ce partenaire ?",
     "DELETE_TEXT": "Voulez-vous vraiment supprimer ce partenaire ?"
   },
-
   "Invoice": {
     "options": "Options",
     "Sauvegarder": "Sauvegarder",
     "saveTooltip": "Sauvegarder le modèle",
     "toggleTooltip": "Afficher/Masquer les options",
-    "saveAriaLabel": "Save model",
-    "toggleAriaLabel": "Toggle options panel"
-  
-},
-
+    "saveAriaLabel": "Sauvegarder le modèle",
+    "toggleAriaLabel": "Basculer le panneau des options"
+  },
+ 
   "CREATE_INVOICE": {
     "STEPS": {
       "CLIENT_INFORMATION": "Informations sur le client",
       "COMPANY_INFORMATION": "Informations sur l'entreprise",
       "SERVICES": "Services",
-      "DATES": "Dates"
+      "DATES": "Dates",
+      "FOOTER_CONTENT": "Contenu du pied de page"
     },
     "LABELS": {
+        "SUMMARY": "Sommaire",
       "SELECT_INVOICE_TEMPLATE": "Sélectionner un modèle de facture",
       "CLIENT": "Client",
       "CLIENT_PHONE": "Téléphone du client",
@@ -441,29 +441,45 @@
       "COMPANY_ADDRESS": "Adresse de l'entreprise",
       "COMPANY_TYPE": "Type d'entreprise",
       "COMPANY_LOGO": "Logo de l'entreprise",
+      "COMPANY_PHONE": "Téléphone de l'entreprise",
       "SERVICE": "Service",
       "SERVICE_NAME": "Nom du service",
-      "SERVICE_REFERENCE": "Reference du service",
-      "SERVICE_PRICE": "Prix du service (€)",
+      "SERVICE_PRICE": "Prix du service",
+      "SERVICE_REFERENCE": "Référence du service",
       "CREATION_DATE": "Date de création",
       "DUE_DATE": "Date d'échéance",
       "CREATED": "Créé le",
       "SECTIONS": "Sections",
-      "NO_PREVIEW_AVAILABLE": "Aucun aperçu disponible"
+      "NO_PREVIEW_AVAILABLE": "Aucun aperçu disponible",
+      "NO_LOGO_AVAILABLE": "Aucun logo disponible",
+      "FOOTER_TEXT": "Texte du pied de page",
+      "QUANTITY": "Quantité",
+      "TVA": "TVA (%)",
+      "DISCOUNT": "Remise (%)",
+      "SUBTOTAL": "Sous-total",
+      "TAXES": "Taxes",
+      "TOTAL_AMOUNT": "Montant Total",
+      "ADDITIONAL_SERVICE": "Service supplémentaire"  
     },
     "PLACEHOLDERS": {
       "CHOOSE_TEMPLATE": "Choisir un modèle",
       "SELECT_CLIENT": "Sélectionner un client",
-      "SELECT_SERVICE": "Sélectionner un service"
+      "SELECT_SERVICE": "Sélectionner un service",
+      "FOOTER_TEXT": "Entrez le texte du pied de page (ex. : conditions, notes)",
+      "TVA": "Entrez le pourcentage de TVA",
+      "DISCOUNT": "Entrez le pourcentage de remise"
     },
     "BUTTONS": {
       "NEXT": "Suivant",
       "BACK": "Précédent",
-      "SUBMIT": "Soumettre"
+      "SUBMIT": "Soumettre",
+      "ADD_SERVICE": "Ajouter un service",  
+      "REMOVE_SERVICE": "Supprimer le service",
+      "PREVIEW": "Aperçu"
     },
     "ERRORS": {
       "SELECT_TEMPLATE_REQUIRED": "Veuillez sélectionner un modèle de facture",
-      "SELECT_CLIENT_REQUIRED": "Veuillez sélectionner un client",
+      "SELECTструй_CLIENT_REQUIRED": "Veuillez sélectionner un client",
       "SELECT_SERVICE_REQUIRED": "Veuillez sélectionner un service",
       "PHONE_REQUIRED": "Le numéro de téléphone est requis",
       "PHONE_INVALID": "Format de numéro de téléphone invalide (8 à 15 chiffres, + optionnel)",
@@ -474,35 +490,49 @@
       "COMPANY_ADDRESS_REQUIRED": "L'adresse de l'entreprise est requise",
       "COMPANY_TYPE_REQUIRED": "Le type d'entreprise est requis",
       "COMPANY_LOGO_REQUIRED": "L'URL du logo de l'entreprise est requise",
+      "COMPANY_PHONE_REQUIRED": "Le téléphone de l'entreprise est requis",
       "SERVICE_NAME_REQUIRED": "Le nom du service est requis",
       "SERVICE_PRICE_REQUIRED": "Le prix du service est requis",
       "SERVICE_PRICE_NEGATIVE": "Le prix du service ne peut pas être négatif",
       "CREATION_DATE_REQUIRED": "La date de création est requise",
-      "DUE_DATE_REQUIRED": "La date d'échéance est requise"
-    }
-  },
-  "INVOICE_TEMPLATES": {
-    "CARD": {
-      "UNTITLED": "Modèle sans titre"
+      "DUE_DATE_REQUIRED": "La date d'échéance est requise",
+      "LOGO_LOAD_FAILED": "Échec du chargement du logo de l'entreprise",
+      "FOOTER_TEXT_REQUIRED": "Le texte du pied de page est requis",
+      "FOOTER_TEXT_TOO_LONG": "Le texte du pied de page ne peut pas dépasser 500 caractères",
+      "QUANTITY_REQUIRED": "La quantité est requise",
+      "QUANTITY_INVALID": "La quantité doit être d'au moins 1",
+      "TVA_REQUIRED": "La TVA est requise",
+      "TVA_INVALID": "La TVA doit être entre 0 et 100",
+      "DISCOUNT_REQUIRED": "La remise est requise",
+      "DISCOUNT_INVALID": "La remise ne peut pas être négative",
+      "INVALID_DATES": "La date d'échéance doit être après la date de création",
+      "RESOURCE_NOT_FOUND": "Ressource demandée non trouvée"
     },
     "MESSAGES": {
-      "FAILED_LOAD_TEMPLATES": {
-        "TEXT": "Échec du chargement des modèles",
+      "INVOICE_CREATED": {
+        "TEXT": "Facture créée avec succès",
+        "TITLE": "Succès"
+      },
+      "FAILED_CREATE_INVOICE": {
+        "TEXT": "Échec de la création de la facture",
         "TITLE": "Erreur"
       },
-      "FAILED_PARSE_CONTENT": {
-        "TEXT": "Échec de l'analyse du contenu du modèle",
+      "INVALID_DATES": {
+        "TEXT": "La date d'échéance doit être après la date de création",
         "TITLE": "Erreur"
       },
-      "INVALID_FORM": {
-        "TEXT": "Veuillez remplir correctement tous les champs requis",
+      "INVALID_NUMERIC_VALUES": {
+        "TEXT": "Veuillez vérifier les valeurs numériques (doivent être positives)",
         "TITLE": "Erreur"
       }
     }
+  },
+
+  "AUTH": {
+    "ERROR": {
+      "INVALID_TOKEN": "Jeton d'authentification invalide ou expiré",
+      "FORBIDDEN": "Vous n'avez pas la permission d'accéder à cette ressource",
+      "PARTNER_NOT_FOUND": "Informations sur l'entreprise non trouvées"
+    }
   }
-  
-  
-  
-
-
 }

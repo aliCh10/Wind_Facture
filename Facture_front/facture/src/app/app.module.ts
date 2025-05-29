@@ -83,11 +83,6 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { FacturePreviewModalComponent } from './components/facture-preview-modal/facture-preview-modal.component';
 import { SafeHtmlPipe } from './shared/pipes/safe-html.pipe';
 
-
-
-
-
-
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -130,7 +125,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ReactiveFormsModule,
     AuthModule,
     BrowserModule,
-    DragDropModule, // This is now recognized because it’s imported above
+    DragDropModule, 
     BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,

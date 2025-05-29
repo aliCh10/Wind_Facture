@@ -30,7 +30,8 @@ public class SecurityConfig {
                     "/swagger-ui.html",
                     "/webjars/**",
                     "/swagger-resources/**",
-                    "/api/modele-facture/**"
+                    "/api/modele-facture/**",
+                    "/api/factures/**" // Ajout du endpoint factures
                 ).permitAll()
                 .anyRequest().authenticated() // Require authentication for all other endpoints
             )

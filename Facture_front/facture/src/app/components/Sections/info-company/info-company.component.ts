@@ -2,6 +2,7 @@ import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, AfterVie
 import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { StyleManagerService } from '../../../services/StyleManagerService';
 import { Subscription } from 'rxjs';
+import { AuthService } from '../../../services/AuthService'; // Adjust path as needed
 import { Section, SectionContent } from '../../../models/section.model';
 
 @Component({
@@ -18,11 +19,9 @@ export class InfoCompanyComponent implements Section, AfterViewInit, OnDestroy {
   @Output() openOptions = new EventEmitter<string>();
 
   companyInfo = {
-    name: 'SCI Wind',
-    address: '85 RUE D\'AURIASQUE, 83600 FREJUS, FR',
-    phone: '',
-    email: '',
-    siret: ''
+    name: '',
+    address: '',
+    phone: ''
   };
 
   // Section interface properties
@@ -46,14 +45,20 @@ export class InfoCompanyComponent implements Section, AfterViewInit, OnDestroy {
 
   private stylesSubscription!: Subscription;
 
-  constructor(private styleManager: StyleManagerService) {}
+  constructor(
+    private styleManager: StyleManagerService,
+    private authService: AuthService
+  ) {}
 
   ngAfterViewInit() {
+    // Fetch company info when component initializes
+    this.fetchCompanyInfo();
+
     // Subscribe to style updates
     this.stylesSubscription = this.styleManager.componentStyles$.subscribe(styles => {
       const componentStyles = styles['info-company'] || {};
       this.loadStyles(componentStyles);
-      this.applyStyles(false); // Apply styles without updating service
+      this.applyStyles(false);
     });
 
     // Apply initial position
@@ -62,6 +67,22 @@ export class InfoCompanyComponent implements Section, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.stylesSubscription?.unsubscribe();
+  }
+
+  private fetchCompanyInfo(): void {
+    this.authService.getCompanyInfo().subscribe({
+      next: (response) => {
+        this.companyInfo = {
+          name: response.companyName || '',
+          address: response.address || '',
+          phone: response.tel || ''
+        };
+        this.applyStyles();
+      },
+      error: (error) => {
+        console.error('Failed to fetch company info:', error);
+      }
+    });
   }
 
   private loadStyles(styles: { [key: string]: string | undefined }): void {
@@ -132,9 +153,6 @@ export class InfoCompanyComponent implements Section, AfterViewInit, OnDestroy {
     event.source.setFreeDragPosition({ x: 0, y: 0 });
 
     this.updateCompanyPosition();
-
-    // Optional: Persist position
-    // this.styleManager.updatePosition('info-company', { x: this.x, y: this.y }, 'InfoCompanyComponent');
   }
 
   public updateCompanyPosition(): void {
@@ -159,15 +177,15 @@ export class InfoCompanyComponent implements Section, AfterViewInit, OnDestroy {
       'height': `${this.height}px`
     };
   }
-    public getSectionContent(): SectionContent {
-      const tableEl = this.companyContainer?.nativeElement;
-      if (!tableEl) {
-          return { contentData: '' };
-      }
-      let htmlContent = tableEl.innerHTML;
-      // Nettoyer les attributs Angular si nécessaire
-      htmlContent = htmlContent.replace(/(_ngcontent-[a-zA-Z0-9-]+="")/g, '');
-      return { contentData: htmlContent };
+
+  public getSectionContent(): SectionContent {
+    const tableEl = this.companyContainer?.nativeElement;
+    if (!tableEl) {
+      return { contentData: '' };
+    }
+    let htmlContent = tableEl.innerHTML;
+    htmlContent = htmlContent.replace(/(_ngcontent-[a-zA-Z0-9-]+="")/g, '');
+    return { contentData: htmlContent };
   }
 
   openOptionsPanel() {

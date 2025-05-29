@@ -1,9 +1,10 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, AfterViewInit, OnDestroy, OnInit } from '@angular/core';
 import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { TranslateService } from '@ngx-translate/core';
 import { StyleManagerService } from '../../../services/StyleManagerService';
 import { Subscription } from 'rxjs';
-import { Section, SectionContent } from '../../../models/section.model';
+import { Section, SectionContent,  } from '../../../models/section.model';
+import { AuthService } from '../../../services/AuthService';
 
 @Component({
   selector: 'app-logo',
@@ -11,7 +12,7 @@ import { Section, SectionContent } from '../../../models/section.model';
   templateUrl: './logo.component.html',
   styleUrls: ['./logo.component.css']
 })
-export class LogoComponent implements Section, AfterViewInit, OnDestroy {
+export class LogoComponent implements OnInit, Section, AfterViewInit, OnDestroy {
   @ViewChild('logoUploadContainer') logoContainer!: ElementRef<HTMLDivElement>;
   @Input() containerRef!: ElementRef<HTMLDivElement>;
   @Input() boundaryElement?: HTMLElement; // Match InfoClientComponent
@@ -42,8 +43,12 @@ export class LogoComponent implements Section, AfterViewInit, OnDestroy {
 
   constructor(
     private translate: TranslateService,
-    private styleManager: StyleManagerService
+    private styleManager: StyleManagerService,
+    private authService: AuthService
   ) {}
+   ngOnInit(): void {
+    this.fetchCompanyLogo();
+  }
 
   ngAfterViewInit(): void {
     if (!this.boundaryElement) {
@@ -63,6 +68,19 @@ export class LogoComponent implements Section, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.stylesSubscription?.unsubscribe();
+  }
+  private fetchCompanyLogo(): void {
+    this.authService.getCompanyInfo().subscribe({
+      next: (companyInfo) => {
+        if (companyInfo.logoUrl) {
+          this.imageUrl = companyInfo.logoUrl;
+          // If you need to update the view immediately, you might need to trigger change detection
+        }
+      },
+      error: (error) => {
+        console.error('Failed to fetch company info:', error);
+      }
+    });
   }
 
   private loadStyles(styles: { [key: string]: string | undefined }): void {
@@ -183,17 +201,52 @@ export class LogoComponent implements Section, AfterViewInit, OnDestroy {
       'font-size': `${this.fontSize}px`
     };
   }
-//   public getSectionContent(): SectionContent {
-//     const tableEl = this.logoContainer?.nativeElement;
-//     if (!tableEl) {
-//         return { contentData: '' };
-//     }
-//     let htmlContent = tableEl.innerHTML;
-//     // Nettoyer les attributs Angular si nécessaire
-//     htmlContent = htmlContent.replace(/(_ngcontent-[a-zA-Z0-9-]+="")/g, '');
-//     return { contentData: htmlContent };
-// }
+public getSectionContent(): SectionContent {
+    // Styles de base pour le conteneur
+    const containerStyle = `
+        position: absolute;
+        left: ${this.x}px;
+        top: ${this.y}px;
+        width: ${this.width}px;
+        height: ${this.height}px;
+        background-color: ${this.backgroundColor};
+        border: ${this.borderWidth}px ${this.borderStyle} ${this.borderColor};
+        border-radius: ${this.borderRadius}px;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    `;
 
+    if (!this.imageUrl) {
+        // Retourne un conteneur vide avec les styles si aucun logo n'est chargé
+        const htmlContent = `<div style="${containerStyle}"></div>`;
+        return { contentData: htmlContent };
+    }
+
+    // Extraire l'URL de l'image (gérer SafeUrl si nécessaire)
+    const imgSrc = typeof this.imageUrl === 'string' 
+        ? this.imageUrl 
+        : (this.imageUrl as any).changingThisBreaksApplicationSecurity || '';
+
+    // Styles de l'image
+    const imgStyle = `
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    `;
+
+    const htmlContent = `
+        <div style="${containerStyle}">
+            <img src="${imgSrc}" 
+                 style="${imgStyle}" 
+                 alt="Company Logo" 
+                 class="uploaded-image" />
+        </div>
+    `;
+
+    return { contentData: htmlContent };
+}
   openOptionsPanel(): void {
     this.openOptions.emit('logo');
   }

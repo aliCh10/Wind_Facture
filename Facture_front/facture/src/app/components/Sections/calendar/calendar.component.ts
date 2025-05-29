@@ -17,11 +17,10 @@ export class CalendarComponent implements Section, AfterViewInit, OnDestroy {
   @Output() openOptions = new EventEmitter<string>();
   @Output() positionChanged = new EventEmitter<{ x: number; y: number }>();
 
-  selectedDate1: Date | null = new Date(2025, 3, 10);
+  selectedDate1: Date | null = new Date(2025, 3, 10); // Date d'émission
+  selectedDate2: Date | null = new Date(2025, 4, 10); // Règlement
   selectedOption = 'Facture';
-  selectedPayment = 'à réception';
   options = ['Facture', 'Devis', 'Bon de commande'];
-  paymentOptions = ['à réception', '30 jours', '60 jours'];
 
   // Section interface properties
   id?: number;
@@ -39,8 +38,8 @@ export class CalendarComponent implements Section, AfterViewInit, OnDestroy {
   textColor = '#000000';
   fontFamily = 'Inter';
   fontSize = 14;
-  width = 750; // Consistent with FooterComponent
-  height = 80; // Provided default
+  width = 750;
+  height = 80;
 
   private stylesSubscription!: Subscription;
 
@@ -140,9 +139,6 @@ export class CalendarComponent implements Section, AfterViewInit, OnDestroy {
 
     this.updateCalendarPosition();
     this.positionChanged.emit({ x: this.x, y: this.y });
-
-    // Optional: Persist position
-    // this.styleManager.updatePosition('calendar', { x: this.x, y: this.y }, 'CalendarComponent');
   }
 
   public updateCalendarPosition(): void {
@@ -167,16 +163,62 @@ export class CalendarComponent implements Section, AfterViewInit, OnDestroy {
       'height': `${this.height}px`
     };
   }
+
   public getSectionContent(): SectionContent {
-    const contentEl = this.calendarContainer?.nativeElement;
-    if (!contentEl) {
-        return { contentData: '' };
-    }
-    let htmlContent = contentEl.innerHTML;
-    htmlContent = htmlContent.replace(/(_ngcontent-[a-zA-Z0-9-]+="")/g, '');
+    const containerStyle = `
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        position: absolute;
+        left: ${this.x}px;
+        top: ${this.y}px;
+        width: ${this.width}px;
+        height: ${this.height}px;
+        background-color: ${this.backgroundColor};
+        border: ${this.borderWidth}px ${this.borderStyle} ${this.borderColor};
+        border-radius: ${this.borderRadius}px;
+        padding: 10px;
+    `;
+
+    const spanStyle = `
+        color: ${this.textColor};
+        font-family: ${this.fontFamily};
+        font-size: ${this.fontSize}px;
+        font-weight: normal;
+    `;
+
+    let htmlContent = `<div style="${containerStyle}">`;
+
+    // Add creationDate placeholder
+    htmlContent += `
+        <div>
+            <span style="${spanStyle}" data-placeholder="#creationDate">
+                ${this.selectedDate1 ? this.formatDate(this.selectedDate1) : '#creationDate'}
+            </span>
+        </div>
+    `;
+
+    // Add dueDate placeholder
+    htmlContent += `
+        <div>
+            <span style="${spanStyle}" data-placeholder="#dueDate">
+                ${this.selectedDate2 ? this.formatDate(this.selectedDate2) : '#dueDate'}
+            </span>
+        </div>
+    `;
+
+    htmlContent += `</div>`;
+
     return { contentData: htmlContent };
 }
 
+private formatDate(date: Date): string {
+    return date.toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+}
 
   openOptionsPanel() {
     this.openOptions.emit('calendar');

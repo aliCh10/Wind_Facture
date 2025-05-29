@@ -38,3 +38,14 @@ logging:
   logging:
    level:
     com.example.facture.services: DEBUG  # Plus spécifique
+
+
+    client:
+  service:
+    url: http://localhost:8092
+service:
+  service:
+    url: http://localhost:8093
+auth:
+  service:
+    url: http://localhost:8090

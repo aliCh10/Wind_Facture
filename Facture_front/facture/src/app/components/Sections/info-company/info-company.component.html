@@ -4,14 +4,12 @@
   cdkDrag
   (cdkDragEnded)="onDragEnd($event)"
   (click)="openOptionsPanel()"
-    [style.left.px]="x"
+  [style.left.px]="x"
   [style.top.px]="y"
 >
   <div #companyForm class="company-form">
     {{ companyInfo.name }}<br />
     {{ companyInfo.address }}<br />
     {{ companyInfo.phone }}<br />
-    {{ companyInfo.email }}<br />
-    {{ companyInfo.siret }}
   </div>
 </div>

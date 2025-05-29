@@ -22,7 +22,7 @@
     <!-- Date d'émission -->
     <mat-form-field class="w-40">
       <mat-label class="text-sm font-medium">Date d'émission</mat-label>
-      <input matInput [matDatepicker]="picker1" [(ngModel)]="selectedDate1" class="text-sm">
+      <input matInput [matDatepicker]="picker1" [(ngModel)]="selectedDate1" class="text-sm" data-placeholder="#creationDate">
       <mat-datepicker-toggle matSuffix [for]="picker1" class="">
         <mat-icon class="">calendar_today</mat-icon>
       </mat-datepicker-toggle>
@@ -36,11 +36,15 @@
     <!-- Règlement Dropdown -->
     <mat-form-field class="w-40">
       <mat-label class="text-sm font-medium">Règlement</mat-label>
-      <mat-select [(ngModel)]="selectedPayment" class="text-sm">
-        <mat-option *ngFor="let payment of paymentOptions" [value]="payment" class="text-sm">
-          {{ payment }}
-        </mat-option>
-      </mat-select>
+      <input matInput [matDatepicker]="picker2" [(ngModel)]="selectedDate2" class="text-sm" data-placeholder="#dueDate">
+      <mat-datepicker-toggle matSuffix [for]="picker2" class="">
+        <mat-icon class="">calendar_today</mat-icon>
+      </mat-datepicker-toggle>
+      <mat-datepicker
+        #picker2
+        class="modern-datepicker"
+        panelClass="modern-datepicker-panel"
+      ></mat-datepicker>
     </mat-form-field>
   </div>
 </div>

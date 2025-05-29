@@ -1,29 +1,22 @@
 package com.example.facture.DTO;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 public class CreateFactureRequest {
-    @NotNull(message = "ModeleFacture ID is required")
-    private Long modeleFactureId;
-
-    private Long clientId; // Optional: ID of existing client
-    private Map<String, String> newClient; // Optional: Data to create new client
-
-    @NotEmpty(message = "At least one service is required")
-    private List<Long> serviceIds; // IDs of existing services
-    private List<Map<String, Object>> newServices; // Optional: Data to create new services
+    private Long templateId;
+    private Long clientId;
+    private List<ServiceRequest> services; // List of services
+    private LocalDate creationDate;
+    private LocalDate dueDate;
 
     // Getters and Setters
-    public Long getModeleFactureId() {
-        return modeleFactureId;
+    public Long getTemplateId() {
+        return templateId;
     }
 
-    public void setModeleFactureId(Long modeleFactureId) {
-        this.modeleFactureId = modeleFactureId;
+    public void setTemplateId(Long templateId) {
+        this.templateId = templateId;
     }
 
     public Long getClientId() {
@@ -34,27 +27,27 @@ public class CreateFactureRequest {
         this.clientId = clientId;
     }
 
-    public Map<String, String> getNewClient() {
-        return newClient;
+    public List<ServiceRequest> getServices() {
+        return services;
     }
 
-    public void setNewClient(Map<String, String> newClient) {
-        this.newClient = newClient;
+    public void setServices(List<ServiceRequest> services) {
+        this.services = services;
     }
 
-    public List<Long> getServiceIds() {
-        return serviceIds;
+    public LocalDate getCreationDate() {
+        return creationDate;
     }
 
-    public void setServiceIds(List<Long> serviceIds) {
-        this.serviceIds = serviceIds;
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
     }
 
-    public List<Map<String, Object>> getNewServices() {
-        return newServices;
+    public LocalDate getDueDate() {
+        return dueDate;
     }
 
-    public void setNewServices(List<Map<String, Object>> newServices) {
-        this.newServices = newServices;
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
     }
 }
