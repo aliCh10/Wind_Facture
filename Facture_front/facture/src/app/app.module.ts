@@ -80,8 +80,10 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { CustomMatPaginatorIntlService } from './services/custom-mat-paginator-intl.service';
 import { CreeFactureComponent } from './components/cree-facture/cree-facture.component';
 import { MatStepperModule } from '@angular/material/stepper';
-import { FacturePreviewModalComponent } from './components/facture-preview-modal/facture-preview-modal.component';
 import { SafeHtmlPipe } from './shared/pipes/safe-html.pipe';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { PasswordChangeDialogComponent } from './components/password-change-dialog/password-change-dialog.component';
+
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -116,9 +118,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     TableComponent,
     FooterComponent,
     NewFactureComponent,
-    FacturePreviewModalComponent,
     CreeFactureComponent,
     SafeHtmlPipe,
+    PasswordChangeDialogComponent,
   ],
   imports: [
     MatInputModule,   
@@ -130,6 +132,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppRoutingModule,
     HttpClientModule,
     MatChipsModule,
+    MatGridListModule,
     MatButtonModule,
     MatListModule,
     MatTooltipModule,

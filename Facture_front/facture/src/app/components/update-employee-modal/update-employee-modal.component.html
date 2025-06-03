@@ -56,15 +56,15 @@
         </div>
 
         <!-- Email -->
-        <div class="space-y-1 md:col-span-2">
-          <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>employee.form.email.label</label>
-          <input formControlName="email" type="email" required
-            class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
-            placeholder="Entrez l'email">
-          <div *ngIf="employee.get('email')?.invalid && employee.get('email')?.touched" class="text-red-500 text-sm">
-            Veuillez entrer un email valide.
-          </div>
-        </div>
+       <div class="space-y-1 md:col-span-2">
+  <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>employee.form.email.label</label>
+  <input formControlName="email" type="email" required [disabled]="true"
+    class="mt-1 block w-full px-4 py-3 border-0 bg-gray-100 rounded-xl shadow-sm text-gray-500 cursor-not-allowed"
+    [placeholder]="'employee.form.email.placeholder' | translate">
+  <div *ngIf="employee.get('email')?.invalid && employee.get('email')?.touched" class="text-red-500 text-sm" translate>
+    employee.form.email.error
+  </div>
+</div>
 
         <!-- Département -->
         <div class="space-y-1 md:col-span-2">

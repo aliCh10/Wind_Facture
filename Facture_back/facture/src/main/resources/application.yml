@@ -48,4 +48,4 @@ service:
     url: http://localhost:8093
 auth:
   service:
-    url: http://localhost:8090
+url: http://localhost:8090/public/validate

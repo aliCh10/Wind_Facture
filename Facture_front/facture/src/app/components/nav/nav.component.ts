@@ -1,6 +1,7 @@
-import { Component, HostListener, Input, OnInit } from '@angular/core';
+import { Component, HostListener, Input, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/AuthService';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-nav',
@@ -9,26 +10,67 @@ import { AuthService } from '../../services/AuthService';
   styleUrl: './nav.component.css',
   exportAs: 'navbar'
 })
-export class NavComponent implements OnInit {
+export class NavComponent implements OnInit, OnDestroy {
   @Input() isSidebarCollapsed: boolean = false;
   @Input() isSidebarActive: boolean = false;
   isMobile: boolean = false;
   isLargeScreen: boolean = false;
 
-  userAvatar: string = 'assets/icons/user_default.jpg'; // Default avatar
-  userName: string | null = localStorage.getItem('name');
+  userAvatar: string = 'assets/icons/user_default.jpg';
+  userName: string | null = null; // Initialize to null
   showUserDropdown: boolean = false;
+  private userNameSubscription!: Subscription;
 
   constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
     this.checkScreenSize();
     window.addEventListener('resize', () => this.checkScreenSize());
-    console.log('User Name:', localStorage.getItem('name'));
-    this.loadCompanyLogo(); // Fetch company logo
+    this.loadCompanyLogo();
+    this.loadUserName(); // Fetch name from profile
+
+    // Subscribe to name updates
+    this.userNameSubscription = this.authService.getUserNameObservable().subscribe(name => {
+      this.userName = name;
+    });
   }
 
-  // Fetch company logo from AuthService
+  ngOnDestroy(): void {
+    this.userNameSubscription.unsubscribe();
+    window.removeEventListener('resize', () => this.checkScreenSize());
+  }
+
+  loadUserName(): void {
+    const role = this.authService.getUserRole();
+    if (role === 'PARTNER') {
+      this.authService.getPartnerProfile().subscribe({
+        next: (profile) => {
+          this.userName = profile.name || null;
+          this.authService.updateUserName(this.userName); // Sync with BehaviorSubject
+          console.log('Partner name loaded:', this.userName);
+        },
+        error: (error) => {
+          console.error('Failed to load partner profile:', error);
+          this.userName = null;
+        }
+      });
+    } else if (role === 'EMPLOYE') {
+      this.authService.getEmployeeProfile().subscribe({
+        next: (profile) => {
+          this.userName = profile.name || null;
+          this.authService.updateUserName(this.userName); // Sync with BehaviorSubject
+          console.log('Employee name loaded:', this.userName);
+        },
+        error: (error) => {
+          console.error('Failed to load employee profile:', error);
+          this.userName = null;
+        }
+      });
+    } else {
+      this.userName = null;
+    }
+  }
+
   loadCompanyLogo(): void {
     this.authService.getCompanyInfo().subscribe({
       next: (companyInfo) => {
@@ -40,7 +82,6 @@ export class NavComponent implements OnInit {
       },
       error: (error) => {
         console.error('Failed to load company info:', error);
-        // Keep default avatar on error
       }
     });
   }
@@ -58,17 +99,8 @@ export class NavComponent implements OnInit {
   toggleUserDropdown(): void {
     this.showUserDropdown = !this.showUserDropdown;
   }
-
-  openSettings(): void {
-    console.log('Settings clicked');
-  }
-
   logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('name');
-    localStorage.removeItem('role');
-    this.router.navigate(['/signin']);
-    console.log('User logged out successfully');
+    this.authService.logout();
   }
 
   toggleSidebar() {

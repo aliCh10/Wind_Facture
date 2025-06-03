@@ -16,7 +16,6 @@ import java.util.List;
 @RequestMapping("/clients")
 @Tag(name = "Clients", description = "API pour la gestion des clients")
 @SecurityRequirement(name = "BearerAuth")
-@PreAuthorize("hasAuthority('ROLE_PARTNER')")
 public class ClientController {
 
     private final ClientService clientService;

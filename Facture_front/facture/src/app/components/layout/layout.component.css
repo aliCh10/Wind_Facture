@@ -1,7 +1,6 @@
 
 .layout {
   display: flex;
-  height: 100vh;
   background-color: aliceblue;
 }
 .main-content {
@@ -17,8 +16,5 @@
   top: 60px;
 }
 
-@media (max-width: 768px) {
-  .main-content {
-    margin-left: 0;
-  }
-}
+
+

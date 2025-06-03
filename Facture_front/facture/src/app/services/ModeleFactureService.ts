@@ -14,15 +14,17 @@ export class ModeleFactureService {
 
     constructor(private http: HttpClient) {}
 
+      private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token') || '';
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+  }
+
     createModeleFacture(request: CreateModeleFactureRequest): Observable<ModeleFacture> {
-        const headers = new HttpHeaders({
-            'Content-Type': 'application/json'
-        });
 
-        console.log('Request URL:', this.apiUrl); // Log URL
-        console.log('Request headers:', headers); // Log headers
-
-        return this.http.post<ModeleFacture>(this.apiUrl, request, { headers }).pipe(
+        return this.http.post<ModeleFacture>(this.apiUrl, request, { headers: this.getHeaders() }).pipe(
             catchError((error) => {
                 console.error('Error creating modele facture:', error);
                 console.log('Error status:', error.status); // HTTP status code
@@ -34,11 +36,8 @@ export class ModeleFactureService {
     }
 
     getModeleFacture(id: number): Observable<ModeleFacture> {
-        const headers = new HttpHeaders({
-            'Content-Type': 'application/json'
-        });
 
-        return this.http.get<ModeleFacture>(`${this.apiUrl}/${id}`, { headers }).pipe(
+        return this.http.get<ModeleFacture>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() }).pipe(
             catchError((error) => {
                 console.error('Error fetching modele facture:', error);
                 return throwError(() => new Error('Failed to fetch invoice template'));
@@ -47,11 +46,9 @@ export class ModeleFactureService {
     }
     // ModeleFactureService.ts
 getAllModelesFacture(): Observable<ModeleFacture[]> {
-  const headers = new HttpHeaders({
-      'Content-Type': 'application/json'
-  });
 
-  return this.http.get<ModeleFacture[]>(this.apiUrl, { headers }).pipe(
+
+  return this.http.get<ModeleFacture[]>(this.apiUrl, { headers: this.getHeaders() }).pipe(
       catchError((error) => {
           console.error('Error fetching all modeles facture:', error);
           return throwError(() => new Error('Failed to fetch invoice templates list'));
@@ -59,11 +56,9 @@ getAllModelesFacture(): Observable<ModeleFacture[]> {
   );
 }
 deleteModeleFacture(id: number): Observable<void> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json'
-    });
 
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers }).pipe(
+
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() }).pipe(
       catchError((error) => {
         console.error('Error deleting modele facture:', error);
         return throwError(() => new Error('Failed to delete invoice template'));
@@ -71,19 +66,28 @@ deleteModeleFacture(id: number): Observable<void> {
     );
   }
   getModelePdf(id: number): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/${id}/pdf`, {
-      responseType: 'blob'
-    });
-}
+        return this.http.get(`${this.apiUrl}/${id}/pdf`, {
+            headers: this.getHeaders().delete('Content-Type'), // Remove Content-Type for Blob
+            responseType: 'blob'
+        }).pipe(
+            catchError((error) => {
+                console.error('Error fetching modele PDF:', error);
+                return throwError(() => new Error('Failed to fetch invoice template PDF'));
+            })
+        );
+    }
 
     getModeleThumbnail(id: number): Observable<Blob> {
         return this.http.get(`${this.apiUrl}/${id}/thumbnail`, {
+            headers: this.getHeaders().delete('Content-Type'), // Remove Content-Type for Blob
             responseType: 'blob'
-        });
+        }).pipe(
+            catchError((error) => {
+                console.error('Error fetching modele thumbnail:', error);
+                return throwError(() => new Error('Failed to fetch invoice template thumbnail'));
+            })
+        );
     }
-
-    // ModeleFactureService.ts
-// ModeleFactureService.ts
 
 
 }

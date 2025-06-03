@@ -41,6 +41,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -434,71 +435,97 @@ public class PdfGenerationService {
     }
 
     private void processInfoClientHtml(org.jsoup.nodes.Document doc, Map<String, String> styles, Map<String, String> factureData) {
-        logger.info("Processing info-client HTML with factureData: {}", factureData);
-        logger.debug("Input HTML: {}", doc.html());
+    logger.info("Processing info-client HTML with factureData: {}", factureData);
+    logger.debug("Input HTML: {}", doc.html());
 
-        doc.select("tr").forEach(tr -> {
-            tr.tagName("div");
-            tr.attr("style", "display: block; margin-bottom: 10px;");
-        });
+    // Liste des placeholders et leurs icônes associées
+    Map<String, String> placeholderIcons = new HashMap<>();
+    placeholderIcons.put("#clientName", "👤");
+    placeholderIcons.put("#clientPhone", "📱");
+    placeholderIcons.put("#clientAddress", "🏠");
+    placeholderIcons.put("#clientRIB", "💳");
 
-        doc.select("td").forEach(td -> {
+    // Conserver la structure du tableau
+    org.jsoup.nodes.Element table = doc.selectFirst("table.data-table");
+    if (table == null) {
+        logger.warn("No table found in info-client section, creating one");
+        table = doc.body().appendElement("table").addClass("data-table");
+        table.appendElement("tbody").appendElement("tr");
+    }
+
+    // Appliquer les styles au tableau
+    String tableStyle = buildTableStyle(styles);
+    table.attr("style", tableStyle);
+
+    // Traiter chaque ligne
+    doc.select("tbody > tr").forEach(tr -> {
+        // Conserver les tr comme des div pour une disposition verticale
+        tr.tagName("div");
+        tr.attr("style", "display: flex; flex-direction: column; margin-bottom: 10px;");
+
+        // Traiter chaque cellule
+        tr.select("td").forEach(td -> {
             td.tagName("div");
             org.jsoup.nodes.Element inputField = td.selectFirst(".input-field");
+            org.jsoup.nodes.Element inputIcon = td.selectFirst(".input-icon");
             String value = null;
             String placeholder = null;
 
+            // Vérifier si l'élément input-field existe et a un placeholder
             if (inputField != null && !inputField.attr("data-placeholder").isEmpty()) {
                 placeholder = inputField.attr("data-placeholder");
-                if (placeholder.startsWith("#")) {
-                    String key = placeholder.substring(1);
-                    value = (factureData == null || factureData.isEmpty()) 
-                        ? placeholder 
-                        : factureData.getOrDefault(key, placeholder);
-                    logger.debug("Found data-placeholder: #{} with value: {}", key, value);
-                } else {
-                    td.remove();
-                    logger.debug("Removed td with invalid placeholder: {}", placeholder);
-                    return;
-                }
+                String key = placeholder.startsWith("#") ? placeholder.substring(1) : placeholder;
+                value = (factureData == null || factureData.isEmpty()) 
+                    ? placeholder 
+                    : factureData.getOrDefault(key, placeholder);
+                logger.debug("Found data-placeholder: {} with value: {}", placeholder, value);
             } else {
-                String text = td.text().trim();
-                if (text.startsWith("#")) {
-                    placeholder = text;
-                    String key = text.substring(1);
-                    value = (factureData == null || factureData.isEmpty()) 
-                        ? placeholder 
-                        : factureData.getOrDefault(key, placeholder);
-                    logger.debug("Found text placeholder: #{} with value: {}", key, value);
-                } else {
-                    td.remove();
-                    logger.debug("Removed td without valid input-field or placeholder: {}", td.html());
-                    return;
-                }
+                td.remove();
+                logger.debug("Removed td without valid input-field");
+                return;
             }
 
-            org.jsoup.nodes.Element span = createStyledSpan(value, styles);
-            td.html(span.outerHtml());
-            td.attr("style", "display: block; padding: 8px; border: 1px solid #000;");
+            // Créer un conteneur pour l'icône et le texte
+            org.jsoup.nodes.Element contentDiv = new org.jsoup.nodes.Element("div")
+                .attr("style", "display: flex; align-items: center; gap: 8px; padding: 8px;");
 
-            logger.debug("Info-client value: {}", value);
-        });
-
-        doc.select(".input-container, .input-icon").remove();
-        doc.select("table").attr("style", "width: 100%; display: block;");
-        doc.select("tbody").unwrap();
-
-        doc.select("div").forEach(div -> {
-            if (div.children().isEmpty() || 
-                div.children().stream().allMatch(child -> child.text().trim().isEmpty())) {
-                div.remove();
-                logger.debug("Removed empty or invalid div (formerly tr)");
+            // Ajouter l'icône si elle existe
+            String icon = inputIcon != null ? inputIcon.text() : placeholderIcons.getOrDefault(placeholder, "");
+            if (!icon.isEmpty()) {
+                org.jsoup.nodes.Element iconSpan = new org.jsoup.nodes.Element("span")
+                    .text(icon)
+                    .attr("style", "font-size: " + styles.getOrDefault("font-size", "14px") + ";");
+                contentDiv.appendChild(iconSpan);
             }
+
+            // Ajouter le texte (valeur ou placeholder)
+            org.jsoup.nodes.Element textSpan = createStyledSpan(value, styles);
+            contentDiv.appendChild(textSpan);
+
+            // Remplacer le contenu de la cellule par le nouveau conteneur
+            td.html(contentDiv.outerHtml());
+            td.attr("style", "display: block; padding: 8px; border: 1px solid " + styles.getOrDefault("border-color", "#000") + ";");
+
+            logger.debug("Processed info-client value: {} with icon: {}", value, icon);
         });
+    });
 
-        logger.info("Processed HTML: {}", doc.html());
-    }
+    // Supprimer les classes inutiles et les conteneurs input-container
+    doc.select(".input-container").remove();
+    doc.select("table").attr("style", "width: 100%; display: block;");
+    doc.select("tbody").unwrap();
 
+    // Supprimer les div vides
+    doc.select("div").forEach(div -> {
+        if (div.children().isEmpty() || 
+            div.children().stream().allMatch(child -> child.text().trim().isEmpty())) {
+            div.remove();
+            logger.debug("Removed empty or invalid div");
+        }
+    });
+
+    logger.info("Processed HTML: {}", doc.html());
+}
     private void processFooterHtml(org.jsoup.nodes.Document doc, Map<String, String> styles, Map<String, String> factureData) {
     logger.info("Processing footer HTML with factureData: {}", factureData);
     org.jsoup.nodes.Element container = doc.selectFirst("div");
@@ -646,27 +673,29 @@ private org.jsoup.nodes.Element createStyledSpan(String content, Map<String, Str
         return container;
     }
 
-    private String wrapHtml(String html, float widthPt, float heightPt, String sectionName, Map<String, String> styles) {
-        float widthPx = widthPt / PX_TO_PT;
-        float heightPx = heightPt / PX_TO_PT;
-        String fontFamily = styles != null && styles.containsKey("font-family") ? styles.get("font-family") : "Inter, sans-serif";
+   private String wrapHtml(String html, float widthPt, float heightPt, String sectionName, Map<String, String> styles) {
+    float widthPx = widthPt / PX_TO_PT;
+    float heightPx = heightPt / PX_TO_PT;
+    String fontFamily = styles != null && styles.containsKey("font-family") ? styles.get("font-family") : "Inter, sans-serif";
 
-        String customCss = sectionName.equalsIgnoreCase("info-client")
-                ? "table { width: 100%; display: block; } " +
-                  "td { display: block; padding: 8px; margin-bottom: 10px; min-height: 100px; border: 1px solid #000; } " +
-                  "tr { display: block; margin-bottom: 10px; } " +
-                  "thead, tbody { display: block; }"
-                : "table { table-layout: fixed; width: 100%; border-collapse: collapse; border: 1px solid #000; } " +
-                  "td, th { word-break: break-word; min-height: 100px; border: 1px solid #000; padding: 8px; }";
+    String customCss = sectionName.equalsIgnoreCase("info-client")
+            ? "table { width: 100%; display: block; } " +
+              "div.table-row { display: flex; flex-direction: column; margin-bottom: 10px; } " +
+              "div.input-cell { display: block; padding: 8px; margin-bottom: 10px; border: 1px solid #000; } " +
+              "div.input-cell > div { display: flex; align-items: center; gap: 8px; padding: 8px; } " +
+              "span { font-size: " + styles.getOrDefault("font-size", "14px") + "; " +
+              "color: " + styles.getOrDefault("color", "#94a3b8") + "; }"
+            : "table { table-layout: fixed; width: 100%; border-collapse: collapse; border: 1px solid #000; } " +
+              "td, th { word-break: break-word; min-height: 100px; border: 1px solid #000; padding: 8px; }";
 
-        return String.format(
-                "<!DOCTYPE html><html><head><style>" +
-                        "body { margin: 0; padding: 0; font-family: %s; width: %fpx; height: %fpx; overflow: hidden; } " +
-                        "%s" +
-                        "</style></head><body><div>%s</div></body></html>",
-                fontFamily, widthPx, heightPx, customCss, html
-        );
-    }
+    return String.format(
+            "<!DOCTYPE html><html><head><style>" +
+                    "body { margin: 0; padding: 0; width: %fpx; height: %fpx; overflow: hidden; } " +
+                    "%s" +
+                    "</style></head><body><div>%s</div></body></html>",
+            widthPx, heightPx, customCss, html
+    );
+}
 
     private void addElementsToContainer(Div container, List<IElement> elements, Map<String, String> styles) {
         for (IElement element : elements) {

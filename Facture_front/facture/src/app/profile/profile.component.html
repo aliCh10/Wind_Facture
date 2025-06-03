@@ -1,85 +1,213 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <!-- Card Principale -->
+      <div class="card border-0 shadow-sm overflow-hidden">
+        <!-- Bannière de profil dorée -->
+        <div class="profile-banner" style="background: linear-gradient(135deg, #FFD700 0%, #D4AF37 100%); height: 180px;"></div>
+        
+        <!-- Photo de profil et en-tête -->
+        <div class="card-body position-relative pt-5 pb-4" style="background-color: #f8f9fa;">
+          <!-- Photo de profil en cercle avec option de changement -->
+          <div class="profile-picture-container mx-auto">
+            <div class="position-relative d-inline-block">
+              <img [src]="(userRole === 'PARTNER' ? partnerProfile?.logoUrl : 'assets/images/default-avatar.png')" 
+                   class="profile-picture rounded-circle border-4 border-white shadow-lg" 
+                   alt="{{ 'PROFILE.PERSONAL_INFORMATION' | translate }}">
+              <label for="profileImageUpload" class="profile-upload-btn bg-gold">
+                <i class="fas fa-pen text-dark"></i>
+                <input id="profileImageUpload" type="file" class="d-none" 
+                       (change)="onLogoChange($event)" accept="image/*">
+              </label>
+            </div>
+          </div>
+          
+          <!-- Titre -->
+          <div class="text-center mt-4">
+            <h2 class="mb-1 fw-bold text-dark">
+              {{ (userRole === 'PARTNER' ? partnerProfile?.name + ' ' + partnerProfile?.secondName : 
+                 employeeProfile?.name + ' ' + employeeProfile?.secondName) }}
+            </h2>
+            <p class="text-muted mb-3">
+              <i class="fas fa-briefcase me-1 text-gold"></i>
+              <span class="text-dark">
+                {{ userRole === 'PARTNER' ? partnerProfile?.companyName : employeeProfile?.post }}
+              </span>
+            </p>
+          </div>
+        </div>
 
-<div class="container mt-5">
-  <div class="row">
-    <!-- Profil à gauche -->
-    <div class="col-md-4">
-        <div class="card card-user">
-          <div class="card-body text-center">
-            <div class="author">
-              <!-- Image de l'avatar -->
-              <img class="avatar border-gray rounded-circle mb-3" src="assets/images/LOGO-svg.webp" alt="..." width="100">
-              <h5 class="title">Chet Faker</h5>
-              <p class="description">"No diggity, I wanna bag it up"</p>
-      
-              <!-- Informations du partenaire -->
-              <div class="company-info mt-3">
-                <p><strong>Company Name:</strong> XYZ Corporation</p>
-                <p><strong>Address:</strong> 1234 Street Name, City, Country</p>
-                <p><strong>Website:</strong> <a href="https://www.xyzcorporation.com" target="_blank">www.xyzcorporation.com</a></p>
+        <!-- Contenu du profil -->
+        <div class="card-body pt-0">
+          <!-- Loading Spinner -->
+          <div *ngIf="isLoading" class="text-center py-4">
+            <div class="spinner-border text-gold" role="status">
+              <span class="visually-hidden">{{ 'PROFILE.UPDATING_PROFILE' | translate }}</span>
+            </div>
+            <p class="mt-2 text-muted">{{ 'PROFILE.UPDATING_PROFILE' | translate }}</p>
+          </div>
+          
+          <!-- Partner Profile -->
+          <div *ngIf="!isLoading && userRole === 'PARTNER' && partnerProfile">
+            <div class="row g-4">
+              <!-- Colonne Informations Entreprise -->
+              <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                  <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="fas fa-building me-2 text-gold"></i>{{ 'PROFILE.COMPANY_INFORMATION' | translate }}</h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">{{ 'PROFILE.COMPANY_NAME' | translate }}</label>
+                      <input type="text" class="form-control form-control-modern" 
+                             [(ngModel)]="partnerProfile.companyName" name="companyName" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">{{ 'PROFILE.COMPANY_TYPE' | translate }}</label>
+                      <input type="text" class="form-control form-control-modern" 
+                             [(ngModel)]="partnerProfile.companyType" name="companyType">
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">{{ 'PROFILE.BUSINESS_LICENSE' | translate }}</label>
+                      <input type="text" class="form-control form-control-modern" 
+                             [(ngModel)]="partnerProfile.businessLicense" name="businessLicense">
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">{{ 'PROFILE.CRN' | translate }}</label>
+                      <input type="text" class="form-control form-control-modern" 
+                             [(ngModel)]="partnerProfile.crn" name="crn">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Colonne Informations Personnelles -->
+              <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                  <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="fas fa-user-tie me-2 text-gold"></i>{{ 'PROFILE.PERSONAL_INFORMATION' | translate }}</h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">{{ 'PROFILE.FIRST_NAME' | translate }}</label>
+                      <input type="text" class="form-control form-control-modern" 
+                             [(ngModel)]="partnerProfile.name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">{{ 'PROFILE.LAST_NAME' | translate }}</label>
+                      <input type="text" class="form-control form-control-modern" 
+                             [(ngModel)]="partnerProfile.secondName" name="secondName" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">{{ 'PROFILE.EMAIL' | translate }}</label>
+                      <input type="email" class="form-control form-control-modern" 
+                             [(ngModel)]="partnerProfile.email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">{{ 'PROFILE.PHONE' | translate }}</label>
+                      <input type="tel" class="form-control form-control-modern" 
+                             [(ngModel)]="partnerProfile.tel" name="tel" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">{{ 'PROFILE.ADDRESS' | translate }}</label>
+                      <input type="text" class="form-control form-control-modern" 
+                             [(ngModel)]="partnerProfile.address" name="address">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Ligne Website -->
+              <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                  <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="fas fa-globe me-2 text-gold"></i>{{ 'PROFILE.ONLINE_PRESENCE' | translate }}</h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">{{ 'PROFILE.WEBSITE' | translate }}</label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-gold text-dark"><i class="fas fa-link"></i></span>
+                        <input type="text" class="form-control form-control-modern" 
+                               [(ngModel)]="partnerProfile.website" name="website" 
+                               placeholder="{{ 'PROFILE.WEBSITE_PLACEHOLDER' | translate }}">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Bouton Sauvegarder -->
+              <div class="col-12 text-center mt-4">
+                <button type="submit" class="btn btn-gold px-4 py-2 fw-bold" 
+                        (click)="updatePartnerProfile()" [disabled]="isLoading">
+                  <i class="fas fa-save me-2"></i>
+                  {{ isLoading ? ('PROFILE.SAVING' | translate) : ('PROFILE.SAVE_CHANGES' | translate) }}
+                </button>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      
-
-    <!-- Formulaire à droite -->
-    <div class="col-md-8">
-      <div class="card card-user">
-        <div class="card-header">
-          <h5 class="card-title">Edit Profile</h5>
-        </div>
-        <div class="card-body">
-          <form>
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>First Name</label>
-                  <input type="text" class="form-control" placeholder="First Name" value="Chet">
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Last Name</label>
-                  <input type="text" class="form-control" placeholder="Last Name" value="Faker">
+          
+          <!-- Employee Profile -->
+          <div *ngIf="!isLoading && userRole === 'EMPLOYE' && employeeProfile" class="row g-4">
+            <div class="col-md-6">
+              <div class="card h-100 border-0 shadow-sm">
+                <div class="card-header bg-dark text-white">
+                  <h5 class="mb-0"><i class="fas fa-user-circle me-2 text-gold"></i>{{ 'PROFILE.PERSONAL_INFORMATION' | translate }}</h5>
+                  </div>
+                <div class="card-body">
+                  <div class="mb-3">
+                    <label class="form-label fw-bold">{{ 'PROFILE.FIRST_NAME' | translate }}</label>
+                    <input type="text" class="form-control form-control-modern" 
+                           [(ngModel)]="employeeProfile.name" name="name" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-bold">{{ 'PROFILE.LAST_NAME' | translate }}</label>
+                    <input type="text" class="form-control form-control-modern" 
+                           [(ngModel)]="employeeProfile.secondName" name="secondName" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-bold">{{ 'PROFILE.EMAIL' | translate }}</label>
+                    <input type="email" class="form-control form-control-modern" 
+                           [(ngModel)]="employeeProfile.email" name="email" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-bold">{{ 'PROFILE.PHONE' | translate }}</label>
+                    <input type="tel" class="form-control form-control-modern" 
+                           [(ngModel)]="employeeProfile.tel" name="tel" required>
+                  </div>
                 </div>
               </div>
             </div>
             
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Email</label>
-                  <input type="email" class="form-control" placeholder="Email" value="chet@example.com">
+            <div class="col-md-6">
+              <div class="card h-100 border-0 shadow-sm">
+                <div class="card-header bg-dark text-white">
+                  <h5 class="mb-0"><i class="fas fa-briefcase me-2 text-gold"></i>{{ 'PROFILE.PROFESSIONAL_INFORMATION' | translate }}</h5>
                 </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Phone</label>
-                  <input type="text" class="form-control" placeholder="+61 123 456 789">
+                <div class="card-body">
+                  <div class="mb-3">
+                    <label class="form-label fw-bold">{{ 'PROFILE.POSITION' | translate }}</label>
+                    <input type="text" class="form-control form-control-modern" 
+                           [(ngModel)]="employeeProfile.post" name="post" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-bold">{{ 'PROFILE.DEPARTMENT' | translate }}</label>
+                    <input type="text" class="form-control form-control-modern" 
+                           [(ngModel)]="employeeProfile.department" name="department" required>
+                  </div>
                 </div>
               </div>
             </div>
-
-            <div class="form-group">
-                <label>Mot de passe</label>
-                <div class="d-flex align-items-center gap-2">
-                  <input type="password" class="form-control" value="••••••••" readonly>
-                  <button type="button" class="btn btn-icon">
-                    <i class="fas fa-pen"></i>
-                  </button>
-                </div>
-              </div>
-              
-              
-              
-
-            <div class="row">
-              <div class="col-md-12 text-center mt-3">
-                <button type="submit" class="btn btn-primary btn-round">Update Profile</button>
-              </div>
+            
+            <div class="col-12 text-center mt-4">
+              <button type="submit" class="btn btn-gold px-4 py-2 fw-bold" 
+                      (click)="updateEmployeeProfile()" [disabled]="isLoading">
+                <i class="fas fa-save me-2"></i>
+                {{ isLoading ? ('PROFILE.SAVING' | translate) : ('PROFILE.SAVE_CHANGES' | translate) }}
+              </button>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>

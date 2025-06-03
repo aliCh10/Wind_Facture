@@ -24,7 +24,7 @@ public class SecurityConfig {
             .cors().and() // Active la gestion CORS
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/clients/**").authenticated() // L'utilisateur doit être authentifié
-                .requestMatchers("/clients/**").hasAuthority("ROLE_PARTNER") // L'utilisateur doit avoir l'autorité ROLE_PARTNER
+                .requestMatchers("/clients/**").hasAnyAuthority("ROLE_PARTNER","ROLE_EMPLOYE") // L'utilisateur doit avoir l'autorité ROLE_PARTNER
                 .anyRequest().permitAll() // Autorise les autres routes sans authentification
             )
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class); // Ajout du filtre JWT

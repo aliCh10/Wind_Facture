@@ -10,26 +10,27 @@ export class FactureServiceService {
   private apiUrl = 'http://localhost:8094/api/factures';
 
   constructor(private http: HttpClient) {}
+      private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token') || '';
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+  }
 
   createInvoice(formData: CreateFactureRequest): Observable<any> {
-    const token = localStorage.getItem('authToken'); // Adjust based on where token is stored
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    });
 
-    return this.http.post(this.apiUrl, formData, { headers });
+
+    return this.http.post(this.apiUrl, formData, { headers: this.getHeaders() });
 
   }
   generatePdfPreview(id: number, clientData: Map<string, string>): Observable<Blob> {
-  const headers = new HttpHeaders({
-    'Content-Type': 'application/json',
-  });
+ 
   const data = Object.fromEntries(clientData);
   console.log('Preview Request URL:', `${this.apiUrl}/${id}/preview`); // Debug
   console.log('Preview Request Data:', data); // Debug
   return this.http.post(`${this.apiUrl}/${id}/preview`, data, {
-    headers,
+    headers: this.getHeaders(),
     responseType: 'blob',
   }).pipe(
     catchError((error) => {

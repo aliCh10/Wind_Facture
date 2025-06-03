@@ -3,7 +3,7 @@ package com.example.facture.services;
 import com.example.facture.DTO.CreateFactureRequest;
 import com.example.facture.DTO.ServiceRequest;
 import com.example.facture.models.Facture;
-import com.example.facture.models.FactureServicee; // Correct import
+import com.example.facture.models.FactureServicee;
 import com.example.facture.models.ModeleFacture;
 import com.example.facture.Repository.FactureRepository;
 import com.example.facture.Repository.ModeleFactureRepository;
@@ -33,13 +33,14 @@ public class FactureService {
     }
 
     @Transactional
-    public Facture createFacture(CreateFactureRequest request) {
+    public Facture createFacture(CreateFactureRequest request, Long tenantId) {
         if (request.getServices() == null || request.getServices().isEmpty()) {
             throw new IllegalArgumentException("At least one service is required");
         }
 
-        ModeleFacture modeleFacture = modeleFactureRepository.findById(request.getTemplateId())
-                .orElseThrow(() -> new RuntimeException("ModeleFacture not found with id: " + request.getTemplateId()));
+        // Verify that the ModeleFacture belongs to the tenant
+        ModeleFacture modeleFacture = modeleFactureRepository.findByIdAndTenantId(request.getTemplateId(), tenantId)
+                .orElseThrow(() -> new RuntimeException("ModeleFacture not found with id: " + request.getTemplateId() + " for tenant: " + tenantId));
 
         Facture facture = new Facture();
         facture.setFactureNumber(generateFactureNumber());
@@ -50,6 +51,7 @@ public class FactureService {
         facture.setCreatedAt(LocalDateTime.now());
         facture.setUpdatedAt(LocalDateTime.now());
         facture.setStatus("pending");
+        facture.setTenantId(tenantId); // Set tenantId
 
         List<FactureServicee> factureServices = new ArrayList<>();
         double totalTaxes = 0.0;
@@ -97,7 +99,12 @@ public class FactureService {
 
         // Save the facture (this will also save factureServices due to cascade)
         Facture savedFacture = factureRepository.save(facture);
+        logger.info("Facture created with ID: {} for tenant: {}", savedFacture.getId(), tenantId);
         return savedFacture;
+    }
+
+    public List<Facture> getFacturesByTenantId(Long tenantId) {
+        return factureRepository.findByTenantId(tenantId);
     }
 
     private String generateFactureNumber() {

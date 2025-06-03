@@ -533,5 +533,51 @@
       "FORBIDDEN": "You do not have permission to access this resource",
       "PARTNER_NOT_FOUND": "Company information not found"
     }
+  },
+  
+  
+"CHANGE_PASSWORD": {
+  "TITLE": "Change Your Password",
+  "NEW_PASSWORD": "New Password",
+  "PASSWORD_HINT": "Password must be at least 8 characters long",
+  "REQUIRED": "Password is required",
+  "MIN_LENGTH": "Password must be at least 8 characters",
+  "CANCEL": "Cancel",
+  "MODIFY": "Modify",
+  "SUCCESS": "Password changed successfully",
+  "ERROR": "Failed to change password",
+  "FORBIDDEN": "You don't have permission to change password",
+  "INVALID_USER": "Invalid user ID"
+},
+"PROFILE": {
+    "COMPANY_INFORMATION": "Company Information",
+    "PERSONAL_INFORMATION": "Personal Information",
+    "PROFESSIONAL_INFORMATION": "Professional Information",
+    "ONLINE_PRESENCE": "Online Presence",
+    "COMPANY_NAME": "Company Name",
+    "COMPANY_TYPE": "Company Type",
+    "BUSINESS_LICENSE": "Business License",
+    "CRN": "CRN",
+    "FIRST_NAME": "First Name",
+    "LAST_NAME": "Last Name",
+    "EMAIL": "Email",
+    "PHONE": "Phone",
+    "ADDRESS": "Address",
+    "WEBSITE": "Website",
+    "POSITION": "Position",
+    "DEPARTMENT": "Department",
+    "SAVE_CHANGES": "Save Changes",
+    "SAVING": "Saving...",
+    "UPDATING_PROFILE": "Updating profile...",
+    "LOGO_SIZE_ERROR": "Logo size should be less than 2MB",
+    "LOGO_TYPE_ERROR": "Only image files are allowed",
+    "LOAD_PARTNER_FAILED": "Failed to load partner profile",
+    "LOAD_EMPLOYEE_FAILED": "Failed to load employee profile",
+    "UPDATE_PARTNER_SUCCESS": "Partner profile updated successfully",
+    "UPDATE_EMPLOYEE_SUCCESS": "Employee profile updated successfully",
+    "UPDATE_PARTNER_FAILED": "Failed to update partner profile",
+    "UPDATE_EMPLOYEE_FAILED": "Failed to update employee profile",
+    "WEBSITE_PLACEHOLDER": "https://"
   }
 }
+

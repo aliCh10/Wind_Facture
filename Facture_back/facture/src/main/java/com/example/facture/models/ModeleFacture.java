@@ -27,6 +27,8 @@ public class ModeleFacture {
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+    @Column(name = "tenant_id", nullable = false) // Add tenantId field
+    private Long tenantId;
 
     @OneToMany(mappedBy = "modeleFacture", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Section> sections = new ArrayList<>();

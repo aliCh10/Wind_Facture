@@ -535,4 +535,50 @@
       "PARTNER_NOT_FOUND": "Informations sur l'entreprise non trouvées"
     }
   }
+,
+
+"CHANGE_PASSWORD": {
+  "TITLE": "Modifier votre mot de passe",
+  "NEW_PASSWORD": "Nouveau mot de passe",
+  "PASSWORD_HINT": "Le mot de passe doit contenir au moins 8 caractères",
+  "REQUIRED": "Le mot de passe est requis",
+  "MIN_LENGTH": "Le mot de passe doit contenir au moins 8 caractères",
+  "CANCEL": "Annuler",
+  "MODIFY": "Modifier",
+  "SUCCESS": "Mot de passe modifié avec succès",
+  "ERROR": "Échec de la modification du mot de passe",
+  "FORBIDDEN": "Vous n'avez pas la permission de modifier le mot de passe",
+  "INVALID_USER": "ID utilisateur invalide"
+},
+  "PROFILE": {
+    "COMPANY_INFORMATION": "Informations sur l'entreprise",
+    "PERSONAL_INFORMATION": "Informations personnelles",
+    "PROFESSIONAL_INFORMATION": "Informations professionnelles",
+    "ONLINE_PRESENCE": "Présence en ligne",
+    "COMPANY_NAME": "Nom de l'entreprise",
+    "COMPANY_TYPE": "Type d'entreprise",
+    "BUSINESS_LICENSE": "Licence commerciale",
+    "CRN": "Numéro d'enregistrement commercial",
+    "FIRST_NAME": "Prénom",
+    "LAST_NAME": "Nom de famille",
+    "EMAIL": "Email",
+    "PHONE": "Téléphone",
+    "ADDRESS": "Adresse",
+    "WEBSITE": "Site web",
+    "POSITION": "Poste",
+    "DEPARTMENT": "Département",
+    "SAVE_CHANGES": "Enregistrer les modifications",
+    "SAVING": "Enregistrement...",
+    "UPDATING_PROFILE": "Mise à jour du profil...",
+    "LOGO_SIZE_ERROR": "La taille du logo doit être inférieure à 2 Mo",
+    "LOGO_TYPE_ERROR": "Seuls les fichiers image sont autorisés",
+    "LOAD_PARTNER_FAILED": "Échec du chargement du profil partenaire",
+    "LOAD_EMPLOYEE_FAILED": "Échec du chargement du profil employé",
+    "UPDATE_PARTNER_SUCCESS": "Profil partenaire mis à jour avec succès",
+    "UPDATE_EMPLOYEE_SUCCESS": "Profil employé mis à jour avec succès",
+    "UPDATE_PARTNER_FAILED": "Échec de la mise à jour du profil partenaire",
+    "UPDATE_EMPLOYEE_FAILED": "Échec de la mise à jour du profil employé",
+    "WEBSITE_PLACEHOLDER": "https://"
+  }
+
 }

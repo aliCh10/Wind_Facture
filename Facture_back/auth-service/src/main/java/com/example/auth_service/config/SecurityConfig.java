@@ -32,7 +32,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .requestMatchers("/public/**").permitAll()
                 .requestMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                 .requestMatchers("/system/**").hasAuthority("ROLE_System") // Accès réservé aux utilisateurs ayant le rôle SYSTEM
-                .requestMatchers("/employee/**").hasAuthority("ROLE_PARTNER") // Accès réservé aux utilisateurs ayant le rôle EMPLOYE
+                .requestMatchers("/employee/**").hasAnyAuthority("ROLE_PARTNER","ROLE_EMPLOYE") // Accès réservé aux utilisateurs ayant le rôle EMPLOYE
                 .anyRequest().authenticated() // Toutes les autres requêtes nécessitent une authentification
             )
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

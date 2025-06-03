@@ -56,16 +56,10 @@ public class ModeleFactureController {
                 : ResponseEntity.ok(modeles);
     }
 
-    @DeleteMapping("/{id}")
-    @Operation(summary = "Delete an invoice template", description = "Deletes an invoice template by its ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Template deleted successfully"),
-            @ApiResponse(responseCode = "404", description = "Template not found")
-    })
+ @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteModeleFacture(@PathVariable Long id) {
-        return modeleFactureService.deleteModeleFacture(id)
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+        modeleFactureService.deleteModeleFacture(id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{id}/pdf")

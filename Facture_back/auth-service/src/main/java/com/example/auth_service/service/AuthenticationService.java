@@ -5,8 +5,10 @@
     import com.example.auth_service.config.JwtService;
     import com.example.auth_service.config.SystemConfig;
     import com.example.auth_service.dto.RegisterRequest;
-    import com.example.auth_service.dto.UpdateProfileRequest;
-    import com.example.auth_service.model.Partner;
+    import com.example.auth_service.dto.UpdateProfileEmployee;
+    import com.example.auth_service.dto.UpdateProfilePartner;
+import com.example.auth_service.model.Employee;
+import com.example.auth_service.model.Partner;
     import com.example.auth_service.model.Role;
     import com.example.auth_service.model.User;
     import com.example.auth_service.token.Token;
@@ -264,29 +266,98 @@
                         tokenRepository.save(token);
                     });
         }
-        public ResponseEntity<?> updateProfile(Long userId, UpdateProfileRequest request) {
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new RuntimeException("User  not found"));
-        
-            if (request.getName() != null) {
-                user.setName(request.getName());
-            }
-            if (request.getSecondName() != null) {
-                user.setSecondName(request.getSecondName());
-            }
-            if (request.getTel() != null) {
-                user.setTel(request.getTel());
-            }
-            if (request.getEmail() != null) {
-                user.setEmail(request.getEmail());
-                
-            }
-        
-        
-            userRepository.save(user);
-        
-            return ResponseEntity.ok(Map.of("message", "Profile updated successfully"));
+        public ResponseEntity<?> updatePartnerProfile(Long partnerId, UpdateProfilePartner request, MultipartFile file) {
+        Partner partner = partnerRepository.findById(partnerId)
+                .filter(p -> p.getRole() == Role.PARTNER)
+                .orElseThrow(() -> new RuntimeException("Partner not found"));
+
+        // Update common fields
+        if (request.getName() != null) {
+            partner.setName(request.getName());
         }
+        if (request.getSecondName() != null) {
+            partner.setSecondName(request.getSecondName());
+        }
+        if (request.getTel() != null) {
+            partner.setTel(request.getTel());
+        }
+        // Update partner-specific fields
+        if (request.getCompanyName() != null) {
+            partner.setCompanyName(request.getCompanyName());
+        }
+        if (request.getAddress() != null) {
+            partner.setAddress(request.getAddress());
+        }
+        if (request.getCompanyType() != null) {
+            partner.setCompanyType(request.getCompanyType());
+        }
+        if (request.getWebsite() != null) {
+            partner.setWebsite(request.getWebsite());
+        }
+        if (request.getBusinessLicense() != null) {
+            partner.setBusinessLicense(request.getBusinessLicense());
+        }
+        if (request.getCrn() != null) {
+            partner.setCrn(request.getCrn());
+        }
+
+        // Handle logo upload
+        if (file != null && !file.isEmpty()) {
+            try {
+                String imageUrl = cloudinaryService.uploadImage(file);
+                partner.setLogoUrl(imageUrl);
+            } catch (IOException e) {
+                log.error("Error uploading logo: {}", e.getMessage());
+                return ResponseEntity.badRequest().body(Map.of("message", "Logo upload failed"));
+            }
+        }
+
+        partnerRepository.save(partner);
+        log.info("Partner profile updated successfully for ID: {}", partnerId);
+        
+        return ResponseEntity.ok(Map.of(
+            "message", "Partner profile updated successfully",
+            "companyName", partner.getCompanyName(),
+            "address", partner.getAddress(),
+            "companyType", partner.getCompanyType(),
+            "logoUrl", partner.getLogoUrl()
+        ));
+    }
+
+    public ResponseEntity<?> updateEmployeeProfile(Long employeeId, UpdateProfileEmployee request) {
+        Employee employee = (Employee) userRepository.findById(employeeId)
+                .filter(user -> user.getRole() == Role.EMPLOYE)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        // Update common fields
+        if (request.getName() != null) {
+            employee.setName(request.getName());
+        }
+        if (request.getSecondName() != null) {
+            employee.setSecondName(request.getSecondName());
+        }
+        if (request.getTel() != null) {
+            employee.setTel(request.getTel());
+        }
+     
+
+        // Update employee-specific fields
+        if (request.getPost() != null) {
+            employee.setPost(request.getPost());
+        }
+        if (request.getDepartment() != null) {
+            employee.setDepartment(request.getDepartment());
+        }
+
+        userRepository.save(employee);
+        log.info("Employee profile updated successfully for ID: {}", employeeId);
+        
+        return ResponseEntity.ok(Map.of(
+            "message", "Employee profile updated successfully",
+            "post", employee.getPost(),
+            "department", employee.getDepartment()
+        ));
+    }
         
 
         
