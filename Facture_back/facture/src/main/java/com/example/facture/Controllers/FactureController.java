@@ -69,4 +69,35 @@ public class FactureController {
 
         return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteFacture(@PathVariable Long id) {
+        try {
+            factureService.deleteFacture(id);
+            return ResponseEntity.noContent().build(); 
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(null); // 404 Not Found
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null); // 500 Internal Server Error
+        }
+    }
+    @PutMapping("/{id}/modele")
+    public ResponseEntity<Facture> updateFactureModele(@PathVariable Long id, @RequestBody Map<String, Long> request) {
+        JwtAuthentication authentication = (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getTenantId() == null) {
+            return ResponseEntity.status(401).build();
+        }
+        Long tenantId = authentication.getTenantId();
+        Long templateId = request.get("templateId");
+        if (templateId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        try {
+            Facture updatedFacture = factureService.updateFactureModele(id, templateId, tenantId);
+            return ResponseEntity.ok(updatedFacture);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
 }

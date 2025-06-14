@@ -38,4 +38,12 @@ export class ClientService {
   deleteClient(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }
+searchClients(term: string): Observable<Client[]> {
+  const criteria: Partial<Client> = {
+    clientName: term
+  };
+  return this.http.post<Client[]>(`${this.apiUrl}/search`, criteria, {
+    headers: this.getHeaders()
+  });
+}
 }

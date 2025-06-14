@@ -51,8 +51,8 @@ public class FactureService {
         facture.setCreatedAt(LocalDateTime.now());
         facture.setUpdatedAt(LocalDateTime.now());
         facture.setStatus("pending");
-        facture.setTenantId(tenantId); // Set tenantId
-
+        facture.setTenantId(tenantId);
+        facture.setFooterText(request.getFooterText()); // Map footerText
         List<FactureServicee> factureServices = new ArrayList<>();
         double totalTaxes = 0.0;
         double totalDiscountAmount = 0.0;
@@ -63,6 +63,8 @@ public class FactureService {
             FactureServicee factureService = new FactureServicee();
             factureService.setFacture(facture);
             factureService.setServiceId(serviceRequest.getServiceId());
+            factureService.setServiceName(serviceRequest.getServiceName()); // Map serviceName
+            factureService.setServiceReference(serviceRequest.getServiceReference()); // Map serviceReference
             factureService.setServicePrice(serviceRequest.getServicePrice());
             factureService.setQuantity(serviceRequest.getQuantity());
             factureService.setTva(serviceRequest.getTva());
@@ -110,4 +112,27 @@ public class FactureService {
     private String generateFactureNumber() {
         return "INV-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
+    @Transactional
+    public Facture updateFactureModele(Long id, Long templateId, Long tenantId) {
+        Facture facture = factureRepository.findByIdAndTenantId(id, tenantId)
+                .orElseThrow(() -> new RuntimeException("Facture not found with id: " + id + " for tenant: " + tenantId));
+
+        ModeleFacture modeleFacture = modeleFactureRepository.findByIdAndTenantId(templateId, tenantId)
+                .orElseThrow(() -> new RuntimeException("ModeleFacture not found with id: " + templateId + " for tenant: " + tenantId));
+
+        facture.setModeleFacture(modeleFacture);
+        facture.setUpdatedAt(LocalDateTime.now());
+
+        Facture updatedFacture = factureRepository.save(facture);
+        logger.info("Facture modele updated with ID: {} for tenant: {}", updatedFacture.getId(), tenantId);
+        return updatedFacture;
+    }
+    @Transactional
+public void deleteFacture(Long id) {
+    Facture facture = factureRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Facture not found with id: " + id + " for tenant: " ));
+    
+    factureRepository.delete(facture);
+    logger.info("Facture deleted with ID: {} for tenant: {}", id);
+}
 }

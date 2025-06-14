@@ -1,8 +1,12 @@
 <div class="card">
   <p-toolbar [style]="{ 'border-radius': '1.5rem', 'padding': '0.75rem 1.5rem'}">
     <ng-template #start>
-      <input type="text" [placeholder]="'TOOLBAR.SEARCH_PLACEHOLDER' | translate" class="search-input" />
-    </ng-template>
+<input
+  type="text"
+  [placeholder]="'TOOLBAR.SEARCH_PLACEHOLDER' | translate"
+  class="search-input"
+  (input)="onSearchInput($event)"
+/>    </ng-template>
 
     <ng-template #end>
       <div class="flex items-center gap-2">

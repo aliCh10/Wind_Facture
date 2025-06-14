@@ -11,5 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface ServiceRepository extends JpaRepository<Service, Long> {
     List<Service> findByTenantId(Long tenantId);
         Optional<Service> findByIdAndTenantId(Long id, Long tenantId);
+         List<Service> findByTenantIdAndServiceNameContainingIgnoreCase(Long tenantId, String serviceName);
 
 }

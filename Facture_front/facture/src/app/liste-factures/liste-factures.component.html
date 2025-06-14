@@ -1,0 +1,123 @@
+<div class="container">
+  <div class="facture-header transition-all duration-300 hover:shadow-lg hover:color-white mt-2">
+    <h2 class="facture-title">
+      {{ 'factures.title' | translate }}
+    </h2>
+  </div>
+  <app-toolbar
+    (refreshFactures)="refreshFactures()"
+    (searchTermChange)="onSearchTermChange($event)">
+  </app-toolbar>
+
+  <div class="rounded-xl shadow-lg overflow-hidden border border-gray-100 mt-4">
+    <mat-table [dataSource]="dataSource" class="w-full" matSort>
+      <!-- Facture Number Column -->
+      <ng-container matColumnDef="factureNumber">
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
+          {{ 'factures.FactureNumber' | translate }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let facture" class="px-6 py-4 text-gray-800 font-medium">
+          {{ facture.factureNumber }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Issue Date Column -->
+      <ng-container matColumnDef="issueDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
+          {{ 'factures.IssueDate' | translate }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let facture" class="px-6 py-4 text-gray-600">
+          {{ facture.issueDate }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Due Date Column -->
+      <!-- Remplacez la colonne dueDate par clientName -->
+<ng-container matColumnDef="clientName">
+  <mat-header-cell *matHeaderCellDef mat-sort-header
+    class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
+    {{ 'factures.ClientName' | translate }}
+  </mat-header-cell>
+  <mat-cell *matCellDef="let facture" class="px-6 py-4 text-gray-600">
+    {{ facture.clientName }}
+  </mat-cell>
+</ng-container>
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
+          {{ 'factures.Status' | translate }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let facture" class="px-6 py-4 text-gray-600">
+          {{ facture.status }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Total Amount Column -->
+      <ng-container matColumnDef="totalAmount">
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
+          {{ 'factures.TotalAmount' | translate }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let facture" class="px-6 py-4 text-gray-600">
+          {{ facture.totalAmount }} DT
+        </mat-cell>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef
+          class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
+          {{ 'factures.Actions' | translate }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let facture" class="px-8 py-4">
+          <div class="flex gap-2 items-center">
+            <!-- View/Edit button -->
+            <button mat-mini-fab color="primary" class="yellow-button transition-all transform hover:scale-110"
+              [matTooltip]="'factures.View' | translate" (click)="previewFacture(facture.id)">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            
+            <!-- Delete button -->
+            <button mat-mini-fab color="warn" class="yellow-button transition-all transform hover:scale-110"
+              [matTooltip]="'factures.Delete' | translate" (click)="deleteFacture(facture.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+
+            <!-- Three-dot menu -->
+            <button mat-icon-button [matMenuTriggerFor]="modelMenu"
+              [matTooltip]="'factures.ChangeModel' | translate"
+              class="transition-all transform hover:scale-110">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #modelMenu="matMenu">
+              <button mat-menu-item (click)="openModelSelectionModal(facture.id)">
+                {{ 'factures.ChooseAnotherModel' | translate }}
+              </button>
+            </mat-menu>
+          </div>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Header and Row Definitions -->
+      <mat-header-row *matHeaderRowDef="displayedColumns" class="border-b border-gray-200"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"
+        class="transition-all hover:bg-gray-50 border-b border-gray-100 last:border-0"></mat-row>
+    </mat-table>
+
+    <!-- Empty State -->
+    <div *ngIf="dataSource.filteredData.length === 0" class="p-12 text-center text-gray-500">
+      <mat-icon class="text-4xl mb-4 text-gray-300">receipt_long</mat-icon>
+      <p class="text-lg">{{ 'factures.NoResults' | translate }}</p>
+    </div>
+
+    <!-- Paginator -->
+    <mat-paginator [length]="dataSource.data.length" [pageSize]="5"
+      [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons
+      class="bg-gray-50 rounded-b-xl border-t border-gray-200">
+    </mat-paginator>
+  </div>
+</div>

@@ -62,4 +62,11 @@ public class ServiceController {
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.notFound().build();
     }
+    // Dans ServiceController.java
+@Operation(summary = "Rechercher des services par nom pour le tenant authentifié")
+@GetMapping("/search")
+public ResponseEntity<List<ServiceDTO>> searchServicesByName(@RequestParam String name) {
+    List<ServiceDTO> services = serviceService.searchServicesByName(name);
+    return ResponseEntity.ok(services);
+}
 }

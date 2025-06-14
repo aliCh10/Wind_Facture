@@ -26,7 +26,7 @@ export class CalendarComponent implements Section, AfterViewInit, OnDestroy {
   id?: number;
   sectionName: string = 'calendar';
   x: number = 20;
-  y: number = 440;
+  y: number = 320;
   styles: { [key: string]: string } = {};
 
   // Style properties
@@ -38,8 +38,8 @@ export class CalendarComponent implements Section, AfterViewInit, OnDestroy {
   textColor = '#000000';
   fontFamily = 'Inter';
   fontSize = 14;
-  width = 750;
-  height = 80;
+width = 300;  // Largeur réduite
+height = 70; // Hauteur réduite
 
   private stylesSubscription!: Subscription;
 

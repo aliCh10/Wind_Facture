@@ -83,6 +83,11 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { SafeHtmlPipe } from './shared/pipes/safe-html.pipe';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { PasswordChangeDialogComponent } from './components/password-change-dialog/password-change-dialog.component';
+import { ListeFacturesComponent } from './liste-factures/liste-factures.component';
+import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import { MatMenuModule } from '@angular/material/menu';
+import { ModelSelectionModalComponentComponent } from './components/model-selection-modal-component/model-selection-modal-component.component';
+
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -121,8 +126,12 @@ export function HttpLoaderFactory(http: HttpClient) {
     CreeFactureComponent,
     SafeHtmlPipe,
     PasswordChangeDialogComponent,
+    ListeFacturesComponent,
+    ConfirmDialogComponent,
+    ModelSelectionModalComponentComponent,
   ],
   imports: [
+    MatMenuModule,
     MatInputModule,   
     ReactiveFormsModule,
     AuthModule,

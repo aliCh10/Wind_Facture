@@ -50,4 +50,13 @@ public class CreateFactureRequest {
     public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
     }
+    private String footerText; // Add this field
+
+    public String getFooterText() {
+        return footerText;
+    }
+
+    public void setFooterText(String footerText) {
+        this.footerText = footerText;
+    }
 }

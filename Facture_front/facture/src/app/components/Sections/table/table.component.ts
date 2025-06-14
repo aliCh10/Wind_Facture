@@ -32,7 +32,7 @@ export class TableComponent implements Section, AfterViewInit, OnDestroy {
   id?: number;
   sectionName: string = 'tableContainer';
   x: number = 20;
-  y: number = 550;
+  y: number = 520;
   styles: { [key: string]: string } = {};
 
   // Style properties

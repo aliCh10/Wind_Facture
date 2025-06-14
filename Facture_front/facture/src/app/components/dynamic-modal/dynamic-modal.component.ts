@@ -31,6 +31,7 @@ export class DynamicModalComponent {
   isLoading = false;
     serviceForm: FormGroup;
     clientForm: FormGroup;
+    employeeForm: FormGroup;
 
 
   constructor(
@@ -44,9 +45,18 @@ export class DynamicModalComponent {
     private toastr: ToastrService,
     private translate: TranslateService
   ) {
+    this.employeeForm = this.fb.group({
+  name: ['', [Validators.required]],
+  secondName: ['', [Validators.required]],
+  email: ['', [Validators.required, Validators.email]],
+  tel: ['', [Validators.required, Validators.pattern(/^\+?\d{8,15}$/)]],
+  post: ['', [Validators.required]],
+  department: ['', [Validators.required]]
+});
      this.serviceForm = this.fb.group({
       ref: ['', Validators.required],
       serviceName: ['', Validators.required],
+      serviceQuantity: [1, [Validators.required, Validators.min(1)]],
       servicePrice: [0, [Validators.required, Validators.min(0)]]
     });
     this.clientForm = this.fb.group({

@@ -48,6 +48,8 @@ public class Facture {
     private Long clientId;
     @Column(name = "tenant_id", nullable = false) // Add tenantId field
     private Long tenantId;
+    @Column(name = "footer_text")
+    private String footerText;
 
     @OneToMany(mappedBy = "facture", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference

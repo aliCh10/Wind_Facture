@@ -15,6 +15,7 @@ export class ToolbarComponent {
   @Output() refreshEmployees = new EventEmitter<void>();
   @Output() refreshClients = new EventEmitter<void>();
   @Output() refreshServices = new EventEmitter<void>();
+  @Output() searchTermChange = new EventEmitter<string>();
   buttons = [
     { route: 'facture', label: 'TOOLBAR.CREATE_INVOICE', type: 'facture' },
     { route: 'employe', label: 'TOOLBAR.CREATE_EMPLOYEE', type: 'employe' },
@@ -79,6 +80,10 @@ export class ToolbarComponent {
       }
     });
   }
-  
+onSearchInput(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  console.log('Search input:', input.value);
+  this.searchTermChange.emit(input.value);
+}
   
 }

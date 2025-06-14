@@ -59,4 +59,9 @@ public class ClientController {
         clientService.deleteClient(id);
         return ResponseEntity.ok().build();
     }
+    @Operation(summary = "Recherche avancée des clients")
+@PostMapping("/search")
+public ResponseEntity<List<ClientDTO>> searchClients(@RequestBody ClientDTO clientDTO) {
+    return ResponseEntity.ok(clientService.searchClients(clientDTO));
+}
 }

@@ -1,0 +1,64 @@
+:host {
+  /* Force Yellow Spinner with Higher Specificity */
+  ::ng-deep .yellow-spinner.mat-spinner circle {
+    stroke: #ffd700 !important;
+    stroke-linecap: round;
+  }
+
+  /* Alternative: Even More Specific */
+  ::ng-deep mat-spinner.yellow-spinner svg circle {
+    stroke: #ffd700 !important;
+    stroke-linecap: round;
+  }
+
+  /* Rest of your existing styles */
+  .yellow-button {
+    background-color: #ffd700;
+    color: #000000;
+    font-weight: 500;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+
+    &:hover {
+      background-color: #e6cc00;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      background-color: #d4b300;
+      transform: translateY(0);
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.3);
+    }
+
+    &.mat-raised-button {
+      line-height: 36px;
+    }
+  }
+
+  h2 {
+    color: #ffd700 !important;
+  }
+
+  .card-container {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+    &:hover {
+      border-color: #ffd700;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  img {
+    background-color: white;
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    transition: opacity 0.3s ease;
+  }
+}

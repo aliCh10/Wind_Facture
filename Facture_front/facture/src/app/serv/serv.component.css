@@ -12,6 +12,13 @@
     background-color: #ffffff;
     color: #ffd700;
   }
+  .highlight {
+  background-color: #FFD700; /* Couleur dorée */
+  color: #252437; /* Couleur du texte */
+  padding: 0.1em 0.2em;
+  border-radius: 0.2em;
+  font-weight: bold;
+}
   
 
   

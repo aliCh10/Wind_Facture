@@ -12,6 +12,7 @@ import { ClientsComponent } from './clients/clients.component';
 import { ServComponent } from './serv/serv.component';
 import { NewFactureComponent } from './list-models/new-facture.component';
 import { CreeFactureComponent } from './components/cree-facture/cree-facture.component';
+import { ListeFacturesComponent } from './liste-factures/liste-factures.component';
 
 const routes: Routes = [
   {
@@ -32,6 +33,7 @@ const routes: Routes = [
       { path: 'services', component: ServComponent, canActivate: [AuthGuard] },
       { path: 'models', component: NewFactureComponent, canActivate: [AuthGuard] },
       {path:'creer-facture', component: CreeFactureComponent, canActivate: [AuthGuard] },
+      { path: 'factures', component: ListeFacturesComponent, canActivate: [AuthGuard] },
     ]
   },
   { path: '404', component: PageNotFoundComponent }, 

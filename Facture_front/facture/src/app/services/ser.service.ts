@@ -38,7 +38,6 @@ export class SerService {
       .pipe(catchError(this.handleError));
   }
 
-// In your ser.service.ts
 createService(service: ServiceDTO): Observable<Service> {
   return this.http.post<Service>(this.apiUrl, service, { headers: this.getHeaders() })
     .pipe(catchError(this.handleError));
@@ -53,4 +52,9 @@ createService(service: ServiceDTO): Observable<Service> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() })
       .pipe(catchError(this.handleError));
   }
+searchServicesByName(name: string): Observable<Service[]> {
+  return this.http.get<Service[]>(`${this.apiUrl}/search?name=${name}`, { 
+    headers: this.getHeaders() 
+  }).pipe(catchError(this.handleError));
+}
 }

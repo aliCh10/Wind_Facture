@@ -25,6 +25,12 @@ public class FactureServicee {
     @Column(name = "service_id", nullable = false)
     private Long serviceId;
 
+    @Column(name = "service_name")
+    private String serviceName;
+
+    @Column(name = "service_reference")
+    private String serviceReference;
+
     @Column(name = "service_price", nullable = false)
     private double servicePrice;
 
@@ -45,6 +51,4 @@ public class FactureServicee {
 
     @Column(name = "total_amount", nullable = false)
     private double totalAmount;
-
-    
 }

@@ -91,4 +91,11 @@ public class ServiceService {
                 })
                 .orElse(false);
     }
+    public List<ServiceDTO> searchServicesByName(String name) {
+    Long tenantId = getAuthenticatedTenantId();
+    return serviceRepository.findByTenantIdAndServiceNameContainingIgnoreCase(tenantId, name)
+            .stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+}
 }

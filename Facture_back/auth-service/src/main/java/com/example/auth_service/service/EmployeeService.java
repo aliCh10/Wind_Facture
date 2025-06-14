@@ -1,5 +1,7 @@
 package com.example.auth_service.service;
 
+import com.example.auth_service.Repository.EmployeeRepository;
+import com.example.auth_service.Repository.PartnerRepository;
 import com.example.auth_service.Repository.UserRepository;
 import com.example.auth_service.config.JwtService;
 import com.example.auth_service.dto.EmployeeRegisterRequest;
@@ -20,6 +22,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.springframework.data.jpa.domain.Specification;
+import jakarta.persistence.criteria.Predicate;
+
+
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +35,7 @@ public class EmployeeService {
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final JwtService jwtService;
+    private final EmployeeRepository employeeRepository;
     private static final Logger logger = LoggerFactory.getLogger(EmployeeService.class);
     private static final int PASSWORD_LENGTH = 8;
 
@@ -238,4 +245,35 @@ public class EmployeeService {
 
         return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
     }
+    public ResponseEntity<?> searchEmployeesByName(String name, HttpServletRequest httpRequest) {
+    logger.info("Searching employees with name: {} for tenant...", name);
+
+    Long authenticatedTenantId = getAuthenticatedTenantId(httpRequest);
+
+    Specification<Employee> spec = (root, query, cb) -> {
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(root.get("tenantId"), authenticatedTenantId));
+        
+        if (name != null && !name.trim().isEmpty()) {
+            predicates.add(cb.like(cb.lower(root.get("name")),      
+                          "%" + name.toLowerCase() + "%"));
+        }
+
+        return cb.and(predicates.toArray(new Predicate[0]));
+    };
+
+    List<Employee> employees = employeeRepository.findAll(spec)
+            .stream()
+            .filter(user -> user.getRole() == Role.EMPLOYE)
+            .map(user -> (Employee) user)
+            .collect(Collectors.toList());
+
+    if (employees.isEmpty()) {
+        logger.warn("No employees found with name {} for tenant {}", name, authenticatedTenantId);
+        return ResponseEntity.status(404).body(Map.of("message", "No employees found matching the name"));
+    }
+
+    logger.info("Found {} employees with name {} for tenant {}", employees.size(), name, authenticatedTenantId);
+    return ResponseEntity.ok(employees);
+}
 }

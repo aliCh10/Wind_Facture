@@ -23,6 +23,9 @@ import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.TextAlignment;
+import com.openhtmltopdf.css.parser.property.PrimitivePropertyBuilders.FontWeight;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -53,7 +56,7 @@ public class PdfGenerationService {
     private static final PageSize PAGE_SIZE = PageSize.A4;
     private Map<String, String> factureData;
 
-    public byte[] generatePdfFromModele(ModeleFacture modeleFacture, Map<String, String> factureData) {
+  public byte[] generatePdfFromModele(ModeleFacture modeleFacture, Map<String, String> factureData) {
         logger.info("Generating PDF for model: {}", modeleFacture.getNameModel());
         try {
             logger.info("Processing sections: {}", modeleFacture.getSections().size());
@@ -69,12 +72,18 @@ public class PdfGenerationService {
             PdfDocument pdf = new PdfDocument(new PdfWriter(baos));
             pdf.setDefaultPageSize(PAGE_SIZE);
             Document document = new Document(pdf);
+            document.setMargins(36, 36, 36, 36); // Marges par défaut
 
             float pageHeight = PAGE_SIZE.getHeight();
+
+            // Traiter les sections fixes (sauf tableContainer et footer)
             for (Section section : modeleFacture.getSections()) {
                 if (section.getContent() == null || section.getContent().getContentData() == null) {
                     logger.warn("Skipping empty section: {}", section.getSectionName());
                     continue;
+                }
+                if (section.getSectionName().equalsIgnoreCase("tablecontainer") || section.getSectionName().equalsIgnoreCase("footer")) {
+                    continue; // Traiter après
                 }
 
                 float width = parseSize(section.getStyles(), "width", 0) * PX_TO_PT;
@@ -103,6 +112,100 @@ public class PdfGenerationService {
                 }
             }
 
+            // Traiter tableContainer
+            Section tableSection = modeleFacture.getSections().stream()
+                    .filter(s -> s.getSectionName().equalsIgnoreCase("tablecontainer"))
+                    .findFirst()
+                    .orElse(null);
+            if (tableSection != null && tableSection.getContent() != null && tableSection.getContent().getContentData() != null) {
+                float width = parseSize(tableSection.getStyles(), "width", 0) * PX_TO_PT;
+                float x = tableSection.getX() * PX_TO_PT;
+                float y = tableSection.getY() * PX_TO_PT; // Position Y en pixels
+
+                // Ajouter un espaceur pour respecter la position Y sur la première page
+                if (y > 0) {
+                    Div spacer = new Div().setHeight(y * PX_TO_PT);
+                    document.add(spacer);
+                    logger.debug("Added spacer of height {}pt for tableContainer", y * PX_TO_PT);
+                }
+
+                String processedHtml = processHtmlContent(tableSection, factureData);
+                processedHtml = replacePlaceholders(processedHtml, factureData);
+                String wrappedHtml = wrapHtml(processedHtml, width, 0, tableSection.getSectionName(), tableSection.getStyles());
+                logger.debug("Final HTML for section {}: {}", tableSection.getSectionName(), wrappedHtml);
+                List<IElement> elements = HtmlConverter.convertToElements(wrappedHtml);
+
+                Div container = new Div();
+                container.setMarginLeft(x); // Position horizontale
+                container.setWidth(width);
+                Div contentContainer = new Div().setPadding(parseSize(tableSection.getStyles(), "padding", 10));
+                addElementsToContainer(contentContainer, elements, tableSection.getStyles());
+
+                container.add(contentContainer);
+                document.add(container);
+
+                // Ajouter le récapitulatif (subtotal, taxes, total) après la table
+                if (factureData != null && factureData.containsKey("subtotal")) {
+                    Div summaryContainer = new Div();
+                    summaryContainer.setMarginLeft(x);
+                    summaryContainer.setWidth(width);
+                    summaryContainer.setBackgroundColor(new DeviceRgb(243, 244, 246)); // #f3f4f6
+                    summaryContainer.setPadding(12);
+                    summaryContainer.setMarginTop(0); // Pas d'espace avant le récapitulatif
+
+                    Div summaryContent = new Div();
+                   summaryContent.setTextAlignment(TextAlignment.RIGHT);
+                   summaryContent.setBold();
+
+
+                    Paragraph subtotal = new Paragraph("Subtotal: " + factureData.getOrDefault("subtotal", "0.00"))
+                            .setMarginBottom(4);
+                    Paragraph taxes = new Paragraph("Taxes: " + factureData.getOrDefault("taxes", "0.00"))
+                            .setMarginBottom(4);
+                    Paragraph total = new Paragraph("Total: " + factureData.getOrDefault("totalAmount", "0.00"))
+                            .setFontColor(new DeviceRgb(37, 99, 235)) // #2563eb
+                           .setBold();
+
+
+                    summaryContent.add(subtotal);
+                    summaryContent.add(taxes);
+                    summaryContent.add(total);
+
+                    summaryContainer.add(summaryContent);
+                    document.add(summaryContainer);
+                    logger.debug("Added summary container with subtotal: {}, taxes: {}, total: {}",
+                            factureData.get("subtotal"), factureData.get("taxes"), factureData.get("totalAmount"));
+                }
+            }
+
+            // Traiter footer immédiatement après le récapitulatif
+            Section footerSection = modeleFacture.getSections().stream()
+                    .filter(s -> s.getSectionName().equalsIgnoreCase("footer"))
+                    .findFirst()
+                    .orElse(null);
+            if (footerSection != null && footerSection.getContent() != null && footerSection.getContent().getContentData() != null) {
+                float width = parseSize(footerSection.getStyles(), "width", 0) * PX_TO_PT;
+                float height = parseSize(footerSection.getStyles(), "height", 0) * PX_TO_PT;
+                float x = footerSection.getX() * PX_TO_PT;
+
+                String processedHtml = processHtmlContent(footerSection, factureData);
+                processedHtml = replacePlaceholders(processedHtml, factureData);
+                String wrappedHtml = wrapHtml(processedHtml, width, height, footerSection.getSectionName(), footerSection.getStyles());
+                logger.debug("Final HTML for section {}: {}", footerSection.getSectionName(), wrappedHtml);
+                List<IElement> elements = HtmlConverter.convertToElements(wrappedHtml);
+
+                Div container = new Div();
+                container.setMarginLeft(x);
+                container.setWidth(width);
+                container.setHeight(height);
+                container.setMarginTop(5); // Espacement minimal après le récapitulatif
+                Div contentContainer = new Div().setPadding(parseSize(footerSection.getStyles(), "padding", 10));
+                addElementsToContainer(contentContainer, elements, footerSection.getStyles());
+
+                container.add(contentContainer);
+                document.add(container);
+            }
+
             document.close();
             logger.info("PDF generated successfully");
             return baos.toByteArray();
@@ -110,8 +213,8 @@ public class PdfGenerationService {
             logger.error("Failed to generate PDF for model: {}", modeleFacture.getNameModel(), e);
             throw new RuntimeException("Error generating PDF", e);
         }
-    }
-
+    } 
+    
     private void processLogoSection(Section section, Document document, float x, float y, float width, float height) {
         String html = section.getContent().getContentData();
         logger.debug("Logo section HTML: {}", html);
@@ -241,6 +344,9 @@ public class PdfGenerationService {
             case "footer":
                 processFooterHtml(doc, styles, factureData);
                 break;
+            case "company":
+                processCompanyHtml(doc, styles, factureData);
+                break;
             default:
                 logger.debug("No specific processing for section: {}", section.getSectionName());
         }
@@ -274,122 +380,85 @@ public class PdfGenerationService {
         return result;
     }
 
-    private String processTableHtml(org.jsoup.nodes.Document doc, Map<String, String> styles, Map<String, String> factureData) {
-        logger.info("Processing table HTML for tableContainer with factureData: {}", factureData);
-        logger.debug("Input HTML: {}", doc.html());
+   private String processTableHtml(org.jsoup.nodes.Document doc, Map<String, String> styles, Map<String, String> factureData) {
+    logger.info("Processing table HTML for tableContainer with factureData: {}", factureData);
+    logger.debug("Input HTML: {}", doc.html());
 
-        org.jsoup.nodes.Element table = doc.selectFirst("table");
-        if (table == null) {
-            logger.error("No table found in tableContainer section. Creating a default table.");
-            table = doc.body().appendElement("table").addClass("min-w-full");
-            table.appendElement("thead").appendElement("tr");
-            table.appendElement("tbody");
-            table.appendElement("tfoot");
-        }
-
-        table.parents().select("div.relative, div.overflow-x-auto").forEach(div -> div.unwrap());
-
-        org.jsoup.nodes.Element thead = table.selectFirst("thead");
-        if (thead == null) {
-            logger.warn("No thead found, creating one");
-            thead = table.prependElement("thead");
-            org.jsoup.nodes.Element headerRow = thead.appendElement("tr");
-            String[] columns = {"Reference", "TVA", "Discount", "Quantity", "Price", "Total"};
-            for (String col : columns) {
-                headerRow.appendElement("th").text(col);
-            }
-        } else {
-            thead.select("tr th:last-child").remove();
-            logger.debug("Removed last th column (if any)");
-        }
-
-        org.jsoup.nodes.Element tbody = table.selectFirst("tbody");
-        if (tbody == null) {
-            logger.warn("No tbody found in table, creating one");
-            tbody = table.appendElement("tbody");
-        }
-
-        String[] columns = {"reference", "tva", "discount", "quantity", "price", "total"};
-        String[] mainServiceKeys = {"serviceReference", "tva", "discount", "quantity", "servicePrice", "serviceTotal"};
-        String[] additionalServiceKeys = {"reference", "tva", "discount", "quantity", "price", "total"};
-        String[] placeholders = {"#reference", "#tva", "#discount", "#quantity", "#price", "#total"};
-
-        tbody.select("tr").remove();
-        logger.debug("Cleared existing rows in tbody");
-
-        if (factureData != null && factureData.containsKey("serviceReference")) {
-            org.jsoup.nodes.Element row = tbody.appendElement("tr");
-            appendServiceRow(row, factureData, "", mainServiceKeys, placeholders);
-            logger.debug("Added main service row");
-        }
-
-        int rowCount = 1;
-        while (factureData != null && factureData.containsKey("service_" + rowCount + "_reference")) {
-            org.jsoup.nodes.Element row = tbody.appendElement("tr");
-            appendServiceRow(row, factureData, "service_" + rowCount + "_", additionalServiceKeys, placeholders);
-            logger.debug("Added additional service row {} with prefix service_{}_", rowCount, rowCount);
-            rowCount++;
-        }
-
-        if ((factureData == null || factureData.isEmpty() || (!factureData.containsKey("serviceReference") && rowCount == 1))) {
-            logger.debug("No valid service data found, adding placeholder row");
-            org.jsoup.nodes.Element row = tbody.appendElement("tr");
-            for (String placeholder : placeholders) {
-                row.appendElement("td").appendElement("span").text(placeholder);
-            }
-        }
-
-        if (factureData != null && factureData.containsKey("subtotal")) {
-            org.jsoup.nodes.Element tfoot = table.selectFirst("tfoot");
-            if (tfoot == null) {
-                tfoot = table.appendElement("tfoot");
-            } else {
-                tfoot.select("tr").remove();
-            }
-
-            org.jsoup.nodes.Element summaryRow = tfoot.appendElement("tr");
-            summaryRow.attr("style", "background-color: #f3f4f6; font-weight: bold;");
-
-            org.jsoup.nodes.Element summaryCell = summaryRow.appendElement("td");
-            summaryCell.attr("colspan", String.valueOf(columns.length));
-            summaryCell.attr("style", buildCellStyle(styles) + "text-align: right; padding: 12px;");
-
-            org.jsoup.nodes.Element summaryContent = summaryCell.appendElement("div");
-            summaryContent.attr("style", "display: flex; flex-direction: column; align-items: flex-end;");
-
-            org.jsoup.nodes.Element subtotalSpan = summaryContent.appendElement("span");
-            subtotalSpan.attr("style", "margin-bottom: 4px;");
-            subtotalSpan.text("Subtotal: " + factureData.getOrDefault("subtotal", "0.00"));
-
-            org.jsoup.nodes.Element taxesSpan = summaryContent.appendElement("span");
-            taxesSpan.attr("style", "margin-bottom: 4px;");
-            taxesSpan.text("Taxes: " + factureData.getOrDefault("taxes", "0.00"));
-
-            org.jsoup.nodes.Element totalSpan = summaryContent.appendElement("span");
-            totalSpan.attr("style", "color: #2563eb; font-weight: bold;");
-            totalSpan.text("Total: " + factureData.getOrDefault("totalAmount", "0.00"));
-
-            logger.debug("Added summary row with subtotal: {}, taxes: {}, total: {}",
-                    factureData.get("subtotal"), factureData.get("taxes"), factureData.get("totalAmount"));
-        }
-
-        table.select("*").forEach(element -> {
-            element.attributes().forEach(attr -> {
-                if (attr.getKey().startsWith("ng-") || attr.getKey().startsWith("_ng") || attr.getKey().startsWith("cdk")) {
-                    element.removeAttr(attr.getKey());
-                }
-            });
-        });
-
-        table.attr("style", buildTableStyle(styles));
-        table.select("td").forEach(td -> td.attr("style", buildCellStyle(styles)));
-        table.select("th").forEach(th -> th.attr("style", buildHeaderStyle(styles)));
-
-        String result = doc.body().html();
-        logger.info("Processed table HTML: {}", result);
-        return result;
+    org.jsoup.nodes.Element table = doc.selectFirst("table");
+    if (table == null) {
+        logger.error("No table found in tableContainer section. Creating a default table.");
+        table = doc.body().appendElement("table").addClass("min-w-full");
+        table.appendElement("thead").appendElement("tr");
+        table.appendElement("tbody");
     }
 
+    table.parents().select("div.relative, div.overflow-x-auto").forEach(div -> div.unwrap());
+
+    org.jsoup.nodes.Element thead = table.selectFirst("thead");
+    if (thead == null) {
+        logger.warn("No thead found, creating one");
+        thead = table.prependElement("thead");
+        org.jsoup.nodes.Element headerRow = thead.appendElement("tr");
+        String[] columns = {"Reference", "TVA", "Discount", "Quantity", "Price", "Total"};
+        for (String col : columns) {
+            headerRow.appendElement("th").text(col);
+        }
+    } else {
+        thead.select("tr th:last-child").remove();
+        org.jsoup.nodes.Element headerRow = thead.selectFirst("tr");
+        if (headerRow != null) {
+            headerRow.appendElement("th").text("Total");
+            logger.debug("Added Total column to thead");
+        }
+    }
+
+    org.jsoup.nodes.Element tbody = table.selectFirst("tbody");
+    if (tbody == null) {
+        logger.warn("No tbody found in table, creating one");
+        tbody = table.appendElement("tbody");
+    }
+
+    String[] columns = {"reference", "tva", "discount", "quantity", "price", "total"};
+    String[] mainServiceKeys = {"serviceReference", "tva", "discount", "quantity", "servicePrice", "serviceTotal"};
+    String[] additionalServiceKeys = {"reference", "tva", "discount", "quantity", "price", "total"};
+    String[] placeholders = {"#reference", "#tva", "#discount", "#quantity", "#price", "#total"};
+
+    tbody.select("tr").remove();
+    logger.debug("Cleared existing rows in tbody");
+
+    // Ajout du service principal
+    if (factureData != null && factureData.containsKey("serviceReference")) {
+        org.jsoup.nodes.Element row = tbody.appendElement("tr");
+        appendServiceRow(row, factureData, "", mainServiceKeys, placeholders);
+        logger.debug("Added main service row");
+    }
+
+    // Ajout des services supplémentaires
+    int rowCount = 1;
+    while (factureData != null && factureData.containsKey("service_" + rowCount + "_reference")) {
+        org.jsoup.nodes.Element row = tbody.appendElement("tr");
+        appendServiceRow(row, factureData, "service_" + rowCount + "_", additionalServiceKeys, placeholders);
+        logger.debug("Added additional service row {} with prefix service_{}_", rowCount, rowCount);
+        rowCount++;
+    }
+
+    // Nettoyage des attributs Angular
+    table.select("*").forEach(element -> {
+        element.attributes().forEach(attr -> {
+            if (attr.getKey().startsWith("ng-") || attr.getKey().startsWith("_ng") || attr.getKey().startsWith("cdk")) {
+                element.removeAttr(attr.getKey());
+            }
+        });
+    });
+
+    table.attr("style", buildTableStyle(styles));
+    table.select("td").forEach(td -> td.attr("style", buildCellStyle(styles)));
+    table.select("th").forEach(th -> th.attr("style", buildHeaderStyle(styles)));
+
+    String result = doc.body().html();
+    logger.info("Processed table HTML: {}", result);
+    return result;
+}
     private void appendServiceRow(org.jsoup.nodes.Element row, Map<String, String> factureData, String prefix, String[] factureKeys, String[] placeholders) {
         for (int i = 0; i < factureKeys.length; i++) {
             String factureKey = prefix + factureKeys[i];
@@ -409,25 +478,35 @@ public class PdfGenerationService {
         }
 
         container.html("");
-        container.attr("style", "display: flex; flex-direction: column; gap: 10px;");
+        container.attr("style", "display: flex; flex-direction: column; gap: 8px;");
 
         String creationDate = factureData != null ? factureData.get("creationDate") : null;
         String dueDate = factureData != null ? factureData.get("dueDate") : null;
 
+        org.jsoup.nodes.Element creationLine = container.appendElement("div")
+            .attr("style", "display: flex; gap: 5px;");
+        
+        org.jsoup.nodes.Element creationTitle = createStyledSpan("Date Création:", styles);
+        creationTitle.attr("style", creationTitle.attr("style") + "font-weight: bold;");
+        creationLine.appendChild(creationTitle);
+        
         String creationText = (creationDate != null && !creationDate.equals("N/A")) 
-            ? String.format("#creationDate:%s", creationDate) 
+            ? creationDate 
             : "#creationDate";
-        org.jsoup.nodes.Element creationSpan = createStyledSpan(creationText, styles);
-        org.jsoup.nodes.Element creationDiv = new org.jsoup.nodes.Element("div").appendChild(creationSpan);
-        container.appendChild(creationDiv);
+        creationLine.appendChild(createStyledSpan(creationText, styles));
         logger.debug("Added creationDate: {}", creationText);
 
+        org.jsoup.nodes.Element dueLine = container.appendElement("div")
+            .attr("style", "display: flex; gap: 5px;");
+        
+        org.jsoup.nodes.Element dueTitle = createStyledSpan("Date Échéance:", styles);
+        dueTitle.attr("style", dueTitle.attr("style") + "font-weight: bold;");
+        dueLine.appendChild(dueTitle);
+        
         String dueText = (dueDate != null && !dueDate.equals("N/A")) 
-            ? String.format("#dueDate:%s", dueDate) 
+            ? dueDate 
             : "#dueDate";
-        org.jsoup.nodes.Element dueSpan = createStyledSpan(dueText, styles);
-        org.jsoup.nodes.Element dueDiv = new org.jsoup.nodes.Element("div").appendChild(dueSpan);
-        container.appendChild(dueDiv);
+        dueLine.appendChild(createStyledSpan(dueText, styles));
         logger.debug("Added dueDate: {}", dueText);
 
         container.select("mat-form-field, mat-label, mat-select, mat-option, mat-datepicker-toggle, mat-datepicker").remove();
@@ -435,133 +514,115 @@ public class PdfGenerationService {
     }
 
     private void processInfoClientHtml(org.jsoup.nodes.Document doc, Map<String, String> styles, Map<String, String> factureData) {
-    logger.info("Processing info-client HTML with factureData: {}", factureData);
-    logger.debug("Input HTML: {}", doc.html());
+        logger.info("Processing info-client HTML with factureData: {}", factureData);
+        logger.debug("Input HTML: {}", doc.html());
 
-    // Liste des placeholders et leurs icônes associées
-    Map<String, String> placeholderIcons = new HashMap<>();
-    placeholderIcons.put("#clientName", "👤");
-    placeholderIcons.put("#clientPhone", "📱");
-    placeholderIcons.put("#clientAddress", "🏠");
-    placeholderIcons.put("#clientRIB", "💳");
+        org.jsoup.nodes.Element container = doc.body().appendElement("div");
+        container.attr("style", "display: flex; flex-direction: column; gap: 8px; align-items: flex-start;");
 
-    // Conserver la structure du tableau
-    org.jsoup.nodes.Element table = doc.selectFirst("table.data-table");
-    if (table == null) {
-        logger.warn("No table found in info-client section, creating one");
-        table = doc.body().appendElement("table").addClass("data-table");
-        table.appendElement("tbody").appendElement("tr");
-    }
+        Map<String, String> fieldTitles = new HashMap<>();
+        fieldTitles.put("clientName", "Nom:");
+        fieldTitles.put("clientAddress", "Adresse:");
+        fieldTitles.put("clientPhone", "Téléphone:");
+        fieldTitles.put("clientRIB", "RIB:");
 
-    // Appliquer les styles au tableau
-    String tableStyle = buildTableStyle(styles);
-    table.attr("style", tableStyle);
+        String[] fields = {"clientName", "clientAddress", "clientPhone", "clientRIB"};
+        for (String field : fields) {
+            String placeholder = "#" + field;
+            String value = (factureData != null && factureData.containsKey(field)) 
+                ? factureData.get(field) 
+                : placeholder;
 
-    // Traiter chaque ligne
-    doc.select("tbody > tr").forEach(tr -> {
-        // Conserver les tr comme des div pour une disposition verticale
-        tr.tagName("div");
-        tr.attr("style", "display: flex; flex-direction: column; margin-bottom: 10px;");
+            org.jsoup.nodes.Element lineDiv = container.appendElement("div")
+                .attr("style", "display: flex; gap: 5px; align-items: flex-start;");
 
-        // Traiter chaque cellule
-        tr.select("td").forEach(td -> {
-            td.tagName("div");
-            org.jsoup.nodes.Element inputField = td.selectFirst(".input-field");
-            org.jsoup.nodes.Element inputIcon = td.selectFirst(".input-icon");
-            String value = null;
-            String placeholder = null;
+            org.jsoup.nodes.Element titleSpan = createStyledSpan(fieldTitles.get(field), styles);
+            titleSpan.attr("style", titleSpan.attr("style") + "font-weight: bold;");
+            lineDiv.appendChild(titleSpan);
 
-            // Vérifier si l'élément input-field existe et a un placeholder
-            if (inputField != null && !inputField.attr("data-placeholder").isEmpty()) {
-                placeholder = inputField.attr("data-placeholder");
-                String key = placeholder.startsWith("#") ? placeholder.substring(1) : placeholder;
-                value = (factureData == null || factureData.isEmpty()) 
-                    ? placeholder 
-                    : factureData.getOrDefault(key, placeholder);
-                logger.debug("Found data-placeholder: {} with value: {}", placeholder, value);
-            } else {
-                td.remove();
-                logger.debug("Removed td without valid input-field");
-                return;
-            }
+            org.jsoup.nodes.Element valueSpan = createStyledSpan(value, styles);
+            lineDiv.appendChild(valueSpan);
 
-            // Créer un conteneur pour l'icône et le texte
-            org.jsoup.nodes.Element contentDiv = new org.jsoup.nodes.Element("div")
-                .attr("style", "display: flex; align-items: center; gap: 8px; padding: 8px;");
-
-            // Ajouter l'icône si elle existe
-            String icon = inputIcon != null ? inputIcon.text() : placeholderIcons.getOrDefault(placeholder, "");
-            if (!icon.isEmpty()) {
-                org.jsoup.nodes.Element iconSpan = new org.jsoup.nodes.Element("span")
-                    .text(icon)
-                    .attr("style", "font-size: " + styles.getOrDefault("font-size", "14px") + ";");
-                contentDiv.appendChild(iconSpan);
-            }
-
-            // Ajouter le texte (valeur ou placeholder)
-            org.jsoup.nodes.Element textSpan = createStyledSpan(value, styles);
-            contentDiv.appendChild(textSpan);
-
-            // Remplacer le contenu de la cellule par le nouveau conteneur
-            td.html(contentDiv.outerHtml());
-            td.attr("style", "display: block; padding: 8px; border: 1px solid " + styles.getOrDefault("border-color", "#000") + ";");
-
-            logger.debug("Processed info-client value: {} with icon: {}", value, icon);
-        });
-    });
-
-    // Supprimer les classes inutiles et les conteneurs input-container
-    doc.select(".input-container").remove();
-    doc.select("table").attr("style", "width: 100%; display: block;");
-    doc.select("tbody").unwrap();
-
-    // Supprimer les div vides
-    doc.select("div").forEach(div -> {
-        if (div.children().isEmpty() || 
-            div.children().stream().allMatch(child -> child.text().trim().isEmpty())) {
-            div.remove();
-            logger.debug("Removed empty or invalid div");
+            logger.debug("Added field: {} with title: {} and value: {}", field, fieldTitles.get(field), value);
         }
-    });
 
-    logger.info("Processed HTML: {}", doc.html());
-}
-    private void processFooterHtml(org.jsoup.nodes.Document doc, Map<String, String> styles, Map<String, String> factureData) {
-    logger.info("Processing footer HTML with factureData: {}", factureData);
-    org.jsoup.nodes.Element container = doc.selectFirst("div");
-    if (container == null) {
-        logger.warn("No container found in footer section");
-        return;
+        doc.select("table, tbody, tr, td, .input-container, .input-field, .input-icon").remove();
+        logger.info("Processed HTML: {}", doc.html());
     }
 
-    container.html("");
-    container.attr("style", "display: flex; flex-direction: column; gap: 10px;");
+    private void processCompanyHtml(org.jsoup.nodes.Document doc, Map<String, String> styles, Map<String, String> factureData) {
+        logger.info("Processing company HTML with factureData: {}", factureData);
+        logger.debug("Input HTML: {}", doc.html());
 
-    String footerText = factureData != null ? factureData.get("footerText") : null;
-    String footerContent = (footerText != null && !footerText.equals("N/A") && !footerText.trim().isEmpty()) 
-        ? footerText 
-        : "#footerText";
+        org.jsoup.nodes.Element container = doc.body().appendElement("div");
+        container.attr("style", "display: flex; flex-direction: column; gap: 8px; align-items: flex-start;");
 
-    org.jsoup.nodes.Element footerSpan = createStyledSpan(footerContent, styles);
-    org.jsoup.nodes.Element footerDiv = new org.jsoup.nodes.Element("div").appendChild(footerSpan);
-    container.appendChild(footerDiv);
-    logger.debug("Added footerText: {}", footerContent);
+        Map<String, String> fieldTitles = new HashMap<>();
+        fieldTitles.put("companyName", "Nom:");
+        fieldTitles.put("companyAddress", "Adresse:");
+        fieldTitles.put("companyPhone", "Téléphone:");
 
-    container.select("h3, .footer-title, .footer-section, .footer-text").remove();
-    logger.debug("Processed footer HTML: {}", doc.html());
-}
+        String[] fields = {"companyName", "companyAddress", "companyPhone"};
+        for (String field : fields) {
+            String placeholder = "#" + field;
+            String value = (factureData != null && factureData.containsKey(field)) 
+                ? factureData.get(field) 
+                : placeholder;
 
-private org.jsoup.nodes.Element createStyledSpan(String content, Map<String, String> styles) {
-    StringBuilder spanStyle = new StringBuilder();
-    appendStyle(spanStyle, styles, "font-family", "font-family", "Inter, sans-serif");
-    appendStyle(spanStyle, styles, "font-size", "font-size", "16px");
-    appendStyle(spanStyle, styles, "color", "color", "#000000");
-    spanStyle.append("font-weight: normal;");
+            org.jsoup.nodes.Element lineDiv = container.appendElement("div")
+                .attr("style", "display: flex; gap: 5px; align-items: flex-start;");
 
-    return new org.jsoup.nodes.Element("span")
-            .html(content)
-            .attr("style", spanStyle.toString());
-}
+            org.jsoup.nodes.Element titleSpan = createStyledSpan(fieldTitles.get(field), styles);
+            titleSpan.attr("style", titleSpan.attr("style") + "font-weight: bold;");
+            lineDiv.appendChild(titleSpan);
+
+            org.jsoup.nodes.Element valueSpan = createStyledSpan(value, styles);
+            lineDiv.appendChild(valueSpan);
+
+            logger.debug("Added field: {} with title: {} and value: {}", field, fieldTitles.get(field), value);
+        }
+
+        doc.select("table, tbody, tr, td, .input-container").remove();
+        logger.info("Processed HTML: {}", doc.html());
+    }
+
+    private void processFooterHtml(org.jsoup.nodes.Document doc, Map<String, String> styles, Map<String, String> factureData) {
+        logger.info("Processing footer HTML with factureData: {}", factureData);
+        org.jsoup.nodes.Element container = doc.selectFirst("div");
+        if (container == null) {
+            logger.warn("No container found in footer section");
+            return;
+        }
+
+        container.html("");
+        container.attr("style", "display: flex; flex-direction: column; gap: 10px;");
+
+        String footerText = factureData != null ? factureData.get("footerText") : null;
+        String footerContent = (footerText != null && !footerText.equals("N/A") && !footerText.trim().isEmpty()) 
+            ? footerText 
+            : "#footerText";
+
+        org.jsoup.nodes.Element footerSpan = createStyledSpan(footerContent, styles);
+        org.jsoup.nodes.Element footerDiv = new org.jsoup.nodes.Element("div").appendChild(footerSpan);
+        container.appendChild(footerDiv);
+        logger.debug("Added footerText: {}", footerContent);
+
+        container.select("h3, .footer-title, .footer-section, .footer-text").remove();
+        logger.debug("Processed footer HTML: {}", doc.html());
+    }
+
+    private org.jsoup.nodes.Element createStyledSpan(String content, Map<String, String> styles) {
+        StringBuilder spanStyle = new StringBuilder();
+        appendStyle(spanStyle, styles, "font-family", "font-family", "Inter, sans-serif");
+        appendStyle(spanStyle, styles, "font-size", "font-size", "16px");
+        appendStyle(spanStyle, styles, "color", "color", "#000000");
+        spanStyle.append("font-weight: normal;");
+
+        return new org.jsoup.nodes.Element("span")
+                .html(content)
+                .attr("style", spanStyle.toString());
+    }
+
     private void styleTableElements(org.jsoup.nodes.Document doc, Map<String, String> styles) {
         doc.select("table").forEach(table -> {
             String currentStyle = table.attr("style");
@@ -673,54 +734,62 @@ private org.jsoup.nodes.Element createStyledSpan(String content, Map<String, Str
         return container;
     }
 
-   private String wrapHtml(String html, float widthPt, float heightPt, String sectionName, Map<String, String> styles) {
+private String wrapHtml(String html, float widthPt, float heightPt, String sectionName, Map<String, String> styles) {
     float widthPx = widthPt / PX_TO_PT;
     float heightPx = heightPt / PX_TO_PT;
     String fontFamily = styles != null && styles.containsKey("font-family") ? styles.get("font-family") : "Inter, sans-serif";
 
-    String customCss = sectionName.equalsIgnoreCase("info-client")
-            ? "table { width: 100%; display: block; } " +
-              "div.table-row { display: flex; flex-direction: column; margin-bottom: 10px; } " +
-              "div.input-cell { display: block; padding: 8px; margin-bottom: 10px; border: 1px solid #000; } " +
-              "div.input-cell > div { display: flex; align-items: center; gap: 8px; padding: 8px; } " +
-              "span { font-size: " + styles.getOrDefault("font-size", "14px") + "; " +
-              "color: " + styles.getOrDefault("color", "#94a3b8") + "; }"
-            : "table { table-layout: fixed; width: 100%; border-collapse: collapse; border: 1px solid #000; } " +
-              "td, th { word-break: break-word; min-height: 100px; border: 1px solid #000; padding: 8px; }";
+    String customCss;
+    if (sectionName.equalsIgnoreCase("info-client") || sectionName.equalsIgnoreCase("company")) {
+        customCss = "div { display: flex; flex-direction: column; gap: 8px; } " +
+                    "div > div { display: flex; align-items: center; gap: 8px; padding: 8px; } " +
+                    "span { font-size: " + styles.getOrDefault("font-size", "14px") + "; " +
+                    "color: " + styles.getOrDefault("color", "#94a3b8") + "; }";
+    } else if (sectionName.equalsIgnoreCase("tablecontainer")) {
+        customCss = "table { table-layout: fixed; width: 100%; border-collapse: collapse; border: 1px solid #000; } " +
+                    "td, th { word-break: break-word; min-height: 100px; border: 1px solid #000; padding: 8px; }";
+    } else {
+        customCss = "";
+    }
 
     return String.format(
             "<!DOCTYPE html><html><head><style>" +
-                    "body { margin: 0; padding: 0; width: %fpx; height: %fpx; overflow: hidden; } " +
+                    "body { margin: 0; padding: 0; width: %fpx; %s overflow: hidden; } " +
                     "%s" +
                     "</style></head><body><div>%s</div></body></html>",
-            widthPx, heightPx, customCss, html
+            widthPx, 
+            sectionName.equalsIgnoreCase("tablecontainer") ? "" : "height: " + heightPx + "px;",
+            customCss, 
+            html
     );
 }
 
-    private void addElementsToContainer(Div container, List<IElement> elements, Map<String, String> styles) {
-        for (IElement element : elements) {
-            if (element instanceof Table) {
-                Table table = (Table) element;
-                float cellHeight = styles != null && styles.containsKey("cell-height")
-                        ? parseSize(styles, "cell-height", 100) * PX_TO_PT
-                        : 100 * PX_TO_PT;
+   private void addElementsToContainer(Div container, List<IElement> elements, Map<String, String> styles) {
+    for (IElement element : elements) {
+        if (element instanceof Table) {
+            Table table = (Table) element;
+            table.setKeepTogether(false); // Allow table to split across pages
+            // No need for PdfStructureAttributes.HEADER; header repetition is handled by <thead>
+            float cellHeight = styles != null && styles.containsKey("cell-height")
+                    ? parseSize(styles, "cell-height", 100) * PX_TO_PT
+                    : 100 * PX_TO_PT;
 
-                for (IElement childElement : table.getChildren()) {
-                    if (childElement instanceof Cell) {
-                        Cell cell = (Cell) childElement;
-                        cell.setMinHeight(cellHeight);
-                        cell.setBorder(new SolidBorder(1));
-                        cell.setPadding(8);
-                    }
+            for (IElement childElement : table.getChildren()) {
+                if (childElement instanceof Cell) {
+                    Cell cell = (Cell) childElement;
+                    cell.setMinHeight(cellHeight);
+                    cell.setBorder(new SolidBorder(1));
+                    cell.setPadding(8);
                 }
-                container.add(table);
-            } else if (element instanceof BlockElement) {
-                container.add((BlockElement<?>) element);
-            } else {
-                container.add(new Paragraph().add((com.itextpdf.layout.element.IBlockElement) element));
             }
+            container.add(table);
+        } else if (element instanceof BlockElement) {
+            container.add((BlockElement<?>) element);
+        } else {
+            container.add(new Paragraph().add((com.itextpdf.layout.element.IBlockElement) element));
         }
     }
+}
 
     private Color parseColor(String colorStr) {
         if (colorStr == null || colorStr.isEmpty()) {
@@ -766,5 +835,3 @@ private org.jsoup.nodes.Element createStyledSpan(String content, Map<String, Str
         }
     }
 }
-
-

@@ -4,12 +4,14 @@
       {{ 'CLIENTS_PAGE.TITLE' | translate }}
     </h2>
   </div>
-  <app-toolbar (refreshClients)="refreshClients()"></app-toolbar>
-  
+<app-toolbar
+  (refreshClients)="refreshClients()"
+  (searchTermChange)="onSearchChange($event)"
+></app-toolbar>  
 
   
-  <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 mt-4">
-    <mat-table [dataSource]="clients" class="w-full" matSort>
+<div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 mt-4">  
+    <mat-table [dataSource]="dataSource" class="w-full" matSort>
       
       <!-- Nom du Client Column -->
       <ng-container matColumnDef="clientName">
@@ -22,16 +24,14 @@
       </ng-container>
 
       <!-- Téléphone Column -->
-      <ng-container matColumnDef="clientPhone">
-        <mat-header-cell *matHeaderCellDef mat-sort-header class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
-          {{ 'CLIENTS_PAGE.PHONE' | translate }}
-        </mat-header-cell>
-        <mat-cell *matCellDef="let client" class="px-6 py-4 text-gray-600">
-          <a href="tel:{{client.clientPhone}}" class="hover:text-amber-600 transition-colors">
-            {{ client.clientPhone | phone }}
-          </a>
-        </mat-cell>
-      </ng-container>
+   <ng-container matColumnDef="clientPhone">
+  <mat-header-cell *matHeaderCellDef mat-sort-header class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
+    {{ 'CLIENTS_PAGE.PHONE' | translate }}
+  </mat-header-cell>
+  <mat-cell *matCellDef="let client" class="px-6 py-4 text-gray-600">
+    {{ client.clientPhone | phone }}
+  </mat-cell>
+</ng-container>
 
       <!-- Adresse Column -->
       <ng-container matColumnDef="clientAddress">
@@ -83,10 +83,10 @@
     </mat-table>
 
     <!-- Empty State -->
-    <div *ngIf="clients.length === 0" class="p-12 text-center text-gray-500">
-      <mat-icon class="text-4xl mb-4 text-gray-300">people_outline</mat-icon>
-      <p class="text-lg">{{ 'CLIENTS_PAGE.NO_CLIENTS' | translate }}</p>
-    </div>
+   <div *ngIf="dataSource.data.length === 0 && !isLoading" class="p-12 text-center text-gray-500">
+  <mat-icon class="text-4xl mb-4 text-gray-300">people_outline</mat-icon>
+  <p class="text-lg">{{ 'CLIENTS_PAGE.NO_CLIENTS' | translate }}</p>
+</div>
 
     <!-- Paginator -->
     <mat-paginator [length]="dataSource.data.length" [pageSize]="5" 

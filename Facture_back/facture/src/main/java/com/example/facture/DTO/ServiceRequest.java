@@ -2,6 +2,8 @@ package com.example.facture.DTO;
 
 public class ServiceRequest {
     private Long serviceId;
+    private String serviceName; // Add this field
+    private String serviceReference;
     private double servicePrice;
     private int quantity;
     private double tva;
@@ -14,6 +16,22 @@ public class ServiceRequest {
 
     public void setServiceId(Long serviceId) {
         this.serviceId = serviceId;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public String getServiceReference() {
+        return serviceReference;
+    }
+
+    public void setServiceReference(String serviceReference) {
+        this.serviceReference = serviceReference;
     }
 
     public double getServicePrice() {

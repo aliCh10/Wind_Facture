@@ -9,10 +9,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+import org.springframework.data.jpa.domain.Specification;
+import jakarta.persistence.criteria.Predicate;
 @Service
 @AllArgsConstructor
 public class ClientService {
@@ -99,5 +101,40 @@ public void deleteClient(Long id) {
             .filter(c -> c.getTenantId().equals(tenantId))
             .orElseThrow(() -> new RuntimeException("Client not found with id: " + id + " for tenant: " + tenantId));
     clientRepository.delete(client);
+}
+public List<ClientDTO> searchClients(ClientDTO clientDTO) {
+    Long tenantId = getAuthenticatedTenantId();
+    
+    Specification<Client> spec = (root, query, cb) -> {
+        List<Predicate> predicates = new ArrayList<>();
+        
+        // Toujours filtrer par tenantId
+        predicates.add(cb.equal(root.get("tenantId"), tenantId));
+        
+        // Ajouter les critères de recherche si fournis
+        if (clientDTO.getClientName() != null && !clientDTO.getClientName().isEmpty()) {
+            predicates.add(cb.like(cb.lower(root.get("clientName")), 
+                          "%" + clientDTO.getClientName().toLowerCase() + "%"));
+        }
+        if (clientDTO.getClientPhone() != null && !clientDTO.getClientPhone().isEmpty()) {
+            predicates.add(cb.like(root.get("clientPhone"), 
+                          "%" + clientDTO.getClientPhone() + "%"));
+        }
+        if (clientDTO.getClientAddress() != null && !clientDTO.getClientAddress().isEmpty()) {
+            predicates.add(cb.like(cb.lower(root.get("clientAddress")), 
+                          "%" + clientDTO.getClientAddress().toLowerCase() + "%"));
+        }
+        if (clientDTO.getRib() != null && !clientDTO.getRib().isEmpty()) {
+            predicates.add(cb.like(root.get("rib"), 
+                          "%" + clientDTO.getRib() + "%"));
+        }
+        
+        return cb.and(predicates.toArray(new Predicate[0]));
+    };
+    
+    return clientRepository.findAll(spec)
+            .stream()
+            .map(this::toDTO)
+            .collect(Collectors.toList());
 }
 }

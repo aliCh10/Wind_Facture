@@ -72,4 +72,11 @@ export class EmployeeService {
       }
     );
   }
+
+searchEmployees(searchTerm: string): Observable<any> {
+  return this.http.get(`${this.apiUrl}/search`, {
+    headers: this.createHeaders(),
+    params: { q: searchTerm }
+  });
+}
 }

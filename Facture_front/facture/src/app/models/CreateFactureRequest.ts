@@ -1,5 +1,8 @@
+// src/app/models/CreateFactureRequest.ts
 export interface ServiceRequest {
   serviceId: number;
+  serviceName: string;
+  serviceReference: string;
   servicePrice: number;
   quantity: number;
   tva: number;
@@ -9,7 +12,9 @@ export interface ServiceRequest {
 export interface CreateFactureRequest {
   templateId: number;
   clientId: number;
-  services: ServiceRequest[]; // List of services
+  services: ServiceRequest[];
+  
   creationDate: string;
   dueDate: string;
+  footerText: string;
 }

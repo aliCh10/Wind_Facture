@@ -66,4 +66,10 @@ public class EmployeeController {
                                            HttpServletRequest httpRequest) {
         return employeeService.changePassword(employeeId, newPassword, httpRequest);
     }
+    @Operation(summary = "Rechercher des employés par nom pour le tenant authentifié")
+@PostMapping("/search")
+public ResponseEntity<?> searchEmployeesByName(@RequestParam String name, 
+                                              HttpServletRequest httpRequest) {
+    return employeeService.searchEmployeesByName(name, httpRequest);
+}
 }

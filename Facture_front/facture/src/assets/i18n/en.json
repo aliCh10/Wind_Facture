@@ -66,10 +66,12 @@
     "SERVICES": "Services",
     "models_list": "Models List",
     "invoice": "Invoice",
-    "Create Invoice": "Create Invoice"
+    "Create Invoice": "Create Invoice",
+    "invoices_list": "Invoices List"
   },
   "or click to select files": "or click to select files",
   "employee": {
+        "NO_RESULTS": "No employees found",
     "List of Employees": "List of Employees",
     "Name": "Name",
     "Second Name": "Second Name",
@@ -240,7 +242,9 @@
       "INVALID_FIELDS": "Please fill in all required fields",
       "GENERIC": "An error occurred during addition",
       "NETWORK": "Unable to connect to the server. Check your internet connection.",
-      "BAD_REQUEST": "Invalid data. Check the entered information."
+      "BAD_REQUEST": "Invalid data. Check the entered information.",
+      "NAME_REQUIRED": "Name is required",
+      "NAME_MINLENGTH": "Name must be at least 3 characters long"
     },
     "SUCCESS": {
       "TITLE": "Success"
@@ -285,6 +289,16 @@
         "DELETE_CONFIRM": "Are you sure you want to delete this client?"
       },
       "form": {
+        "phone": {
+    "error": {
+      "pattern": "Invalid phone number format"
+    }
+  },
+  "email": {
+    "error": {
+      "email": "Please enter a valid email address"
+    }
+  },
         "addTitle": "Add Client",
         "updateTitle": "Update Client",
         "clientName": {
@@ -422,6 +436,7 @@
   },
  
   "CREATE_INVOICE": {
+        "TITLE": "Create New Invoice",
     "STEPS": {
       "CLIENT_INFORMATION": "Client Information",
       "COMPANY_INFORMATION": "Company Information",
@@ -578,6 +593,45 @@
     "UPDATE_PARTNER_FAILED": "Failed to update partner profile",
     "UPDATE_EMPLOYEE_FAILED": "Failed to update employee profile",
     "WEBSITE_PLACEHOLDER": "https://"
+  },
+
+  "factures": {
+    "title": "List of Invoices",
+    "FactureNumber": "Invoice Number",
+    "IssueDate": "Issue Date",
+    "ClientName": "Client Name",
+    "Status": "Status",
+    "TotalAmount": "Total Amount",
+    "ClientId": "Client ID",
+    "Actions": "Actions",
+    "ChangeModel": "Change model",
+    "ChooseAnotherModel": "Choose another model",
+    "Edit": "preview",
+    "Delete": "Delete",
+    "NoResults": "No invoices found",
+   "SelectModel": "Select Model",
+    "LoadingModels": "Loading models...",
+    "NoModelsAvailable": "No models available",
+    "Cancel": "Cancel",
+    "CONFIRM": {
+      "DELETE_TITLE": "Confirm Deletion",
+      "DELETE_TEXT": "Are you sure you want to delete this invoice? This action is irreversible.",
+      "CANCEL": "Cancel",
+      "OK": "OK"
+    },
+    "SUCCESS": {
+      "MODEL_UPDATED": "Model updated successfully",
+      "TITLE": "Success",
+      "DELETE": "Invoice deleted successfully"
+    },
+    "ERROR": {
+      "UPDATE_FAILED": "Failed to update invoice",
+      "TITLE": "Error",
+      "LOAD_FAILED": "Failed to load invoices",
+      "DELETE_FAILED": "Failed to delete invoice"
+    }
   }
+  
+
 }
 

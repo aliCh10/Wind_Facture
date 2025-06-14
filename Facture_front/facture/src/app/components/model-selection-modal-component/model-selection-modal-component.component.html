@@ -1,0 +1,55 @@
+<mat-dialog-content class="max-w-3xl">
+  <h2 class="text-2xl font-bold mb-6 text-[#ffd700] border-b border-[#ffd700]/30 pb-2">
+    {{ 'factures.SelectModel' | translate }}
+  </h2>
+  
+  <div *ngIf="loading" class="text-center py-8">
+    <mat-spinner diameter="40" class="mx-auto yellow-spinner"></mat-spinner>
+    <p class="text-gray-500 mt-2">{{ 'factures.LoadingModels' | translate }}</p>
+  </div>
+  
+  <div *ngIf="!loading && modeles.length === 0" class="text-center text-gray-500 py-8">
+    <mat-icon class="text-4xl mb-4 text-gray-300">image_not_supported</mat-icon>
+    <p>{{ 'factures.NoModelsAvailable' | translate }}</p>
+  </div>
+  
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" *ngIf="!loading && modeles.length > 0">
+    <div *ngFor="let modele of modeles" 
+         class="relative group cursor-pointer bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 card-container"
+         (click)="selectModel(modele.id)">
+      
+      <div class="w-full h-48 bg-gray-50 flex items-center justify-center relative">
+        <mat-spinner *ngIf="isThumbnailLoading(modele)" 
+                    diameter="40" 
+                    class="mx-auto absolute yellow-spinner"></mat-spinner>
+        
+        <img *ngIf="!isThumbnailLoading(modele) && getThumbnailUrl(modele)" 
+             [src]="getThumbnailUrl(modele)"
+             alt="Template thumbnail"
+             class="w-full h-full object-contain p-4 transition-opacity duration-300"
+             [class.opacity-0]="isThumbnailLoading(modele)"
+             (error)="handleImageError($event, modele)">
+             
+        <div *ngIf="!isThumbnailLoading(modele) && !getThumbnailUrl(modele)" 
+             class="text-gray-400 text-center p-4 flex flex-col items-center">
+          <mat-icon class="text-4xl mb-2 text-gray-300">image_not_supported</mat-icon>
+          <p class="text-sm">{{ 'CREATE_INVOICE.LABELS.NO_PREVIEW_AVAILABLE' | translate }}</p>
+        </div>
+      </div>
+      
+      <div class="p-1 group-hover:bg-[#ffd700]/10 transition-colors duration-300">
+        <h3 class="font-medium text-gray-800 truncate text-center text-xs leading-tight h-6 flex items-center justify-center">
+          {{modele.nameModel || ('INVOICE_TEMPLATES.CARD.UNTITLED' | translate)}}
+        </h3>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="px-6 pb-4">
+  <button mat-raised-button
+          class="yellow-button px-4 py-2 rounded-lg transition-colors duration-300 shadow-sm hover:shadow-md"
+          (click)="closeModal()">
+    {{ 'factures.Cancel' | translate }}
+  </button>
+</mat-dialog-actions>

@@ -3,6 +3,25 @@ mat-form-field.w-full {
   width: 100%;
   max-width: 100%;
 }
+/* Dans votre fichier CSS du composant */
+::ng-deep .mat-stepper-vertical-line::before {
+  background-color: #FFD700 !important;
+}
+
+::ng-deep .mat-step-header .mat-step-icon {
+  background-color: #FFD700 !important;
+  color: #1A237E !important; /* Couleur du texte dans l'icône */
+}
+
+::ng-deep .mat-step-header .mat-step-icon-selected {
+  background-color: #FFD700 !important;
+  color: #1A237E !important;
+}
+
+::ng-deep .mat-step-header .mat-step-icon-state-edit {
+  background-color: #FFD700 !important;
+  color: #1A237E !important;
+}
 
 /* Style the mat-select trigger for elegance */
 .elegant-select .mat-mdc-select-trigger {
@@ -11,7 +30,7 @@ mat-form-field.w-full {
   border-radius: 8px;
   padding: 12px;
   font-size: 14px;
-  color: #1a237e;
+  color: #ffd700;
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
@@ -41,30 +60,28 @@ mat-option {
   border-radius: 8px;
   margin: 4px 0;
 }
+   ::ng-deep .mat-mdc-option {
+     padding: 12px 16px !important; /* Increased padding for better spacing */
+     line-height: 1.5 !important; /* Improves readability */
+   }
 
-/* Responsive adjustments */
-@media (max-width: 640px) {
-  .template-option {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 10px;
-  }
+   ::ng-deep .mat-mdc-option:hover {
+     background-color: #f5f5f5 !important; /* Light gray background on hover */
+   }
 
-  .template-option > div:first-child {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1 / 1.414;
-    max-width: 120px;
-    margin-bottom: 8px;
-  }
-
-  .elegant-select .mat-mdc-select-trigger {
-    padding: 10px;
-    font-size: 12px;
-  }
+   /* Ensure consistency for selected option */
+   ::ng-deep .mat-mdc-option.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+     background-color: #e0f7fa !important; /* Light cyan for selected item */
+   }
+.gradient-text {
+  background: linear-gradient(50deg, #1A237E 20%, #FFD700 80%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block; /* Ensures gradient applies correctly */
+  font-weight: 800; /* Reinforce bold weight */
+}
+::ng-deep .mat-option {
+  padding-left: 16px !important; /* Adjust the value as needed */
 }
 
-/* Ensure spinner aligns with the centered layout */
-mat-spinner {
-  margin: 0 auto;
-}

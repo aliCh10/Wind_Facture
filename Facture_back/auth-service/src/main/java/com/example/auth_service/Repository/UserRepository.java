@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.auth_service.model.Partner;
 import com.example.auth_service.model.Role;
 import com.example.auth_service.model.User;
 

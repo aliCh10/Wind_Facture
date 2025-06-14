@@ -7,8 +7,7 @@
           <h4 class="font-weight-bold" style="font-size: 2rem; color: #2c3e50; font-family: 'Montserrat', sans-serif;">
             Bienvenue à
           </h4>
-          <img src="assets/images/LOGO-svg.webp" alt="Logo" style="max-width: 80%; height: auto;">
-          
+<img src="assets/images/LOGO-svg.webp" alt="Logo" style="max-width: 80%; height: auto; display: block; margin: auto;">          
           <p class="text-muted" style="font-size: 1rem; color: #7f8c8d;">
             Connectez-vous pour accéder à votre compte
           </p>
@@ -33,11 +32,15 @@
               Une erreur s'est produite. Veuillez réessayer.
             </div>
             <div class="modal-footer d-block text-center">
-              <button type="submit" class="btn btn-lg btn-pill w-100"
-                      style="background: linear-gradient(180deg, #2c3e50, #34495e); color: #FFD700; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);"
-                      [disabled]="!email || !password || loading">
-                Se connecter
-              </button>
+             <button type="submit" class="btn btn-lg btn-pill w-100"
+        style="background: url('assets/images/boutton.svg');
+                  background-size: cover; 
+                  border-radius: 50px;                
+                  color: #FFD700; 
+                  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);"
+        [disabled]="!email || !password || loading">
+    Se connecter
+</button>
             </div>
           </form>
           <p class="text-center mt-3">

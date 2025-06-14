@@ -66,10 +66,13 @@
     "SERVICES": "Services",
     "models_list": "Liste des Modèles",
     "invoice": "Facture",
-    "Create Invoice": "Créer Facture"
+    "Create Invoice": "Créer Facture",
+        "invoices_list": "Liste des Factures"
+
   },
   "or click to select files": "ou cliquez pour sélectionner les fichiers",
   "employee": {
+    "NO_RESULTS": "Aucun employé trouvé",
     "List of Employees": "Liste des Employés",
     "Name": "Nom",
     "Second Name": "Prénom",
@@ -241,7 +244,9 @@
       "INVALID_FIELDS": "Veuillez remplir tous les champs obligatoires",
       "GENERIC": "Une erreur est survenue lors de l'ajout",
       "NETWORK": "Impossible de se connecter au serveur. Vérifiez votre connexion internet.",
-      "BAD_REQUEST": "Données invalides. Vérifiez les informations saisies."
+      "BAD_REQUEST": "Données invalides. Vérifiez les informations saisies.",
+      "NAME_REQUIRED": "Le nom est requis",
+      "NAME_MINLENGTH": "Le nom doit avoir au moins 3 caractères"
     },
     "SUCCESS": {
       "TITLE": "Succès"
@@ -286,6 +291,16 @@
         "DELETE_CONFIRM": "Voulez-vous vraiment supprimer ce client ?"
       },
       "form": {
+        "phone": {
+    "error": {
+      "pattern": "Format de numéro de téléphone invalide"
+    }
+  },
+  "email": {
+    "error": {
+      "email": "Veuillez entrer un email valide"
+    }
+  },
         "addTitle": "Ajouter un Client",
         "updateTitle": "Modifier un Client",
         "clientName": {
@@ -423,6 +438,7 @@
   },
  
   "CREATE_INVOICE": {
+        "TITLE": "Créer une nouvelle facture",
     "STEPS": {
       "CLIENT_INFORMATION": "Informations sur le client",
       "COMPANY_INFORMATION": "Informations sur l'entreprise",
@@ -579,6 +595,45 @@
     "UPDATE_PARTNER_FAILED": "Échec de la mise à jour du profil partenaire",
     "UPDATE_EMPLOYEE_FAILED": "Échec de la mise à jour du profil employé",
     "WEBSITE_PLACEHOLDER": "https://"
+  },
+
+ 
+  "factures": {
+    "title": "Liste des factures",
+    "FactureNumber": "Numéro de facture",
+    "IssueDate": "Date d'émission",
+    "Status": "Statut",
+    "ClientName": "Nom du client",
+    "TotalAmount": "Montant total",
+    "ClientId": "Identifiant client",
+    "Actions": "Actions",
+     "ChangeModel": "Changer de modèle",
+    "ChooseAnotherModel": "Choisir un autre modèle",
+    "Edit": "Aperçu",
+    "Delete": "Supprimer",
+    "NoResults": "Aucune facture trouvée",
+  "SelectModel": "Sélectionner un modèle",
+    "LoadingModels": "Chargement des modèles...",
+    "NoModelsAvailable": "Aucun modèle disponible",
+    "Cancel": "Annuler",
+    "CONFIRM": {
+      "DELETE_TITLE": "Confirmer la suppression",
+      "DELETE_TEXT": "Êtes-vous sûr de vouloir supprimer cette facture ? Cette action est irréversible.",
+      "CANCEL": "Annuler",
+      "OK": "Confirmer"
+    },
+    "SUCCESS": {
+      "MODEL_UPDATED": "Modèle mis à jour avec succès",
+      "TITLE": "Succès",
+      "DELETE": "Facture supprimée avec succès"
+    },
+    "ERROR": {
+      "UPDATE_FAILED": "Échec de la mise à jour de la facture",
+      "TITLE": "Erreur",
+      "LOAD_FAILED": "Échec du chargement des factures",
+      "DELETE_FAILED": "Échec de la suppression de la facture"
+    }
   }
+
 
 }

@@ -22,7 +22,7 @@ export class FooterComponent implements Section, AfterViewInit, OnDestroy {
   id?: number;
   sectionName: string = 'footer';
   x: number = 20;
-  y: number = 850;
+  y: number = 960;
   styles: { [key: string]: string } = {};
 
   // Style properties
@@ -35,7 +35,7 @@ export class FooterComponent implements Section, AfterViewInit, OnDestroy {
   borderColor = '#cbd5e1';
   borderRadius = 4;
   width = 750; // From footer.component.css
-  height = 170; // Inferred from .footer-input height
+  height = 60; // Inferred from .footer-input height
 
   private stylesSubscription!: Subscription;
 
