@@ -82,18 +82,18 @@
                     </mat-form-field>
                   </div>
                   <!-- Next Button -->
-                <!-- Dans la partie du bouton Suivant (remplacez le code existant) -->
-<div class="text-center mt-4">
-  <button mat-raised-button 
-          color="primary" 
-          (click)="stepper.next()" 
-          [disabled]="personalInfo.invalid"
-          [class.disabled-button]="personalInfo.invalid"
-          [class.enabled-button]="personalInfo.valid"
-          class="w-100 py-2 transition-all">
-    Suivant
-  </button>
-</div>
+                  <div class="text-center mt-4">
+                    <button mat-raised-button 
+                            color="primary" 
+                            (click)="stepper.next()" 
+                            [disabled]="personalInfo.invalid"
+                            [class.disabled-button]="personalInfo.invalid"
+                            [class.enabled-button]="personalInfo.valid"
+                            class="w-100 py-2 transition-all"
+                            style="background: #276BC2; color: white;">
+                      Suivant
+                    </button>
+                  </div>
 
                   <p class="mt-4 text-center">
                     Vous avez déjà un compte ?
@@ -101,7 +101,6 @@
                       Connectez-vous ici
                     </a>
                   </p>
-
                 </form>
               </mat-step>
 
@@ -169,17 +168,22 @@
                   <!-- Previous and Submit Buttons -->
                   <div class="d-flex justify-content-between mt-4">
                     <button mat-raised-button color="basic" (click)="stepper.previous()"
-                            class="w-45 py-2" style="background: linear-gradient(180deg, #2c3e50, #34495e);color:#FFD700">
+                            class="w-45 py-2" style="background: #276BC2; color: white;">
                       Précédent
                     </button>
-                    <button mat-raised-button color="primary" type="submit" [disabled]="companyInfo.invalid"
-                            class="w-45 py-2" style="background: linear-gradient(180deg, #2c3e50, #34495e);color: #FFD700;" (click)="onSubmit()">
+                    <button mat-raised-button color="primary" type="submit" [disabled]="companyInfo.invalid || isLoading"
+                            class="w-45 py-2" style="background: #276BC2; color: white;" (click)="onSubmit()">
                       Créer un compte
                     </button>
                   </div>
                 </form>
               </mat-step>
             </mat-horizontal-stepper>
+
+            <!-- Loading Spinner -->
+            <div *ngIf="isLoading" class="loading-overlay">
+              <mat-spinner diameter="50" strokeWidth="5" [color]="'#FFD700'"></mat-spinner>
+            </div>
 
             <!-- Error Message -->
             <div *ngIf="errorMessage" class="alert alert-danger mt-3">

@@ -1,16 +1,15 @@
+// src/app/components/liste-factures/liste-factures.component.ts
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatSort } from '@angular/material/sort';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatSort, Sort } from '@angular/material/sort';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { FactureServiceService } from '../services/facture-service.service';
 import { Facture } from '../models/Facture';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from '../services/dialog.service';
-import { ClientService } from '../services/ClientService';
 import { AuthService } from '../services/AuthService';
-import { Client } from '../models/Client';
 import { ModelSelectionModalComponentComponent } from '../components/model-selection-modal-component/model-selection-modal-component.component';
 
 @Component({
@@ -23,12 +22,18 @@ export class ListeFacturesComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
     'factureNumber',
     'issueDate',
-  'clientName', // Remplace dueDate
+    'clientName',
     'status',
     'totalAmount',
     'actions',
   ];
   dataSource = new MatTableDataSource<Facture>([]);
+  loading: boolean = false;
+  pageSize: number = 10;
+  pageIndex: number = 0;
+  totalItems: number = 0;
+  sortField: string = 'issueDate';
+  sortDirection: string = 'desc';
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -39,10 +44,8 @@ export class ListeFacturesComponent implements OnInit, AfterViewInit {
     private translate: TranslateService,
     private dialog: MatDialog,
     private dialogService: DialogService,
-    private clientService: ClientService,
     private authService: AuthService
   ) {}
-  loading: boolean = false;
 
   ngOnInit(): void {
     this.loadFactures();
@@ -52,58 +55,67 @@ export class ListeFacturesComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
+
+    // Handle sort changes
+    this.sort.sortChange.subscribe((sort: Sort) => {
+      this.sortField = sort.active;
+      this.sortDirection = sort.direction || 'asc';
+      this.pageIndex = 0; // Reset to first page on sort change
+      this.loadFactures();
+    });
+
+    // Handle page changes
+    this.paginator.page.subscribe((page: PageEvent) => {
+      this.pageIndex = page.pageIndex;
+      this.pageSize = page.pageSize;
+      this.loadFactures();
+    });
   }
 
   private createFilter(): (data: Facture, filter: string) => boolean {
     return (data, filter) => {
       const searchTerm = filter.toLowerCase();
-      return data.factureNumber.toLowerCase().includes(searchTerm);
+      return (
+        data.factureNumber.toLowerCase().includes(searchTerm) ||
+        data.clientName?.toLowerCase().includes(searchTerm) ||
+        data.status.toLowerCase().includes(searchTerm)
+      );
     };
   }
 
-
 loadFactures(): void {
-  this.loading = true;
-  this.factureService.getAllFactures().subscribe({
-    next: (factures) => {
-      // Chargez les noms des clients pour chaque facture
-      const facturePromises = factures.map(facture => 
-        this.clientService.getClientById(facture.clientId).toPromise()
-          .then(client => ({
-            ...facture,
-            footerText: facture.footerText || 'N/A',
-            clientName: client?.clientName || 'N/A' // Ajoutez le nom du client
-          }))
-          .catch(() => ({
-            ...facture,
-            footerText: facture.footerText || 'N/A',
-            clientName: 'N/A' // Valeur par défaut en cas d'erreur
-          })));
-
-      Promise.all(facturePromises).then(facturesWithClients => {
-        this.dataSource.data = facturesWithClients;
-        this.loading = false;
-      });
-    },
-    error: (err) => {
-      console.error('Failed to load factures:', err);
-      this.toastr.error(
-        this.translate.instant('factures.ERROR.LOAD_FAILED'),
-        this.translate.instant('factures.ERROR.TITLE')
-      );
-      this.loading = false;
-    },
-  });
+    this.loading = true;
+    const sortParam = `${this.sortField},${this.sortDirection}`;
+    this.factureService.getFactures(this.pageIndex, this.pageSize, sortParam).subscribe({
+        next: (response) => {
+            this.dataSource.data = response.content;
+            console.log('Loaded factures:', response.content); // Log pour vérifier modeleFacture
+            this.totalItems = response.totalItems;
+            this.paginator.length = response.totalItems;
+            this.paginator.pageIndex = response.currentPage;
+            this.paginator.pageSize = response.pageSize;
+            this.loading = false;
+        },
+        error: (err) => {
+            console.error('Failed to load factures:', err);
+            this.toastr.error(
+                this.translate.instant('factures.ERROR.LOAD_FAILED'),
+                this.translate.instant('factures.ERROR.TITLE')
+            );
+            this.loading = false;
+        },
+    });
 }
 
   refreshFactures(): void {
+    this.pageIndex = 0;
     this.loadFactures();
   }
 
   onSearchTermChange(searchTerm: string): void {
     this.dataSource.filter = searchTerm.trim().toLowerCase();
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+    if (this.paginator) {
+      this.paginator.firstPage();
     }
   }
 
@@ -117,6 +129,7 @@ loadFactures(): void {
       })
       .subscribe((result) => {
         if (result) {
+          this.loading = true;
           this.factureService.deleteFacture(id).subscribe({
             next: () => {
               this.toastr.success(
@@ -131,65 +144,57 @@ loadFactures(): void {
                 this.translate.instant('factures.ERROR.DELETE_FAILED'),
                 this.translate.instant('factures.ERROR.TITLE')
               );
+              this.loading = false;
             },
           });
         }
       });
   }
 
-  previewFacture(id: number): void {
-    this.loading = true;
-    const facture = this.dataSource.data.find((f) => f.id === id);
-    if (!facture || !facture.modeleFacture?.id) {
+previewFacture(id: number): void {
+  this.loading = true;
+  const facture = this.dataSource.data.find((f) => f.id === id);
+  
+  // Check if facture and its template exist
+  if (!facture || !facture.modeleFacture?.id) {
+    this.toastr.error(
+      this.translate.instant('factures.ERROR.NO_FACTURE_OR_TEMPLATE'),
+      this.translate.instant('factures.ERROR.TITLE')
+    );
+    this.loading = false;
+    return;
+  }
+
+  this.authService.getCompanyInfo().subscribe({
+    next: (companyInfo) => {
+      const factureData = this.prepareFactureData(facture, companyInfo);
+      // Use the template ID from the facture, not the facture ID
+      this.factureService.generatePdfPreview(facture.modeleFacture.id, factureData).subscribe({
+        next: (pdfBlob: Blob) => {
+          const blobUrl = URL.createObjectURL(pdfBlob);
+          window.open(blobUrl, '_blank');
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('Error generating PDF preview:', error);
+          this.toastr.error(
+            this.translate.instant('factures.ERROR.PREVIEW_FAILED'),
+            this.translate.instant('factures.ERROR.TITLE')
+          );
+          this.loading = false;
+        },
+      });
+    },
+    error: () => {
       this.toastr.error(
-        this.translate.instant('factures.ERROR.NO_FACTURE_OR_TEMPLATE'),
+        this.translate.instant('factures.ERROR.COMPANY_INFO_FAILED'),
         this.translate.instant('factures.ERROR.TITLE')
       );
       this.loading = false;
-      return;
-    }
-
-    this.clientService.getClientById(facture.clientId).subscribe({
-      next: (client: Client) => {
-        this.authService.getCompanyInfo().subscribe({
-          next: (companyInfo) => {
-            const factureData = this.prepareFactureData(facture, client, companyInfo);
-            this.factureService.generatePdfPreview(facture.modeleFacture.id, factureData).subscribe({
-              next: (pdfBlob: Blob) => {
-                const blobUrl = URL.createObjectURL(pdfBlob);
-                window.open(blobUrl, '_blank');
-                setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-                
-                this.loading = false;
-              },
-              error: (error) => {
-                console.error('Error generating PDF preview:', error);
-                this.toastr.error(
-                  this.translate.instant('factures.ERROR.PREVIEW_FAILED'),
-                  this.translate.instant('factures.ERROR.TITLE')
-                );
-                this.loading = false;
-              },
-            });
-          },
-          error: () => {
-            this.toastr.error(
-              this.translate.instant('factures.ERROR.COMPANY_INFO_FAILED'),
-              this.translate.instant('factures.ERROR.TITLE')
-            );
-            this.loading = false;
-          },
-        });
-      },
-      error: () => {
-        this.toastr.error(
-          this.translate.instant('factures.ERROR.CLIENT_FETCH_FAILED'),
-          this.translate.instant('factures.ERROR.TITLE')
-        );
-        this.loading = false;
-      },
-    });
-  }
+    },
+  });
+}
 
   private calculateServiceAmounts(service: any): { subtotal: number; taxes: number; total: number } {
     const servicePrice = Number(service.servicePrice) || 0;
@@ -210,17 +215,17 @@ loadFactures(): void {
     };
   }
 
-  private prepareFactureData(facture: Facture, client: Client, companyInfo: any): Map<string, string> {
+  private prepareFactureData(facture: Facture, companyInfo: any): Map<string, string> {
     const factureData = new Map<string, string>();
     let subtotal = 0;
     let taxes = 0;
     let totalAmount = 0;
 
     // Client Data
-    factureData.set('clientName', client.clientName || 'N/A');
-    factureData.set('clientPhone', client.clientPhone || 'N/A');
-    factureData.set('clientAddress', client.clientAddress || 'N/A');
-    factureData.set('clientRIB', client.rib || 'N/A');
+    factureData.set('clientName', facture.clientName || 'N/A');
+    factureData.set('clientPhone', facture.clientPhone || 'N/A'); // Use facture.clientPhone
+    factureData.set('clientAddress', facture.clientAddress || 'N/A'); // Use facture.clientAddress
+    factureData.set('clientRIB', facture.clientRIB || 'N/A'); // Use facture.clientRIB
 
     // Company Data
     factureData.set('companyName', companyInfo.companyName || 'N/A');
@@ -258,11 +263,12 @@ loadFactures(): void {
     factureData.set('taxes', taxes.toFixed(2));
     factureData.set('totalAmount', totalAmount.toFixed(2));
 
-    console.log('factureData:', Object.fromEntries(factureData)); // Debug
     return factureData;
   }
 
-  openModelSelectionModal(factureId: number): void {
+
+
+openModelSelectionModal(factureId: number): void {
     const dialogRef = this.dialog.open(ModelSelectionModalComponentComponent, {
       width: '800px',
       data: { factureId },
@@ -270,17 +276,22 @@ loadFactures(): void {
 
     dialogRef.afterClosed().subscribe((result: Facture | undefined) => {
       if (result) {
-        // Update the facture in the data source
+        // Find the index of the updated facture
         const index = this.dataSource.data.findIndex((f) => f.id === result.id);
         if (index !== -1) {
-          this.dataSource.data[index] = {
+          // Create a new array with the updated facture
+          const updatedData = [...this.dataSource.data];
+          updatedData[index] = {
             ...result,
-            footerText: result.footerText || 'N/A', // Ensure footerText consistency
+            // Ensure all fields are properly updated
+            modeleFacture: result.modeleFacture || this.dataSource.data[index].modeleFacture,
+            footerText: result.footerText || this.dataSource.data[index].footerText
           };
-          this.dataSource.data = [...this.dataSource.data]; // Trigger change detection
-        
+          
+          // Update the data source
+          this.dataSource.data = updatedData;
         }
       }
     });
-  }
+}
 }

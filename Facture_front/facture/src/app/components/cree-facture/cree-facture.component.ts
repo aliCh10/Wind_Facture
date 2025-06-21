@@ -251,37 +251,45 @@ export class CreeFactureComponent implements OnInit, OnDestroy {
     this.clientForm.patchValue({ companyLogo: '' });
   }
 
-  loadClients(): void {
-    this.loading = true;
-    this.clientService.getAllClients().subscribe({
-      next: (clients) => {
-        this.clients = clients;
-        this.loading = false;
-      },
-      error: () => {
-        this.toastr.error(
-          this.translate.instant('DYNAMIC_MODAL.CLIENT.ERROR.FETCH_FAILED'),
-          this.translate.instant('DYNAMIC_MODAL.ERROR.TITLE')
+loadClients(): void {
+  this.loading = true;
+  this.clientService.getAllClients(0, 100).subscribe({ // Fetch first page with a large size
+    next: (page) => {
+      this.clients = page.content; // Extract clients from Page<Client>
+      this.loading = false;
+      if (page.totalElements === 0) {
+        this.toastr.warning(
+          this.translate.instant('DYNAMIC_MODAL.CLIENT.WARNING.NO_CLIENTS'),
+          this.translate.instant('DYNAMIC_MODAL.WARNING.TITLE')
         );
-        this.loading = false;
-      },
-    });
-  }
+      }
+    },
+    error: (error) => {
+      this.loading = false;
+      this.toastr.error(
+        error.message || this.translate.instant('DYNAMIC_MODAL.CLIENT.ERROR.FETCH_FAILED'),
+        this.translate.instant('DYNAMIC_MODAL.ERROR.TITLE')
+      );
+      console.error('Failed to load clients:', error);
+    }
+  });
+}
 
   loadServices(): void {
     this.loading = true;
-    this.serService.getAllServices().subscribe({
-      next: (services) => {
-        this.services = services;
+    this.serService.getAllServices(0, 100).subscribe({
+      next: (page) => {
+        this.services = page.content;
         this.loading = false;
       },
-      error: () => {
+      error: (error) => {
+        this.loading = false;
         this.toastr.error(
-          this.translate.instant('SERVICES_PAGE.ERROR.LOAD_FAILED'),
-          this.translate.instant('SERVICES_PAGE.ERROR.TITLE')
+          error.message || this.translate.instant('DYNAMIC_MODAL.CLIENT.ERROR.FETCH_FAILED'),
+          this.translate.instant('DYNAMIC_MODAL.ERROR.TITLE')
         );
-        this.loading = false;
-      },
+        console.error('Failed to load services:', error);
+      }
     });
   }
 
@@ -443,22 +451,26 @@ export class CreeFactureComponent implements OnInit, OnDestroy {
       }
     });
 
-    const formData: CreateFactureRequest = {
-      templateId: Number(selectedModele.id),
-      clientId: Number(selectedClient.id),
-      services,
-      creationDate: this.datesForm.get('creationDate')?.value || new Date().toISOString().split('T')[0],
-      dueDate: this.datesForm.get('dueDate')?.value || '',
-      footerText: this.footerForm.get('footerText')?.value || 'N/A',
-    };
+const formData: CreateFactureRequest = {
+    templateId: Number(selectedModele.id),
+    clientId: Number(selectedClient.id),
+    clientName: this.clientForm.get('clientName')?.value || 'N/A',
+    clientPhone: this.clientForm.get('clientPhone')?.value || 'N/A', // Add clientPhone
+    clientAddress: this.clientForm.get('clientAddress')?.value || 'N/A', // Add clientAddress
+    clientRIB: this.clientForm.get('clientRIB')?.value || 'N/A', // Add clientRIB
+    services,
+    creationDate: this.datesForm.get('creationDate')?.value || new Date().toISOString().split('T')[0],
+    dueDate: this.datesForm.get('dueDate')?.value || '',
+    footerText: this.footerForm.get('footerText')?.value || 'N/A',
+  };
 
-    if (!formData.creationDate || !formData.dueDate) {
-      this.toastr.error(
-        this.translate.instant('INVOICE_TEMPLATES.MESSAGES.INVALID_DATES.TEXT'),
-        this.translate.instant('INVOICE_TEMPLATES.MESSAGES.INVALID_DATES.TITLE')
-      );
-      return;
-    }
+  if (!formData.creationDate || !formData.dueDate) {
+    this.toastr.error(
+      this.translate.instant('INVOICE_TEMPLATES.MESSAGES.INVALID_DATES.TEXT'),
+      this.translate.instant('INVOICE_TEMPLATES.MESSAGES.INVALID_DATES.TITLE')
+    );
+    return;
+  }
 
     console.log('CreateFactureRequest:', formData); // Debug
     this.loading = true;

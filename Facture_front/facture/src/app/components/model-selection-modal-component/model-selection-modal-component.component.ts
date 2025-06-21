@@ -92,31 +92,38 @@ export class ModelSelectionModalComponentComponent {
     return modele.id ? this.loadingThumbnails[modele.id] || false : false;
   }
 
-  selectModel(modelId: number | undefined): void {
+selectModel(modelId: number | undefined): void {
     if (modelId !== undefined && this.factureId !== undefined) {
-      this.factureService.updateFactureModele(this.factureId, modelId).subscribe({
-        next: (updatedFacture) => {
-          this.toastr.success(
-            this.translate.instant('factures.SUCCESS.MODEL_UPDATED'),
-            this.translate.instant('factures.SUCCESS.TITLE')
-          );
-          this.dialogRef.close(updatedFacture); // Return the updated facture
-        },
-        error: (error) => {
-          console.error('Error updating facture model:', error);
-          this.toastr.error(
-            this.translate.instant('factures.ERROR.MODEL_UPDATE_FAILED'),
-            this.translate.instant('factures.ERROR.TITLE')
-          );
-        }
-      });
+        this.factureService.updateFactureModele(this.factureId, modelId).subscribe({
+            next: (updatedFacture) => {
+                this.toastr.success(
+                    this.translate.instant('factures.SUCCESS.MODEL_UPDATED'),
+                    this.translate.instant('factures.SUCCESS.TITLE')
+                );
+                
+                // Ensure we have the complete updated facture data
+                const completeUpdatedFacture = {
+                    ...updatedFacture,
+                    modeleFacture: this.modeles.find(m => m.id === modelId)
+                };
+                
+                this.dialogRef.close(completeUpdatedFacture);
+            },
+            error: (error) => {
+                console.error('Error updating facture model:', error);
+                this.toastr.error(
+                    this.translate.instant('factures.ERROR.MODEL_UPDATE_FAILED'),
+                    this.translate.instant('factures.ERROR.TITLE')
+                );
+            }
+        });
     } else {
-      this.toastr.error(
-        this.translate.instant('factures.ERROR.INVALID_SELECTION'),
-        this.translate.instant('factures.ERROR.TITLE')
-      );
+        this.toastr.error(
+            this.translate.instant('factures.ERROR.INVALID_SELECTION'),
+            this.translate.instant('factures.ERROR.TITLE')
+        );
     }
-  }
+}
 
   closeModal(): void {
     this.dialogRef.close();

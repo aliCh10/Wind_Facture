@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -6,8 +6,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class EmployeeService {
+  private apiUrl = 'http://localhost:8090/employees';
+
   constructor(private http: HttpClient) { }
-  private apiUrl = 'http://localhost:8090/employees'; // Changed from /employee to /employees
 
   private createHeaders(): HttpHeaders {
     let headers = new HttpHeaders({
@@ -25,7 +26,7 @@ export class EmployeeService {
   // Ajouter un employé
   addEmployee(partnerId: number, employee: any): Observable<any> {
     return this.http.post(
-      `${this.apiUrl}/${partnerId}`, // Corrected to /employees/{partnerId}
+      `${this.apiUrl}/${partnerId}`,
       employee,
       { headers: this.createHeaders() }
     );
@@ -34,20 +35,26 @@ export class EmployeeService {
   // Récupérer un employé par son ID
   getEmployeeById(employeeId: number): Observable<any> {
     return this.http.get(
-      `${this.apiUrl}/${employeeId}`, // Corrected to /employees/{employeeId}
+      `${this.apiUrl}/${employeeId}`,
       { headers: this.createHeaders() }
     );
   }
 
-  // Récupérer tous les employés
-  getAllEmployees(): Observable<any> {
-    return this.http.get(`${this.apiUrl}`, { headers: this.createHeaders() }); // Corrected to /employees
+  // Récupérer tous les employés avec pagination
+  getAllEmployees(page: number = 0, size: number = 10): Observable<any> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.http.get(`${this.apiUrl}`, {
+      headers: this.createHeaders(),
+      params
+    });
   }
 
   // Mettre à jour un employé
   updateEmployee(employeeId: number, employee: any): Observable<any> {
     return this.http.put(
-      `${this.apiUrl}/${employeeId}`, // Corrected to /employees/{employeeId}
+      `${this.apiUrl}/${employeeId}`,
       employee,
       { headers: this.createHeaders() }
     );
@@ -56,7 +63,7 @@ export class EmployeeService {
   // Supprimer un employé par ID
   deleteEmployee(employeeId: number): Observable<any> {
     return this.http.delete(
-      `${this.apiUrl}/${employeeId}`, // Corrected to /employees/{employeeId}
+      `${this.apiUrl}/${employeeId}`,
       { headers: this.createHeaders() }
     );
   }
@@ -64,7 +71,7 @@ export class EmployeeService {
   // Changer le mot de passe d'un employé
   changePassword(employeeId: number, newPassword: string): Observable<any> {
     return this.http.put(
-      `${this.apiUrl}/${employeeId}/change-password`, // Corrected to /employees/{employeeId}/change-password
+      `${this.apiUrl}/${employeeId}/change-password`,
       null,
       {
         headers: this.createHeaders(),
@@ -73,10 +80,15 @@ export class EmployeeService {
     );
   }
 
-searchEmployees(searchTerm: string): Observable<any> {
-  return this.http.get(`${this.apiUrl}/search`, {
-    headers: this.createHeaders(),
-    params: { q: searchTerm }
-  });
-}
+  // Rechercher des employés par nom avec pagination
+  searchEmployees(searchTerm: string, page: number = 0, size: number = 10): Observable<any> {
+    const params = new HttpParams()
+      .set('name', searchTerm)
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.http.post(`${this.apiUrl}/search`, null, {
+      headers: this.createHeaders(),
+      params
+    });
+  }
 }

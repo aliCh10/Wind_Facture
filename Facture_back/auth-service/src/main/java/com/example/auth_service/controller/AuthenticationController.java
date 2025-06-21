@@ -105,11 +105,11 @@ public ResponseEntity<?> authenticate(@RequestBody AuthentificationRequest authe
             return ResponseEntity.status(401).body("Token validation failed: " + e.getMessage());
         }
     }
-    @GetMapping("/company-info")
+@GetMapping("/company-info")
 public ResponseEntity<Map<String, String>> getCompanyInfo(@RequestHeader("Authorization") String token) {
-    String email = jwtService.extractUsername(token.replace("Bearer ", ""));
-    Partner partner = partnerRepository.findByEmail(email)
-            .orElseThrow(() -> new RuntimeException("Partner not found"));
+    Long tenantId = jwtService.extractTenantId(token.replace("Bearer ", ""));
+    Partner partner = partnerRepository.findByTenantId(tenantId)
+            .orElseThrow(() -> new RuntimeException("Company not found"));
     
     Map<String, String> response = new HashMap<>();
     response.put("companyName", partner.getCompanyName());

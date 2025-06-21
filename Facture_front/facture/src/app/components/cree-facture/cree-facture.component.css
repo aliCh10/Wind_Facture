@@ -1,87 +1,122 @@
-/* Center and style the mat-form-field */
-mat-form-field.w-full {
+/* Déplacer uniquement le mat-select du service vers le haut */
+mat-form-field.w-full.service-select-align {
+  margin-top: -13px; /* Ajustez cette valeur (par exemple, -4px, -6px, -10px) pour un alignement précis */
+}
+
+/* Forcer le focus du mat-select en jaune */
+::ng-deep .mat-mdc-select.mat-focused .mdc-notched-outline > * {
+  border-color: #FFD700 !important;
+  border-width: 2px !important;
+}
+
+/* Supprimer l'arrière-plan par défaut lors du focus */
+::ng-deep .mat-mdc-form-field.mat-focused .mat-mdc-form-field-focus-overlay {
+  background-color: transparent !important;
+}
+
+/* Déplacer le mat-select du client vers le bas (déjà existant) */
+mat-form-field.w-full.client-select-align {
+  margin-top: 10px; /* Conserver pour l'alignement du mat-select client */
+}
+
+/* Style pour le bouton de sélection dans mat-select */
+::ng-deep .mat-mdc-select .mat-mdc-select-arrow {
+  color: #FFD700 !important; /* Flèche jaune */
+}
+
+/* Style pour le texte du mat-select lorsqu'il est sélectionné */
+::ng-deep .mat-mdc-select .mat-mdc-select-value {
+  color: #1A237E !important; /* Texte bleu foncé pour contraste */
+}
+
+/* Style pour le placeholder du mat-select */
+::ng-deep .mat-mdc-select .mat-mdc-select-placeholder {
+  color: #6b7280 !important; /* Gris pour le placeholder */
+}
+
+/* Assurer une hauteur et un padding cohérents pour tous les champs */
+mat-form-field.w-full,
+input.w-full {
   width: 100%;
   max-width: 100%;
+  box-sizing: border-box;
+  min-height: 48px;
+  padding: 12px;
+  border-radius: 8px;
 }
-/* Dans votre fichier CSS du composant */
+
+/* Conserver les autres styles existants */
+::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline > * {
+  border-color: #FFD700 !important;
+  border-width: 2px !important;
+}
+
+/* Yellow caret and border for date inputs */
+input[type="date"]:focus {
+  outline: none;
+  border-color: #FFD700 !important;
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+  caret-color: #FFD700 !important;
+}
+
+/* Style the native date picker clear button (Chrome only) */
+input[type="date"]::-webkit-clear-button {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #FFD700;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+input[type="date"]::-webkit-clear-button::before {
+  content: '×';
+  color: #1A237E;
+  font-size: 12px;
+}
+
+input[type="date"]::-webkit-clear-button:hover {
+  background: #FFC107;
+}
+
+/* Style the native date picker calendar icon (Chrome only) */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  padding: 4px;
+  background: transparent;
+  color: #FFD700;
+}
+
+/* Style the custom clear button */
+mat-icon-button.text-yellow-400 {
+  color: #FFD700 !important;
+}
+
+mat-icon-button.text-yellow-400:hover {
+  color: #FFC107 !important;
+}
+
+/* Stepper styles */
 ::ng-deep .mat-stepper-vertical-line::before {
   background-color: #FFD700 !important;
 }
 
-::ng-deep .mat-step-header .mat-step-icon {
-  background-color: #FFD700 !important;
-  color: #1A237E !important; /* Couleur du texte dans l'icône */
-}
-
-::ng-deep .mat-step-header .mat-step-icon-selected {
-  background-color: #FFD700 !important;
-  color: #1A237E !important;
-}
-
+::ng-deep .mat-step-header .mat-step-icon,
+::ng-deep .mat-step-header .mat-step-icon-selected,
 ::ng-deep .mat-step-header .mat-step-icon-state-edit {
   background-color: #FFD700 !important;
   color: #1A237E !important;
 }
 
-/* Style the mat-select trigger for elegance */
-.elegant-select .mat-mdc-select-trigger {
-  background: #fff;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 12px;
-  font-size: 14px;
-  color: #ffd700;
-  transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-.elegant-select .mat-mdc-select-trigger:hover {
-  border-color: #ffd700;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Style the mat-option for a polished look */
-.template-option:hover {
-  background-color: #f9fafb;
-  transform: scale(1.02);
-}
-
-/* Ensure the select panel (dropdown) is styled consistently */
-.mat-mdc-select-panel {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  padding: 8px;
-  max-width: 600px;
-}
-
-/* Style the mat-option text and icons */
-mat-option {
-  padding: 0 !important;
-  border-radius: 8px;
-  margin: 4px 0;
-}
-   ::ng-deep .mat-mdc-option {
-     padding: 12px 16px !important; /* Increased padding for better spacing */
-     line-height: 1.5 !important; /* Improves readability */
-   }
-
-   ::ng-deep .mat-mdc-option:hover {
-     background-color: #f5f5f5 !important; /* Light gray background on hover */
-   }
-
-   /* Ensure consistency for selected option */
-   ::ng-deep .mat-mdc-option.mdc-list-item--selected:not(.mdc-list-item--disabled) {
-     background-color: #e0f7fa !important; /* Light cyan for selected item */
-   }
+/* Gradient text */
 .gradient-text {
   background: linear-gradient(50deg, #1A237E 20%, #FFD700 80%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  display: inline-block; /* Ensures gradient applies correctly */
-  font-weight: 800; /* Reinforce bold weight */
+  display: inline-block;
+  font-weight: 800;
 }
-::ng-deep .mat-option {
-  padding-left: 16px !important; /* Adjust the value as needed */
-}
-

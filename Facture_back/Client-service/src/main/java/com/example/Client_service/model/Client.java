@@ -5,8 +5,15 @@ import lombok.Data;
 
 @Entity
 @Data
+@Table(
+    name = "client",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"clientPhone", "tenantId"}),
+        @UniqueConstraint(columnNames = {"rib", "tenantId"})
+    }
+)
 public class Client {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -14,15 +21,15 @@ public class Client {
     @Column(nullable = false)
     private String clientName;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String clientPhone;
 
     @Column(nullable = false)
     private String clientAddress;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String rib;
 
     @Column(nullable = false)
-    private Long tenantId; // Ajout du tenantId
+    private Long tenantId;
 }

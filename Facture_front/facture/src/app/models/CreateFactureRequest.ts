@@ -12,8 +12,11 @@ export interface ServiceRequest {
 export interface CreateFactureRequest {
   templateId: number;
   clientId: number;
+  clientName: string;
+  clientPhone: string; // Add clientPhone
+  clientAddress: string; // Add clientAddress
+  clientRIB: string; // Add clientRIB
   services: ServiceRequest[];
-  
   creationDate: string;
   dueDate: string;
   footerText: string;

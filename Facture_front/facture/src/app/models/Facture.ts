@@ -19,6 +19,11 @@ export interface Facture {
   discountAmount: number;
   clientId: number;
   tenantId: number;
+  clientName: string; 
+  clientPhone: string; 
+  clientAddress: string; 
+  clientRIB: string; 
+  
   factureServices: FactureService[];
   modeleFacture: any; // Consider defining a ModeleFacture interface
   createdAt: string;

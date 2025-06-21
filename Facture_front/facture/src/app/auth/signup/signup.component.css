@@ -1,19 +1,70 @@
-
-.mat-raised-button {
-  border-radius: 20px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  background: linear-gradient(180deg, #FFD700, #F39C12);
-  color: white;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+/* Styles pour les boutons */
+.disabled-button {
+  background: #67b0f1 !important; /* Couleur plus claire pour les boutons désactivés */
+  color: white !important;
+  cursor: not-allowed;
 }
 
-.mat-raised-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+.enabled-button {
+  background: #276BC2 !important; /* Couleur principale pour les boutons activés */
+  color: white !important;
+  cursor: pointer;
 }
 
-.mat-raised-button:focus {
-  box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.5);
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+/* Stepper Number Styling */
+:host ::ng-deep .mat-horizontal-stepper-header-container .mat-step-header .mat-step-icon,
+:host ::ng-deep .mat-horizontal-stepper-header-container .mat-step-header .mat-step-icon-not-touched,
+:host ::ng-deep .mat-horizontal-stepper-header-container .mat-step-header .mat-step-icon-selected {
+  background-color: #FFD700 !important; /* Jaune forcé pour les numéros des étapes */
+  color: #2c3e50 !important; /* Couleur du texte dans les cercles */
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Assure que le spinner est au-dessus des autres éléments */
+}
+
+:host ::ng-deep .mat-spinner circle {
+  stroke: #FFD700 !important; /* Force la couleur jaune pour le spinner */
+}
+
+/* Form Field Styling */
+:host ::ng-deep .mat-form-field.mat-focused .mat-form-field-outline,
+:host ::ng-deep .mat-form-field.mat-focused .mat-form-field-outline-start,
+:host ::ng-deep .mat-form-field.mat-focused .mat-form-field-outline-end,
+:host ::ng-deep .mat-form-field.mat-focused .mat-form-field-outline-gap {
+  border-color: #FFD700 !important; /* Bordure jaune en focus */
+  border-width: 2px !important;
+}
+
+:host ::ng-deep .mat-form-field.mat-focused .mat-form-field-ripple {
+  background-color: #FFD700 !important; /* Ripple jaune en focus */
+}
+
+:host ::ng-deep .mat-form-field.mat-focused .mat-input-element {
+  box-shadow: 0 0 5px rgba(255, 215, 0, 0.5) !important; /* Glow jaune en focus */
+}
+
+:host ::ng-deep .mat-form-field .mat-label {
+  color: #34495e !important; /* Darker grey for labels */
+}
+
+:host ::ng-deep .mat-form-field .mat-error {
+  color: #e74c3c !important; /* Red color for error messages */
+  font-size: 0.9rem;
 }
 
 /* File Input Styling */
@@ -21,7 +72,6 @@
   position: relative;
   width: 100%;
   margin-top: 1rem;
-  border: #34495e;
 }
 
 .file-input-label {
@@ -38,18 +88,6 @@
   cursor: pointer;
 }
 
-/* Input Field Hover Styling */
-.mat-form-field .mat-input-element {
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.mat-form-field:hover .mat-input-element {
-  border-color: #FFD700 !important; /* Golden border on hover */
-  box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); /* Golden glow effect on hover */
-}
-
-
-
 .file-input-label:hover {
   border: 2px solid #f39c12; /* Slightly darker golden color on hover */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -64,24 +102,6 @@
 .file-input-label span {
   flex-grow: 1;
   text-align: left;
-}
-
-/* Form Field Styling */
-.mat-form-field .mat-label {
-  color: #34495e; /* Darker grey for labels */
-}
-
-.mat-form-field .mat-input-element {
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.mat-form-field.mat-focused .mat-input-element {
-  box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
-}
-
-.mat-form-field .mat-error {
-  color: #e74c3c; /* Red color for error messages */
-  font-size: 0.9rem;
 }
 
 /* Modal and Card Styling */
@@ -129,20 +149,4 @@ p {
 .mat-stepper-horizontal-line {
   background-color: #f0f0f0;
   height: 2px;
-}
-/* Styles pour les boutons */
-.disabled-button {
-  background: linear-gradient(180deg, #acadae, #ecf0f1) !important;
-  color: #7f8c8d !important;
-  cursor: not-allowed;
-}
-
-.enabled-button {
-  background: linear-gradient(180deg, #2c3e50, #34495e) !important;
-  color: #FFD700 !important;
-  cursor: pointer;
-}
-
-.transition-all {
-  transition: all 0.3s ease;
 }

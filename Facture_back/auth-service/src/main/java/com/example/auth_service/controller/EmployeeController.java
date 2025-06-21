@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -38,10 +40,13 @@ public class EmployeeController {
         return employeeService.getEmployeeById(employeeId, httpRequest);
     }
 
-    @Operation(summary = "Récupérer tous les employés du tenant authentifié")
+    @Operation(summary = "Récupérer tous les employés du tenant authentifié avec pagination")
     @GetMapping
-    public ResponseEntity<?> getAllEmployees(HttpServletRequest httpRequest) {
-        return employeeService.getAllEmployees(httpRequest);
+    public ResponseEntity<?> getAllEmployees(HttpServletRequest httpRequest,
+                                            @RequestParam(defaultValue = "0") int page,
+                                            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return employeeService.getAllEmployees(httpRequest, pageable);
     }
 
     @Operation(summary = "Mettre à jour un employé pour le tenant authentifié")
@@ -66,10 +71,14 @@ public class EmployeeController {
                                            HttpServletRequest httpRequest) {
         return employeeService.changePassword(employeeId, newPassword, httpRequest);
     }
-    @Operation(summary = "Rechercher des employés par nom pour le tenant authentifié")
-@PostMapping("/search")
-public ResponseEntity<?> searchEmployeesByName(@RequestParam String name, 
-                                              HttpServletRequest httpRequest) {
-    return employeeService.searchEmployeesByName(name, httpRequest);
-}
+
+    @Operation(summary = "Rechercher des employés par nom pour le tenant authentifié avec pagination")
+    @PostMapping("/search")
+    public ResponseEntity<?> searchEmployeesByName(@RequestParam String name, 
+                                                  HttpServletRequest httpRequest,
+                                                  @RequestParam(defaultValue = "0") int page,
+                                                  @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return employeeService.searchEmployeesByName(name, httpRequest, pageable);
+    }
 }

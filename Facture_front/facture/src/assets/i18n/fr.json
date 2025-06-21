@@ -43,6 +43,8 @@
   "companyType_error": "Le type d'entreprise est requis",
   "logo_error": "Le logo de l'entreprise est requis",
   "Partners List": "Liste des Partenaires",
+  "Validated": "Validé",
+  "Not Validated": "Non validé",
   "Name": "Nom",
   "Status": "Statut",
   "Actions": "Actions",
@@ -86,35 +88,46 @@
       "addTitle": "Ajouter un Employé",
       "title": "Modifier l'Employé",
       "editTitle": "Modifier l'Employé",
-      "name": {
+     "name": {
         "label": "Nom *",
         "placeholder": "Entrez le nom",
-        "error": "Le nom est requis."
+        "error": "Le nom est requis.",
+        "minLength": "Le nom doit comporter au moins 2 caractères.",
+        "error.pattern": "Le nom contient des caractères invalides."
       },
       "secondName": {
         "label": "Prénom *",
         "placeholder": "Entrez le prénom",
-        "error": "Le prénom est requis."
+        "error": "Le prénom est requis.",
+        "minLength": "Le prénom doit comporter au moins 2 caractères.",
+        "error.pattern": "Le prénom contient des caractères invalides."
       },
       "job": {
         "label": "Poste *",
         "placeholder": "Entrez le poste",
-        "error": "Le poste est requis."
+        "error": "Le poste est requis.",
+        "minLength": "Le poste doit comporter au moins 2 caractères.",
+        "error.pattern": "Le poste contient des caractères invalides."
       },
       "phone": {
         "label": "Téléphone *",
         "placeholder": "Entrez le numéro",
-        "error": "Le téléphone est requis."
+        "error": "Le téléphone est requis.",
+        "error.pattern": "Le numéro de téléphone doit comporter 8 chiffres."
       },
       "email": {
         "label": "Email *",
         "placeholder": "Entrez l'email",
-        "error": "Veuillez entrer un email valide."
+        "error": "Veuillez entrer un email valide.",
+        "error.email": "Veuillez entrer une adresse email valide.",
+        "error.pattern": "Veuillez entrer une adresse email valide."
       },
       "department": {
         "label": "Département *",
         "placeholder": "Entrez le département",
-        "error": "Le département est requis."
+        "error": "Le département est requis.",
+        "minLength": "Le département doit comporter au moins 2 caractères.",
+        "error.pattern": "Le département contient des caractères invalides."
       },
       "buttons": {
         "cancel": "Annuler",
@@ -239,106 +252,110 @@
     "PAGINATOR_LABEL": "Sélectionner la page des clients"
   },
   "DYNAMIC_MODAL": {
+  "ERROR": {
+    "TITLE": "Erreur",
+    "INVALID_FIELDS": "Veuillez remplir tous les champs requis",
+    "GENERIC": "Une erreur s'est produite lors de l'ajout",
+    "NETWORK": "Impossible de se connecter au serveur. Vérifiez votre connexion internet.",
+    "BAD_REQUEST": "Données invalides. Vérifiez les informations saisies.",
+    "NAME_REQUIRED": "Le nom est requis",
+    "NAME_MINLENGTH": "Le nom doit contenir au moins 3 caractères"
+  },
+  "SUCCESS": {
+    "TITLE": "Succès"
+  },
+  "SERVICE": {
     "ERROR": {
-      "TITLE": "Erreur",
-      "INVALID_FIELDS": "Veuillez remplir tous les champs obligatoires",
-      "GENERIC": "Une erreur est survenue lors de l'ajout",
-      "NETWORK": "Impossible de se connecter au serveur. Vérifiez votre connexion internet.",
-      "BAD_REQUEST": "Données invalides. Vérifiez les informations saisies.",
-      "NAME_REQUIRED": "Le nom est requis",
-      "NAME_MINLENGTH": "Le nom doit avoir au moins 3 caractères"
+      "INVALID": "Veuillez remplir tous les champs du service"
     },
     "SUCCESS": {
-      "TITLE": "Succès"
-    },
-    "SERVICE": {
-      "ERROR": {
-        "INVALID": "Veuillez remplir tous les champs du service"
-      },
-      "SUCCESS": {
-        "ADD": "Service ajouté avec succès"
-      }
-    },
-    "EMPLOYEE": {
-      "ERROR": {
-        "MISSING_PARTNER_ID": "partnerId est manquant pour l'employé"
-      },
-      "SUCCESS": {
-        "ADD": "Employé ajouté avec succès"
-      }
-    },
-    "CLIENT": {
-      "SUCCESS": {
-        "ADD": "Client ajouté avec succès",
-        "UPDATE": "Client mis à jour avec succès",
-        "DELETE": "Client supprimé avec succès"
-      },
-      "ERROR": {
-        "INVALID_CLIENT_DATA": "Données du client invalides ou ID manquant",
-        "MISSING_CLIENT_ID": "ID du client manquant",
-        "UPDATE_FAILED": "Échec de la mise à jour du client",
-        "FETCH_FAILED": "Impossible de charger les clients",
-        "DELETE_FAILED": "Échec de la suppression du client"
-      },
-      "INFO": {
-        "NO_CHANGES": "Aucun changement à enregistrer"
-      },
-      "WARNING": {
-        "INVALID_DATA": "Données du client invalides détectées",
-        "TITLE": "Attention"
-      },
-      "CONFIRM": {
-        "DELETE_CONFIRM": "Voulez-vous vraiment supprimer ce client ?"
-      },
-      "form": {
-        "phone": {
-    "error": {
-      "pattern": "Format de numéro de téléphone invalide"
+      "ADD": "Service ajouté avec succès"
     }
   },
-  "email": {
-    "error": {
-      "email": "Veuillez entrer un email valide"
+  "EMPLOYEE": {
+    "ERROR": {
+      "MISSING_PARTNER_ID": "L'identifiant du partenaire est manquant pour l'employé"
+    },
+    "SUCCESS": {
+      "ADD": "Employé ajouté avec succès"
     }
   },
-        "addTitle": "Ajouter un Client",
-        "updateTitle": "Modifier un Client",
-        "clientName": {
-          "placeholder": "Entrez le nom du client"
-        },
-        "phone": {
-          "placeholder": "Entrez le numéro"
-        },
-        "address": {
-          "placeholder": "Entrez l'adresse"
-        },
-        "rib": {
-          "placeholder": "Entrez le RIB"
-        },
-        "buttons": {
-          "cancel": "Annuler",
-          "save": "Enregistrer",
-          "saving": "Enregistrement...",
-          "update": "Mettre à jour",
-          "updating": "En cours..."
+  "CLIENT": {
+    "SUCCESS": {
+      "ADD": "Client ajouté avec succès",
+      "UPDATE": "Client mis à jour avec succès",
+      "DELETE": "Client supprimé avec succès"
+    },
+    "ERROR": {
+      "INVALID_CLIENT_DATA": "Données du client invalides ou identifiant manquant",
+      "MISSING_CLIENT_ID": "Identifiant du client manquant",
+      "UPDATE_FAILED": "Échec de la mise à jour du client",
+      "FETCH_FAILED": "Échec du chargement des clients",
+      "DELETE_FAILED": "Échec de la suppression du client"
+    },
+    "INFO": {
+      "NO_CHANGES": "Aucune modification à enregistrer"
+    },
+    "WARNING": {
+      "INVALID_DATA": "Données du client invalides détectées",
+      "TITLE": "Avertissement"
+    },
+    "CONFIRM": {
+      "DELETE_CONFIRM": "Êtes-vous sûr de vouloir supprimer ce client ?"
+    },
+    "form": {
+      "phone": {
+        "error": {
+          "pattern": "Format de numéro de téléphone invalide"
         }
       },
-      "validation": {
-        "clientName": {
-          "required": "Le nom est requis"
-        },
-        "phone": {
-          "required": "Le téléphone est requis"
-        },
-        "address": {
-          "required": "L'adresse est requise"
-        },
-        "rib": {
-          "required": "Le RIB est requis"
+      "email": {
+        "error": {
+          "email": "Veuillez entrer une adresse email valide"
         }
+      },
+      "addTitle": "Ajouter un client",
+      "updateTitle": "Mettre à jour le client",
+      "clientName": {
+        "placeholder": "Entrez le nom du client"
+      },
+      "phone": {
+        "placeholder": "Entrez le numéro de téléphone"
+      },
+      "address": {
+        "placeholder": "Entrez l'adresse"
+      },
+      "rib": {
+        "placeholder": "Entrez le RIB"
+      },
+      "buttons": {
+        "cancel": "Annuler",
+        "save": "Enregistrer",
+        "saving": "Enregistrement en cours...",
+        "update": "Mettre à jour",
+        "updating": "Mise à jour en cours..."
+      }
+    },
+    "validation": {
+      "clientName": {
+        "required": "Le nom est requis",
+        "minlength": "Le nom doit contenir au moins 3 caractères" 
+      },
+      "phone": {
+        "required": "Le téléphone est requis",
+        "pattern": "numero de téléphone invalide, l faut 8 chiffres au minimum"
+      },
+      "address": {
+        "required": "L'adresse est requise",
+        "minlength": "L'adresse doit contenir au moins 5 caractères"
+      },
+      "rib": {
+        "required": "Le RIB est requis",
+        "minlength": "Le RIB doit contenir au moins 20 caractères"
       }
     }
-  },
+  }
+},
   "INVOICE_TEMPLATES": {
     "TITLE": "Modèles de facture",
     "NO_TEMPLATES": {
@@ -494,6 +511,7 @@
       "PREVIEW": "Aperçu"
     },
     "ERRORS": {
+      "SELECT_CLIENT_REQUIRED": "Aucun client sélectionné",
       "SELECT_TEMPLATE_REQUIRED": "Veuillez sélectionner un modèle de facture",
       "SELECTструй_CLIENT_REQUIRED": "Veuillez sélectionner un client",
       "SELECT_SERVICE_REQUIRED": "Veuillez sélectionner un service",
@@ -633,7 +651,59 @@
       "LOAD_FAILED": "Échec du chargement des factures",
       "DELETE_FAILED": "Échec de la suppression de la facture"
     }
+  },
+  
+  "stats": {
+    "title": "Tableau de bord",
+    "subtitle": "Aperçu de vos factures et revenus",
+    "metrics": {
+      "totalRevenue": "Revenu total",
+      "revenueDescription": "Revenu global",
+      "totalInvoices": "Total des factures",
+      "invoicesDescription": "Nombre de factures"
+    },
+    "charts": {
+      "performance": "Analyse de performance",
+      "revenue": "Revenu mensuel {year}",
+      "clients": "Top clients par revenu",
+      "services": "Top services par revenu",
+      "templates": "Top modèles par utilisation"
+    },
+    "loading": "Chargement des statistiques...",
+    "error": "Échec du chargement des statistiques. Veuillez réessayer plus tard.",
+    "revenue": "Revenu",
+    "amount": "Montant (DT)",
+    "usage": "Nombre d'utilisations",
+    "invoices": "factures",
+    "clientId": "Client {id}",
+    "serviceId": "Service {id}",
+    "templateId": "Modèle {id}"
+  },
+  "months": {
+    "jan": "Janv",
+    "feb": "Févr",
+    "mar": "Mars",
+    "apr": "Avr",
+    "may": "Mai",
+    "jun": "Juin",
+    "jul": "Juil",
+    "aug": "Août",
+    "sep": "Sept",
+    "oct": "Oct",
+    "nov": "Nov",
+    "dec": "Déc"
+  },
+    "CONFIRM": {
+    "DELETE_TITLE": "Confirmation de suppression",
+    "DELETE_TEXT": "Êtes-vous sûr de vouloir supprimer ce partenaire ?",
+    "DELETE_CONFIRM": "Supprimer",
+    "DELETE_CANCEL": "Annuler",
+    "VALIDATE_TITLE": "Confirmation de validation",
+    "VALIDATE_TEXT": "Êtes-vous sûr de vouloir valider ce partenaire ?",
+    "VALIDATE_CONFIRM": "Valider",
+    "VALIDATE_CANCEL": "Annuler"
   }
+
 
 
 }

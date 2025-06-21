@@ -51,7 +51,7 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div class="flex items-center gap-2">
-          <mat-form-field class="w-full">
+<mat-form-field class="w-full client-select-align">
   <mat-label translate>CREATE_INVOICE.PLACEHOLDERS.SELECT_CLIENT</mat-label>
   <mat-select formControlName="selectedClient" (selectionChange)="onClientChange($event.value)">
     <mat-option *ngFor="let client of clients" [value]="client">
@@ -167,19 +167,19 @@
       <div class="flex items-center gap-2">
   <div class="w-full">
     <label class="block text-gray-600 font-medium mb-1" translate>CREATE_INVOICE.LABELS.SERVICE</label>
-    <mat-form-field class="w-full">
-      <mat-label translate>CREATE_INVOICE.PLACEHOLDERS.SELECT_SERVICE</mat-label>
-      <mat-select formControlName="selectedService" (selectionChange)="onServiceChange($event.value, servicesForm)">
-        <mat-option *ngFor="let service of services" [value]="service">
-          <div style="margin-left: 16px;">
-            {{ service.serviceName }}
-          </div>
-        </mat-option>
-      </mat-select>
-      <mat-error *ngIf="servicesForm.get('selectedService')?.hasError('required') && servicesForm.get('selectedService')?.touched" translate>
-        CREATE_INVOICE.ERRORS.SELECT_SERVICE_REQUIRED
-      </mat-error>
-    </mat-form-field>
+<mat-form-field class="w-full service-select-align">
+  <mat-label translate>CREATE_INVOICE.PLACEHOLDERS.SELECT_SERVICE</mat-label>
+  <mat-select formControlName="selectedService" (selectionChange)="onServiceChange($event.value, servicesForm)">
+    <mat-option *ngFor="let service of services" [value]="service">
+      <div style="margin-left: 16px;">
+        {{ service.serviceName }}
+      </div>
+    </mat-option>
+  </mat-select>
+  <mat-error *ngIf="servicesForm.get('selectedService')?.hasError('required') && servicesForm.get('selectedService')?.touched" translate>
+    CREATE_INVOICE.ERRORS.SELECT_SERVICE_REQUIRED
+  </mat-error>
+</mat-form-field>
   </div>
   <button mat-icon-button (click)="openServiceModal()"
           class="bg-yellow-400 hover:bg-yellow-500 text-gray-800 rounded-full w-10 h-10 flex items-center justify-center transition-colors">

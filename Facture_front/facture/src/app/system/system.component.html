@@ -9,18 +9,16 @@
   </div>
 
   <!-- Toolbar -->
-  <app-toolbar></app-toolbar>
+  <app-toolbar (searchTermChange)="onSearch($event)"></app-toolbar>
 
   <!-- Table Container -->
   <div class="table-container mt-4">
     <div class="rounded-xl shadow-lg overflow-hidden border border-gray-100">
       <mat-table [dataSource]="dataSource" class="w-full" matSort>
-
         <!-- Name Column -->
         <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef mat-sort-header
-            class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
-            {{ "Name" | translate }}
+          <mat-header-cell *matHeaderCellDef mat-sort-header class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
+            {{ 'Name' | translate }}
           </mat-header-cell>
           <mat-cell *matCellDef="let element" class="px-6 py-4 text-gray-800 font-medium">
             {{ element.name }}
@@ -29,12 +27,11 @@
 
         <!-- Email Column -->
         <ng-container matColumnDef="email">
-          <mat-header-cell *matHeaderCellDef mat-sort-header
-            class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
-            {{ "Email" | translate }}
+          <mat-header-cell *matHeaderCellDef mat-sort-header class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
+            {{ 'Email' | translate }}
           </mat-header-cell>
           <mat-cell *matCellDef="let element" class="px-6 py-4 text-gray-600">
-            <a href="mailto:{{element.email}}" class="hover:text-amber-600 transition-colors">
+            <a href="mailto:{{ element.email }}" class="hover:text-amber-600 transition-colors">
               {{ element.email }}
             </a>
           </mat-cell>
@@ -42,9 +39,8 @@
 
         <!-- Company Name Column -->
         <ng-container matColumnDef="companyName">
-          <mat-header-cell *matHeaderCellDef mat-sort-header
-            class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
-            {{ "Company Name" | translate }}
+          <mat-header-cell *matHeaderCellDef mat-sort-header class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
+            {{ 'Company Name' | translate }}
           </mat-header-cell>
           <mat-cell *matCellDef="let element" class="px-6 py-4 text-gray-600">
             {{ element.companyName }}
@@ -53,44 +49,50 @@
 
         <!-- Status Column -->
         <ng-container matColumnDef="status">
-          <mat-header-cell *matHeaderCellDef
-            class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
-            {{ "Status" | translate }}
+          <mat-header-cell *matHeaderCellDef class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
+            {{ 'Status' | translate }}
           </mat-header-cell>
-          <mat-cell *matCellDef="let element" class="px-6 py-4 text-gray-600">
-            <mat-icon [color]="element.validated ? 'primary' : 'warn'">
-              {{ element.validated ? 'check_circle' : 'cancel' }}
-            </mat-icon>
+          <mat-cell *matCellDef="let element" class="px-6 py-4">
+            <span [class]="element.validated ? 'status-validated' : 'status-not-validated'">
+              {{ element.validated ? ('Validated' | translate) : ('Not Validated' | translate) }}
+            </span>
           </mat-cell>
         </ng-container>
 
         <!-- Actions Column -->
         <ng-container matColumnDef="actions">
-          <mat-header-cell *matHeaderCellDef
-            class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
-            {{ "Actions" | translate }}
+          <mat-header-cell *matHeaderCellDef class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
+            {{ 'Actions' | translate }}
           </mat-header-cell>
-          <mat-cell *matCellDef="let element" class="px-8 py-4">
-            <div class="flex space-x-4">
-              <button *ngIf="!element.validated" mat-mini-fab color="green" 
-                      class="transition-all transform hover:scale-110"
-                      (click)="validatePartner(element.id)" [matTooltip]="'Validate'">
+          <mat-cell *matCellDef="let element">
+            <div class="flex space-x-20">
+              <button
+                *ngIf="!element.validated"
+                mat-mini-fab
+                class="custom-gold-button transition-all transform hover:scale-110"
+                (click)="validatePartner(element.id)"
+                [matTooltip]="'Validate' | translate"
+              >
                 <mat-icon>check_circle</mat-icon>
               </button>
-           <button mat-mini-fab 
-        class="custom-gold-button transition-all transform hover:scale-110"
-        (click)="deletePartner(element.id)" 
-        [matTooltip]="'Delete'">
-  <mat-icon>delete</mat-icon>
-</button>
+              <button
+                mat-mini-fab
+                class="custom-gold-button transition-all transform hover:scale-110 ml-4"
+                (click)="deletePartner(element.id)"
+                [matTooltip]="'Delete' | translate"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
             </div>
           </mat-cell>
         </ng-container>
 
         <!-- Header and Row Definitions -->
         <mat-header-row *matHeaderRowDef="displayedColumns" class="border-b border-gray-200"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"
-          class="transition-all hover:bg-gray-50 border-b border-gray-100 last:border-0"></mat-row>
+        <mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          class="transition-all hover:bg-gray-50 border-b border-gray-100 last:border-0"
+        ></mat-row>
       </mat-table>
 
       <!-- Empty State -->
@@ -100,10 +102,14 @@
       </div>
 
       <!-- Paginator -->
-      <mat-paginator [length]="dataSource.data.length" [pageSize]="5" 
-        [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons
-        class="bg-gray-50 rounded-b-xl border-t border-gray-200">
-      </mat-paginator>
+      <mat-paginator
+        [length]="totalElements"
+        [pageSize]="pageSize"
+        [pageIndex]="pageIndex"
+        [pageSizeOptions]="[5, 10, 25, 100]"
+        showFirstLastButtons
+        class="bg-gray-50 rounded-b-xl border-t border-gray-200"
+      ></mat-paginator>
     </div>
   </div>
 </div>

@@ -1,3 +1,4 @@
+// com.example.facture.models.Facture
 package com.example.facture.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -15,7 +16,6 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 @Table(name = "factures")
 public class Facture {
 
@@ -46,8 +46,22 @@ public class Facture {
 
     @Column(name = "client_id", nullable = false)
     private Long clientId;
-    @Column(name = "tenant_id", nullable = false) // Add tenantId field
+
+    @Column(name = "client_name", nullable = true)
+    private String clientName;
+
+    @Column(name = "client_phone", nullable = true) // Add clientPhone
+    private String clientPhone;
+
+    @Column(name = "client_address", nullable = true) // Add clientAddress
+    private String clientAddress;
+
+    @Column(name = "client_rib", nullable = true) // Add clientRIB
+    private String clientRIB;
+
+    @Column(name = "tenant_id", nullable = false)
     private Long tenantId;
+
     @Column(name = "footer_text")
     private String footerText;
 
@@ -64,6 +78,4 @@ public class Facture {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
-
-    
 }

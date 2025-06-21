@@ -4,9 +4,9 @@
   padding: 2rem; /* Augmenter l'espace interne */
   border-radius: 0.625rem;
   box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.2);
-  margin: 6rem 0 5rem 0; /* Augmenter l'espace à gauche et en bas */
+  margin: 0rem 0 5rem 0; /* Augmenter l'espace à gauche et en bas */
   width: 100%; /* Rendre la carte plus large */
-  margin-bottom: 2rem; /* Augmenter l'espace entre les cartes */
+  margin-bottom: 1rem; /* Augmenter l'espace entre les cartes */
 }
 
 .banner-card:hover {

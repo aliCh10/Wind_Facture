@@ -1,7 +1,6 @@
 package com.example.auth_service.service;
 
 import com.example.auth_service.Repository.EmployeeRepository;
-import com.example.auth_service.Repository.PartnerRepository;
 import com.example.auth_service.Repository.UserRepository;
 import com.example.auth_service.config.JwtService;
 import com.example.auth_service.dto.EmployeeRegisterRequest;
@@ -12,20 +11,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.criteria.Predicate;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import org.springframework.data.jpa.domain.Specification;
-import jakarta.persistence.criteria.Predicate;
-
-
 
 @Service
 @RequiredArgsConstructor
@@ -157,23 +155,33 @@ public class EmployeeService {
         return ResponseEntity.ok(employee);
     }
 
-    public ResponseEntity<?> getAllEmployees(HttpServletRequest httpRequest) {
-        logger.info("Fetching all employees for tenant...");
+    public ResponseEntity<?> getAllEmployees(HttpServletRequest httpRequest, Pageable pageable) {
+        logger.info("Fetching all employees for tenant with pagination...");
 
         Long authenticatedTenantId = getAuthenticatedTenantId(httpRequest);
 
-        List<Employee> employees = userRepository.findAll().stream()
-                .filter(user -> user.getRole() == Role.EMPLOYE && user.getTenantId().equals(authenticatedTenantId))
-                .map(user -> (Employee) user)
-                .collect(Collectors.toList());
+        Specification<Employee> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(cb.equal(root.get("tenantId"), authenticatedTenantId));
+            predicates.add(cb.equal(root.get("role"), Role.EMPLOYE));
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
 
-        if (employees.isEmpty()) {
+        Page<Employee> employeesPage = employeeRepository.findAll(spec, pageable);
+
+        if (employeesPage.isEmpty()) {
             logger.warn("No employees found for tenant {}", authenticatedTenantId);
             return ResponseEntity.status(404).body(Map.of("message", "No employees found in your tenant"));
         }
 
-        logger.info("Successfully fetched {} employees for tenant {}", employees.size(), authenticatedTenantId);
-        return ResponseEntity.ok(employees);
+        logger.info("Successfully fetched {} employees for tenant {}", employeesPage.getTotalElements(), authenticatedTenantId);
+        return ResponseEntity.ok(Map.of(
+            "content", employeesPage.getContent(),
+            "page", employeesPage.getNumber(),
+            "size", employeesPage.getSize(),
+            "totalElements", employeesPage.getTotalElements(),
+            "totalPages", employeesPage.getTotalPages()
+        ));
     }
 
     public ResponseEntity<?> updateEmployee(Long employeeId, EmployeeRegisterRequest request, HttpServletRequest httpRequest) {
@@ -245,35 +253,36 @@ public class EmployeeService {
 
         return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
     }
-    public ResponseEntity<?> searchEmployeesByName(String name, HttpServletRequest httpRequest) {
-    logger.info("Searching employees with name: {} for tenant...", name);
 
-    Long authenticatedTenantId = getAuthenticatedTenantId(httpRequest);
+    public ResponseEntity<?> searchEmployeesByName(String name, HttpServletRequest httpRequest, Pageable pageable) {
+        logger.info("Searching employees with name: {} for tenant with pagination...", name);
 
-    Specification<Employee> spec = (root, query, cb) -> {
-        List<Predicate> predicates = new ArrayList<>();
-        predicates.add(cb.equal(root.get("tenantId"), authenticatedTenantId));
-        
-        if (name != null && !name.trim().isEmpty()) {
-            predicates.add(cb.like(cb.lower(root.get("name")),      
-                          "%" + name.toLowerCase() + "%"));
+        Long authenticatedTenantId = getAuthenticatedTenantId(httpRequest);
+
+        Specification<Employee> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(cb.equal(root.get("tenantId"), authenticatedTenantId));
+            predicates.add(cb.equal(root.get("role"), Role.EMPLOYE));
+            if (name != null && !name.trim().isEmpty()) {
+                predicates.add(cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
+            }
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        Page<Employee> employeesPage = employeeRepository.findAll(spec, pageable);
+
+        if (employeesPage.isEmpty()) {
+            logger.warn("No employees found with name {} for tenant {}", name, authenticatedTenantId);
+            return ResponseEntity.status(404).body(Map.of("message", "No employees found matching the name"));
         }
 
-        return cb.and(predicates.toArray(new Predicate[0]));
-    };
-
-    List<Employee> employees = employeeRepository.findAll(spec)
-            .stream()
-            .filter(user -> user.getRole() == Role.EMPLOYE)
-            .map(user -> (Employee) user)
-            .collect(Collectors.toList());
-
-    if (employees.isEmpty()) {
-        logger.warn("No employees found with name {} for tenant {}", name, authenticatedTenantId);
-        return ResponseEntity.status(404).body(Map.of("message", "No employees found matching the name"));
+        logger.info("Found {} employees with name {} for tenant {}", employeesPage.getTotalElements(), name, authenticatedTenantId);
+        return ResponseEntity.ok(Map.of(
+            "content", employeesPage.getContent(),
+            "page", employeesPage.getNumber(),
+            "size", employeesPage.getSize(),
+            "totalElements", employeesPage.getTotalElements(),
+            "totalPages", employeesPage.getTotalPages()
+        ));
     }
-
-    logger.info("Found {} employees with name {} for tenant {}", employees.size(), name, authenticatedTenantId);
-    return ResponseEntity.ok(employees);
-}
 }

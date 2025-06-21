@@ -1,0 +1,91 @@
+<div class="stats-container">
+  <!-- Loading State -->
+  @if (isLoading) {
+    <div class="loading-state">
+      <mat-spinner diameter="60"></mat-spinner>
+      <p>{{ 'stats.loading' | translate }}</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (error && !isLoading) {
+    <div class="error-state">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <p class="error-text">{{ error }}</p>
+    </div>
+  }
+
+  <!-- Content (Remove hasData condition temporarily) -->
+  <div class="content">
+    <!-- Header -->
+    <div class="header">
+      <h1>{{ 'stats.title' | translate }}</h1>
+    </div>
+
+    <!-- Metrics -->
+    <div class="metrics-grid">
+      <mat-card class="metric-card">
+        <mat-card-content>
+          <h3>{{ 'stats.metrics.totalRevenue' | translate }}</h3>
+          <p class="metric-value">{{ totalRevenue | number }} DT</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="metric-card">
+        <mat-card-content>
+          <h3>{{ 'stats.metrics.totalInvoices' | translate }}</h3>
+          <p class="metric-value">{{ totalInvoices }}</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-section">
+      <div class="charts-grid">
+        <!-- Revenue Chart -->
+        <mat-card class="chart-card">
+          <mat-card-content>
+            <div class="chart-container">
+              <canvas #revenueChart></canvas>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Top Clients Chart -->
+        <mat-card class="chart-card">
+          <mat-card-content>
+            <div class="chart-container">
+              <canvas #topClientsChart></canvas>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Top Services Chart -->
+        <mat-card class="chart-card">
+          <mat-card-content>
+            <div class="chart-container">
+              <canvas #topServicesChart></canvas>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Top Modeles Chart -->
+        <mat-card class="chart-card">
+          <mat-card-content>
+            <div class="chart-container">
+              <canvas #topModelesChart></canvas>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Data State -->
+  @if (!isLoading && !error && !hasData) {
+    <div class="no-data-state">
+      <mat-icon>info</mat-icon>
+      <p>{{ 'stats.noData' | translate }}</p>
+    </div>
+  }
+</div>

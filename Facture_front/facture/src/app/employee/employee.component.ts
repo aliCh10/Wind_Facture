@@ -5,14 +5,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { UpdateEmployeeModalComponent } from '../components/update-employee-modal/update-employee-modal.component';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { TranslateService } from '@ngx-translate/core';
 import { MatSort } from '@angular/material/sort';
 import { DialogService } from '../services/dialog.service';
 
 @Component({
   selector: 'app-employee',
-  standalone:false,
+  standalone: false,
   templateUrl: './employee.component.html',
   styleUrls: ['./employee.component.css']
 })
@@ -22,6 +22,10 @@ export class EmployeeComponent implements OnInit, AfterViewInit {
   partnerId: number | null = null;
   dataSource: MatTableDataSource<any> = new MatTableDataSource();
   isLoading: boolean = true;
+  totalElements: number = 0;
+  pageSize: number = 5;
+  pageIndex: number = 0;
+  searchTerm: string = '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -43,8 +47,8 @@ export class EmployeeComponent implements OnInit, AfterViewInit {
       this.fetchEmployees();
     });
 
-    // Configure le filtrage personnalisé
-    this.dataSource.filterPredicate = this.createFilter();
+    // Remove client-side filter since we're using server-side search
+    this.dataSource.filterPredicate = () => true; // Disable client-side filtering
   }
 
   ngAfterViewInit(): void {
@@ -52,27 +56,9 @@ export class EmployeeComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort;
   }
 
-  // Ajoutez cette méthode pour gérer le changement de terme de recherche
-  onSearchTermChange(searchTerm: string): void {
-    this.dataSource.filter = searchTerm.trim().toLowerCase();
-    
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-  }
-
-  // Crée un prédicat de filtrage personnalisé
-// Modifiez la méthode createFilter pour ne filtrer que par nom
-private createFilter(): (data: any, filter: string) => boolean {
-  return (data, filter) => {
-    const searchTerm = filter.toLowerCase();
-    return data.name.toLowerCase().includes(searchTerm);
-  };
-}
-
-  fetchEmployees(): void {
+  fetchEmployees(page: number = 0, size: number = this.pageSize): void {
     this.isLoading = true;
-    
+
     if (!this.partnerId) {
       this.toastr.error(
         this.translate.instant('employee.ERROR.NO_PARTNER_ID'),
@@ -82,10 +68,17 @@ private createFilter(): (data: any, filter: string) => boolean {
       return;
     }
 
-    this.employeeService.getAllEmployees().subscribe({
+    const request = this.searchTerm
+      ? this.employeeService.searchEmployees(this.searchTerm, page, size)
+      : this.employeeService.getAllEmployees(page, size);
+
+    request.subscribe({
       next: (response) => {
-        this.employees = response;
+        this.employees = response.content;
         this.dataSource.data = this.employees;
+        this.totalElements = response.totalElements;
+        this.pageSize = response.size;
+        this.pageIndex = response.page;
         this.isLoading = false;
       },
       error: (error) => {
@@ -99,9 +92,22 @@ private createFilter(): (data: any, filter: string) => boolean {
     });
   }
 
+  onSearchTermChange(searchTerm: string): void {
+    this.searchTerm = searchTerm.trim();
+    this.pageIndex = 0; // Reset to first page on search
+    this.fetchEmployees(this.pageIndex, this.pageSize);
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.fetchEmployees(this.pageIndex, this.pageSize);
+  }
+
   refreshEmployees(): void {
-    this.dataSource.filter = '';
-    this.fetchEmployees();
+    this.searchTerm = '';
+    this.pageIndex = 0;
+    this.fetchEmployees(this.pageIndex, this.pageSize);
   }
 
   openUpdateModal(employee: any): void {
@@ -120,13 +126,12 @@ private createFilter(): (data: any, filter: string) => boolean {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result?.success) {
-        this.fetchEmployees();
+        this.fetchEmployees(this.pageIndex, this.pageSize);
       }
     });
   }
 
- deleteEmployee(employeeId: number): void {
-    // Use DialogService to open the confirmation dialog
+  deleteEmployee(employeeId: number): void {
     this.dialogService
       .openConfirmDialog({
         title: this.translate.instant('factures.CONFIRM.DELETE_TITLE'),
@@ -135,14 +140,14 @@ private createFilter(): (data: any, filter: string) => boolean {
         confirmText: this.translate.instant('factures.CONFIRM.OK'),
       })
       .subscribe((result) => {
-        if (result) { // If user clicks "OK"
+        if (result) {
           this.employeeService.deleteEmployee(employeeId).subscribe({
             next: () => {
               this.toastr.success(
                 this.translate.instant('employee.SUCCESS.DELETE'),
                 this.translate.instant('employee.SUCCESS.TITLE')
               );
-              this.fetchEmployees();
+              this.fetchEmployees(this.pageIndex, this.pageSize);
             },
             error: (error) => {
               console.error('Error deleting employee:', error);
@@ -154,5 +159,5 @@ private createFilter(): (data: any, filter: string) => boolean {
           });
         }
       });
-}
+  }
 }

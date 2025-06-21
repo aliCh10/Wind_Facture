@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { Client } from '../models/Client';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { Client, Page } from '../models/Client';
 
 @Injectable({
   providedIn: 'root'
@@ -19,31 +20,46 @@ export class ClientService {
     });
   }
 
-  getAllClients(): Observable<Client[]> {
-    return this.http.get<Client[]>(this.apiUrl, { headers: this.getHeaders() });
+  getAllClients(page: number, size: number): Observable<Page<Client>> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.http.get<Page<Client>>(this.apiUrl, { headers: this.getHeaders(), params }).pipe(
+      catchError(error => throwError(() => new Error(error.error?.error || 'Error fetching clients')))
+    );
   }
 
   getClientById(id: number): Observable<Client> {
-    return this.http.get<Client>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
+    return this.http.get<Client>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() }).pipe(
+      catchError(error => throwError(() => new Error(error.error?.error || 'Error fetching client')))
+    );
   }
 
   addClient(client: Client): Observable<Client> {
-    return this.http.post<Client>(this.apiUrl, client, { headers: this.getHeaders() });
+    return this.http.post<Client>(this.apiUrl, client, { headers: this.getHeaders() }).pipe(
+      catchError(error => throwError(() => new Error(error.error?.error || 'Error creating client')))
+    );
   }
 
   updateClient(id: number, client: Client): Observable<Client> {
-    return this.http.put<Client>(`${this.apiUrl}/${id}`, client, { headers: this.getHeaders() });
+    return this.http.put<Client>(`${this.apiUrl}/${id}`, client, { headers: this.getHeaders() }).pipe(
+      catchError(error => throwError(() => new Error(error.error?.error || 'Error updating client')))
+    );
   }
 
   deleteClient(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() }).pipe(
+      catchError(error => throwError(() => new Error(error.error?.error || 'Error deleting client')))
+    );
   }
-searchClients(term: string): Observable<Client[]> {
-  const criteria: Partial<Client> = {
-    clientName: term
-  };
-  return this.http.post<Client[]>(`${this.apiUrl}/search`, criteria, {
-    headers: this.getHeaders()
-  });
-}
+
+  searchClients(term: string, page: number, size: number): Observable<Page<Client>> {
+    const criteria: Partial<Client> = { clientName: term.trim() };
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.http.post<Page<Client>>(`${this.apiUrl}/search`, criteria, { headers: this.getHeaders(), params }).pipe(
+      catchError(error => throwError(() => new Error(error.error?.error || 'Error searching clients')))
+    );
+  }
 }

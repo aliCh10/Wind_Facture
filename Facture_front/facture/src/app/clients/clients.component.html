@@ -1,18 +1,23 @@
 <div class="container">
-  <div class="flex justify-between items-center mb-4 hover-header transition-all duration-300  hover:shadow-lg hover:color-white mt-2">
+  <div class="flex justify-between items-center mb-4 hover-header transition-all duration-300 hover:shadow-lg hover:color-white mt-2">
     <h2 class="client-title">
       {{ 'CLIENTS_PAGE.TITLE' | translate }}
     </h2>
   </div>
-<app-toolbar
-  (refreshClients)="refreshClients()"
-  (searchTermChange)="onSearchChange($event)"
-></app-toolbar>  
 
-  
-<div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 mt-4">  
-    <mat-table [dataSource]="dataSource" class="w-full" matSort>
-      
+  <app-toolbar
+    (refreshClients)="refreshClients()"
+    (searchTermChange)="onSearchChange($event)"
+  ></app-toolbar>
+
+  <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 mt-4">
+    <!-- Loading Indicator -->
+    <div *ngIf="isLoading" class="p-12 text-center">
+      <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+    </div>
+
+    <!-- Table -->
+    <mat-table [dataSource]="dataSource" class="w-full" matSort *ngIf="!isLoading">
       <!-- Nom du Client Column -->
       <ng-container matColumnDef="clientName">
         <mat-header-cell *matHeaderCellDef mat-sort-header class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
@@ -24,14 +29,14 @@
       </ng-container>
 
       <!-- Téléphone Column -->
-   <ng-container matColumnDef="clientPhone">
-  <mat-header-cell *matHeaderCellDef mat-sort-header class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
-    {{ 'CLIENTS_PAGE.PHONE' | translate }}
-  </mat-header-cell>
-  <mat-cell *matCellDef="let client" class="px-6 py-4 text-gray-600">
-    {{ client.clientPhone | phone }}
-  </mat-cell>
-</ng-container>
+      <ng-container matColumnDef="clientPhone">
+        <mat-header-cell *matHeaderCellDef mat-sort-header class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
+          {{ 'CLIENTS_PAGE.PHONE' | translate }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let client" class="px-6 py-4 text-gray-600">
+          {{ client.clientPhone | phone }}
+        </mat-cell>
+      </ng-container>
 
       <!-- Adresse Column -->
       <ng-container matColumnDef="clientAddress">
@@ -60,17 +65,16 @@
         </mat-header-cell>
         <mat-cell *matCellDef="let client" class="px-8 py-4">
           <div class="flex gap-2">
-            <button mat-mini-fab color="primary" 
-                   class="yellow-button transition-all transform hover:scale-110"
-                   [matTooltip]="'CLIENTS_PAGE.EDIT_TOOLTIP' | translate"
-                   (click)="openUpdateModal(client)">
+            <button mat-mini-fab color="primary"
+                    class="yellow-button transition-all transform hover:scale-110"
+                    [matTooltip]="'CLIENTS_PAGE.EDIT_TOOLTIP' | translate"
+                    (click)="openUpdateModal(client)">
               <mat-icon>edit</mat-icon>
             </button>
-            
-            <button mat-mini-fab color="warn" 
-                   class="yellow-button transition-all transform hover:scale-110"
-                   [matTooltip]="'CLIENTS_PAGE.DELETE_TOOLTIP' | translate"
-                   (click)="deleteClient(client.id)">
+            <button mat-mini-fab color="warn"
+                    class="yellow-button transition-all transform hover:scale-110"
+                    [matTooltip]="'CLIENTS_PAGE.DELETE_TOOLTIP' | translate"
+                    (click)="deleteClient(client.id!)">
               <mat-icon>delete</mat-icon>
             </button>
           </div>
@@ -78,20 +82,24 @@
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="displayedColumns" class="border-b border-gray-200"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" 
-              class="transition-all hover:bg-gray-50 border-b border-gray-100 last:border-0"></mat-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" class="transition-all hover:bg-gray-50 border-b border-gray-100 last:border-0"></mat-row>
     </mat-table>
 
     <!-- Empty State -->
-   <div *ngIf="dataSource.data.length === 0 && !isLoading" class="p-12 text-center text-gray-500">
-  <mat-icon class="text-4xl mb-4 text-gray-300">people_outline</mat-icon>
-  <p class="text-lg">{{ 'CLIENTS_PAGE.NO_CLIENTS' | translate }}</p>
-</div>
+    <div *ngIf="dataSource.data.length === 0 && !isLoading" class="p-12 text-center text-gray-500">
+      <mat-icon class="text-4xl mb-4 text-gray-300">people_outline</mat-icon>
+      <p class="text-lg">{{ 'CLIENTS_PAGE.NO_CLIENTS' | translate }}</p>
+    </div>
 
     <!-- Paginator -->
-    <mat-paginator [length]="dataSource.data.length" [pageSize]="5" 
-    [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons
-    class="bg-gray-50 rounded-b-xl border-t border-gray-200">
-  </mat-paginator>
+    <mat-paginator
+      [length]="totalElements"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="[5, 10, 25, 100]"
+      (page)="onPageChange($event)"
+      showFirstLastButtons
+      class="bg-gray-50 rounded-b-xl border-t border-gray-200"
+      *ngIf="!isLoading">
+    </mat-paginator>
   </div>
 </div>

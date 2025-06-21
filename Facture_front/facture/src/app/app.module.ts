@@ -87,6 +87,7 @@ import { ListeFacturesComponent } from './liste-factures/liste-factures.componen
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { ModelSelectionModalComponentComponent } from './components/model-selection-modal-component/model-selection-modal-component.component';
+import { StatsComponent } from './components/stats/stats.component';
 
 
 
@@ -129,14 +130,15 @@ export function HttpLoaderFactory(http: HttpClient) {
     ListeFacturesComponent,
     ConfirmDialogComponent,
     ModelSelectionModalComponentComponent,
+    StatsComponent,
   ],
   imports: [
     MatMenuModule,
-    MatInputModule,   
+    MatInputModule,
     ReactiveFormsModule,
     AuthModule,
     BrowserModule,
-    DragDropModule, 
+    DragDropModule,
     BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
@@ -174,19 +176,19 @@ export function HttpLoaderFactory(http: HttpClient) {
     FormsModule,
     ToastrModule.forRoot(),
     TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient]
-      }
+        loader: {
+            provide: TranslateLoader,
+            useFactory: HttpLoaderFactory,
+            deps: [HttpClient]
+        }
     }),
     TableModule,
     ButtonModule,
     TagModule,
     InputTextModule,
     IconFieldModule,
-    InputIconModule
-  ],
+    InputIconModule,
+],
   providers: [
     provideClientHydration(withEventReplay()),
     provideAnimationsAsync(),

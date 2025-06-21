@@ -43,6 +43,8 @@
   "companyType_error": "Company type is required",
   "logo_error": "Company logo is required",
   "Partners List": "Partners List",
+  "Validated": "Validated",
+  "Not Validated": "Not Validated",
   "Name": "Name",
   "Status": "Status",
   "Actions": "Actions",
@@ -84,35 +86,46 @@
     "form": {
       "addTitle": "Add Employee",
       "title": "Edit Employee",
-      "name": {
+    "name": {
         "label": "Name *",
         "placeholder": "Enter the name",
-        "error": "Name is required."
+        "error": "Name is required.",
+        "minLength": "Name must be at least 2 characters.",
+        "error.pattern": "Name contains invalid characters."
       },
       "secondName": {
         "label": "Second Name *",
         "placeholder": "Enter the second name",
-        "error": "Second name is required."
+        "error": "Second name is required.",
+        "minLength": "Second name must be at least 2 characters.",
+        "error.pattern": "Second name contains invalid characters."
       },
       "job": {
         "label": "Job *",
         "placeholder": "Enter the job",
-        "error": "Job is required."
+        "error": "Job is required.",
+        "minLength": "Job title must be at least 2 characters.",
+        "error.pattern": "Job title contains invalid characters."
       },
       "phone": {
         "label": "Phone *",
         "placeholder": "Enter the phone number",
-        "error": "Phone is required."
+        "error": "Phone is required.",
+        "error.pattern": "Phone number must be 8 digits."
       },
       "email": {
         "label": "Email *",
         "placeholder": "Enter the email",
-        "error": "Please enter a valid email."
+        "error": "Please enter a valid email.",
+        "error.email": "Please enter a valid email address.",
+        "error.pattern": "Please enter a valid email address."
       },
       "department": {
         "label": "Department *",
         "placeholder": "Enter the department",
-        "error": "Department is required."
+        "error": "Department is required.",
+        "minLength": "Department must be at least 2 characters.",
+        "error.pattern": "Department contains invalid characters."
       },
       "buttons": {
         "cancel": "Cancel",
@@ -236,107 +249,111 @@
     "NO_CLIENTS": "No clients found",
     "PAGINATOR_LABEL": "Select page of clients"
   },
-  "DYNAMIC_MODAL": {
+ "DYNAMIC_MODAL": {
+  "ERROR": {
+    "TITLE": "Error",
+    "INVALID_FIELDS": "Please fill in all required fields",
+    "GENERIC": "An error occurred during addition",
+    "NETWORK": "Unable to connect to the server. Check your internet connection.",
+    "BAD_REQUEST": "Invalid data. Check the entered information.",
+    "NAME_REQUIRED": "Name is required",
+    "NAME_MINLENGTH": "Name must be at least 3 characters long"
+  },
+  "SUCCESS": {
+    "TITLE": "Success"
+  },
+  "SERVICE": {
     "ERROR": {
-      "TITLE": "Error",
-      "INVALID_FIELDS": "Please fill in all required fields",
-      "GENERIC": "An error occurred during addition",
-      "NETWORK": "Unable to connect to the server. Check your internet connection.",
-      "BAD_REQUEST": "Invalid data. Check the entered information.",
-      "NAME_REQUIRED": "Name is required",
-      "NAME_MINLENGTH": "Name must be at least 3 characters long"
+      "INVALID": "Please fill in all service fields"
     },
     "SUCCESS": {
-      "TITLE": "Success"
-    },
-    "SERVICE": {
-      "ERROR": {
-        "INVALID": "Please fill in all service fields"
-      },
-      "SUCCESS": {
-        "ADD": "Service added successfully"
-      }
-    },
-    "EMPLOYEE": {
-      "ERROR": {
-        "MISSING_PARTNER_ID": "partnerId is missing for the employee"
-      },
-      "SUCCESS": {
-        "ADD": "Employee added successfully"
-      }
-    },
-    "CLIENT": {
-      "SUCCESS": {
-        "ADD": "Client added successfully",
-        "UPDATE": "Client updated successfully",
-        "DELETE": "Client deleted successfully"
-      },
-      "ERROR": {
-        "INVALID_CLIENT_DATA": "Invalid client data or missing ID",
-        "MISSING_CLIENT_ID": "Missing client ID",
-        "UPDATE_FAILED": "Failed to update client",
-        "FETCH_FAILED": "Failed to load clients",
-        "DELETE_FAILED": "Failed to delete client"
-      },
-      "INFO": {
-        "NO_CHANGES": "No changes to save"
-      },
-      "WARNING": {
-        "INVALID_DATA": "Invalid client data detected",
-        "TITLE": "Warning"
-      },
-      "CONFIRM": {
-        "DELETE_CONFIRM": "Are you sure you want to delete this client?"
-      },
-      "form": {
-        "phone": {
-    "error": {
-      "pattern": "Invalid phone number format"
+      "ADD": "Service added successfully"
     }
   },
-  "email": {
-    "error": {
-      "email": "Please enter a valid email address"
+  "EMPLOYEE": {
+    "ERROR": {
+      "MISSING_PARTNER_ID": "partnerId is missing for the employee"
+    },
+    "SUCCESS": {
+      "ADD": "Employee added successfully"
     }
   },
-        "addTitle": "Add Client",
-        "updateTitle": "Update Client",
-        "clientName": {
-          "placeholder": "Enter the client name"
-        },
-        "phone": {
-          "placeholder": "Enter the phone number"
-        },
-        "address": {
-          "placeholder": "Enter the address"
-        },
-        "rib": {
-          "placeholder": "Enter the RIB"
-        },
-        "buttons": {
-          "cancel": "Cancel",
-          "save": "Save",
-          "saving": "Saving...",
-          "update": "Update",
-          "updating": "Updating..."
+  "CLIENT": {
+    "SUCCESS": {
+      "ADD": "Client added successfully",
+      "UPDATE": "Client updated successfully",
+      "DELETE": "Client deleted successfully"
+    },
+    "ERROR": {
+      "INVALID_CLIENT_DATA": "Invalid client data or missing ID",
+      "MISSING_CLIENT_ID": "Missing client ID",
+      "UPDATE_FAILED": "Failed to update client",
+      "FETCH_FAILED": "Failed to load clients",
+      "DELETE_FAILED": "Failed to delete client"
+    },
+    "INFO": {
+      "NO_CHANGES": "No changes to save"
+    },
+    "WARNING": {
+      "INVALID_DATA": "Invalid client data detected",
+      "TITLE": "Warning"
+    },
+    "CONFIRM": {
+      "DELETE_CONFIRM": "Are you sure you want to delete this client?"
+    },
+    "form": {
+      "phone": {
+        "error": {
+          "pattern": "Invalid phone number format"
         }
       },
-      "validation": {
-        "clientName": {
-          "required": "Name is required"
-        },
-        "phone": {
-          "required": "Phone is required"
-        },
-        "address": {
-          "required": "Address is required"
-        },
-        "rib": {
-          "required": "RIB is required"
+      "email": {
+        "error": {
+          "email": "Please enter a valid email address"
         }
+      },
+      "addTitle": "Add Client",
+      "updateTitle": "Update Client",
+      "clientName": {
+        "placeholder": "Enter the client name"
+      },
+      "phone": {
+        "placeholder": "Enter the phone number"
+      },
+      "address": {
+        "placeholder": "Enter the address"
+      },
+      "rib": {
+        "placeholder": "Enter the RIB"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "save": "Save",
+        "saving": "Saving...",
+        "update": "Update",
+        "updating": "Updating..."
+      }
+    },
+    "validation": {
+      "clientName": {
+        "required": "Name is required",
+        "minLength": "Name must be at least 3 characters long"
+      },
+      "phone": {
+        "required": "Phone is required",
+        "pattern": "phone number must be 8 digits long"
+      },
+      "address": {
+        "required": "Address is required",
+        "minlength": "Address must be at least 5 characters long"
+      },
+      "rib": {
+        "required": "RIB is required",
+        "minlength": "RIB must be at least 20 characters"
       }
     }
-  },
+  }
+},
   "INVOICE_TEMPLATES": {
     "TITLE": "Invoice Templates",
     "NO_TEMPLATES": {
@@ -492,6 +509,7 @@
       "PREVIEW": "Preview"
     },
     "ERRORS": {
+      "SELECT_CLIENT_REQUIRED": "Template name is required",
       "SELECT_TEMPLATE_REQUIRED": "Please select an invoice template",
       "SELECT_CLIENT_REQUIRED": "Please select a client",
       "SELECT_SERVICE_REQUIRED": "Please select a service",
@@ -630,7 +648,61 @@
       "LOAD_FAILED": "Failed to load invoices",
       "DELETE_FAILED": "Failed to delete invoice"
     }
+  },
+  
+ "stats": {
+    "title": "Dashboard",
+    "subtitle": "Overview of your invoices and revenue",
+    "metrics": {
+      "totalRevenue": "Total Revenue",
+      "revenueDescription": "All time revenue",
+      "totalInvoices": "Total Invoices",
+      "invoicesDescription": "Number of invoices"
+    },
+    "charts": {
+      "performance": "Performance Analytics",
+      "revenue": "Monthly Revenue {year}",
+      "clients": "Top Clients by Revenue",
+      "services": "Top Services by Revenue",
+      "templates": "Top Templates by Usage"
+    },
+    "loading": "Loading statistics...",
+    "error": "Failed to load statistics. Please try again later.",
+    "revenue": "Revenue",
+    "amount": "Amount (DT)",
+    "usage": "Usage Count",
+    "invoices": "invoices",
+    "clientId": "Client {id}",
+    "serviceId": "Service {id}",
+    "templateId": "Template {id}"
+  },
+  "months": {
+    "jan": "Jan",
+    "feb": "Feb",
+    "mar": "Mar",
+    "apr": "Apr",
+    "may": "May",
+    "jun": "Jun",
+    "jul": "Jul",
+    "aug": "Aug",
+    "sep": "Sep",
+    "oct": "Oct",
+    "nov": "Nov",
+    "dec": "Dec"
+  },
+  
+  "CONFIRM": {
+    "DELETE_TITLE": "Delete Confirmation",
+    "DELETE_TEXT": "Are you sure you want to delete this partner?",
+    "DELETE_CONFIRM": "Delete",
+    "DELETE_CANCEL": "Cancel",
+    "VALIDATE_TITLE": "Validation Confirmation",
+    "VALIDATE_TEXT": "Are you sure you want to validate this partner?",
+    "VALIDATE_CONFIRM": "Validate",
+    "VALIDATE_CANCEL": "Cancel"
   }
+
+
   
 
 }

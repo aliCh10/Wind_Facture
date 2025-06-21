@@ -10,7 +10,7 @@
     (searchTermChange)="onSearchTermChange($event)">
   </app-toolbar>
 
-  <div class=" rounded-xl shadow-lg overflow-hidden border border-gray-100 mt-4">
+  <div class="rounded-xl shadow-lg overflow-hidden border border-gray-100 mt-4">
     <mat-table [dataSource]="dataSource" class="w-full" matSort>
 
       <!-- Nom Column -->
@@ -19,7 +19,6 @@
           class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
           {{'employee.Name'|translate}}
         </mat-header-cell>
-
         <mat-cell *matCellDef="let employee" class="px-6 py-4 text-gray-800 font-medium">
           {{ employee.name }}
         </mat-cell>
@@ -29,7 +28,6 @@
       <ng-container matColumnDef="secondName">
         <mat-header-cell *matHeaderCellDef mat-sort-header
           class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
-
           {{'employee.Second Name'|translate}}
         </mat-header-cell>
         <mat-cell *matCellDef="let employee" class="px-6 py-4 text-gray-600">
@@ -38,27 +36,27 @@
       </ng-container>
 
       <!-- Email Column -->
-     <!-- Email Column -->
-<ng-container matColumnDef="email">
-  <mat-header-cell *matHeaderCellDef mat-sort-header
-    class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
-    {{'employee.Email'|translate}}
-  </mat-header-cell>
-  <mat-cell *matCellDef="let employee" class="px-6 py-4 text-gray-600">
-    {{ employee.email }}
-  </mat-cell>
-</ng-container>
+      <ng-container matColumnDef="email">
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
+          {{'employee.Email'|translate}}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let employee" class="px-6 py-4 text-gray-600">
+          {{ employee.email }}
+        </mat-cell>
+      </ng-container>
 
-<!-- Téléphone Column -->
-<ng-container matColumnDef="tel">
-  <mat-header-cell *matHeaderCellDef mat-sort-header
-    class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
-    {{'employee.Phone'|translate}}
-  </mat-header-cell>
-  <mat-cell *matCellDef="let employee" class="px-6 py-4 text-gray-600">
-    {{ employee.tel | phone }}
-  </mat-cell>
-</ng-container>
+      <!-- Téléphone Column -->
+      <ng-container matColumnDef="tel">
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
+          {{'employee.Phone'|translate}}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let employee" class="px-6 py-4 text-gray-600">
+          {{ employee.tel | phone }}
+        </mat-cell>
+      </ng-container>
+
       <!-- Department Column -->
       <ng-container matColumnDef="department">
         <mat-header-cell *matHeaderCellDef mat-sort-header
@@ -69,16 +67,18 @@
           {{ employee.department }}
         </mat-cell>
       </ng-container>
+
       <!-- Post Column -->
       <ng-container matColumnDef="post">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
+   <mat-header-cell *matHeaderCellDef mat-sort-header
+             class="!bg-[#252437] !text-[#FFD700] px-6 py-4 font-semibold uppercase text-sm">
           {{'employee.Job'|translate}}
         </mat-header-cell>
         <mat-cell *matCellDef="let employee" class="px-6 py-4 text-gray-600">
           {{ employee.post }}
         </mat-cell>
       </ng-container>
+
       <!-- Actions Column -->
       <ng-container matColumnDef="actions">
         <mat-header-cell *matHeaderCellDef
@@ -87,14 +87,10 @@
         </mat-header-cell>
         <mat-cell *matCellDef="let employee" class="px-8 py-4">
           <div class="flex gap-2">
-            <!-- Edit button -->
-            <!-- Edit button -->
             <button mat-mini-fab color="primary" class="yellow-button transition-all transform hover:scale-110"
               [matTooltip]="'Modifier'" (click)="openUpdateModal(employee)">
               <mat-icon>edit</mat-icon>
             </button>
-
-            <!-- Delete button -->
             <button mat-mini-fab color="warn" class="yellow-button transition-all transform hover:scale-110"
               [matTooltip]="'Supprimer'" (click)="deleteEmployee(employee.id)">
               <mat-icon>delete</mat-icon>
@@ -109,17 +105,27 @@
         class="transition-all hover:bg-gray-50 border-b border-gray-100 last:border-0"></mat-row>
     </mat-table>
 
-
     <!-- Empty State -->
- <!-- Empty State -->
-<div *ngIf="dataSource.filteredData.length === 0" class="p-12 text-center text-gray-500">
-  <mat-icon class="text-4xl mb-4 text-gray-300">people_outline</mat-icon>
-  <p class="text-lg">{{'employee.NO_RESULTS' | translate}}</p>
-</div>
+    <div *ngIf="dataSource.data.length === 0 && !isLoading" class="p-12 text-center text-gray-500">
+      <mat-icon class="text-4xl mb-4 text-gray-300">people_outline</mat-icon>
+      <p class="text-lg">{{'employee.NO_RESULTS' | translate}}</p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="p-12 text-center text-gray-500">
+      <mat-spinner class="mx-auto"></mat-spinner>
+      <p class="text-lg">{{'employee.LOADING' | translate}}</p>
+    </div>
+
     <!-- Paginator -->
-    <mat-paginator [length]="dataSource.data.length" [pageSize]="5" 
-    [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons
-    class="bg-gray-50 rounded-b-xl border-t border-gray-200">
-  </mat-paginator>
+    <mat-paginator
+      [length]="totalElements"
+      [pageSize]="pageSize"
+      [pageIndex]="pageIndex"
+      [pageSizeOptions]="[5, 10, 25, 100]"
+      showFirstLastButtons
+      (page)="onPageChange($event)"
+      class="bg-gray-50 rounded-b-xl border-t border-gray-200">
+    </mat-paginator>
   </div>
-</div>
+</div>  

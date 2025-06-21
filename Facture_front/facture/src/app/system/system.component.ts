@@ -4,12 +4,15 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../components/confirm-dialog/confirm-dialog.component';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-system',
   standalone: false,
   templateUrl: './system.component.html',
-  styleUrls: ['./system.component.css']
+  styleUrls: ['./system.component.css'],
 })
 export class SystemComponent implements OnInit, AfterViewInit {
   sidebarMenuItems = [
@@ -25,41 +28,57 @@ export class SystemComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  pageSize = 5;
+  pageIndex = 0;
+  totalElements = 0;
+  sort = 'name,asc';
+  searchTerm = '';
+  private searchSubject = new Subject<string>();
+
   constructor(
     private systemService: SystemService,
     private translate: TranslateService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private dialog: MatDialog
   ) {
-    translate.setDefaultLang('fr');
-    translate.use('fr');
+    this.translate.setDefaultLang('fr');
+    this.translate.use('fr');
   }
 
   ngOnInit(): void {
     this.translate.setDefaultLang('fr');
     this.translate.use('fr').subscribe(() => {
       console.log('Language set to French');
-      console.log('PAGINATOR.RANGE:', this.translate.instant('PAGINATOR.RANGE', { start: 1, end: 5, total: 10 }));
-      console.log('PAGINATOR.ITEMS_PER_PAGE:', this.translate.instant('PAGINATOR.ITEMS_PER_PAGE'));
-      console.log('Partners List:', this.translate.instant('Partners List'));
     });
+
+    // Debounce search input to avoid excessive API calls
+    this.searchSubject.pipe(debounceTime(300), distinctUntilChanged()).subscribe((searchTerm) => {
+      this.searchTerm = searchTerm;
+      this.pageIndex = 0; // Reset to first page on search
+      this.getPartners();
+    });
+
     this.getPartners();
-    console.log(this.partners);
   }
 
   ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
+    this.paginator.page.subscribe((event) => {
+      this.pageIndex = event.pageIndex;
+      this.pageSize = event.pageSize;
+      this.getPartners();
+    });
   }
 
   getPartners(): void {
-    this.systemService.getPartners().subscribe(
+    this.systemService.getPartners(this.pageIndex, this.pageSize, this.sort, this.searchTerm || undefined).subscribe(
       (data) => {
-        this.partners = data;
-        this.dataSource.data = data;
+        this.partners = data.content;
+        this.dataSource.data = this.partners;
         this.isTableEmpty = this.partners.length === 0;
-
-        if (this.paginator) {
-          this.dataSource.paginator = this.paginator;
-        }
+        this.totalElements = data.totalElements;
+        this.paginator.length = this.totalElements;
+        this.paginator.pageIndex = this.pageIndex;
+        this.paginator.pageSize = this.pageSize;
       },
       (error) => {
         this.toastr.error(this.translate.instant('ERROR.FETCH_PARTNERS'), this.translate.instant('ERROR.TITLE'));
@@ -68,72 +87,80 @@ export class SystemComponent implements OnInit, AfterViewInit {
     );
   }
 
+  onSearch(searchTerm: string): void {
+    this.searchSubject.next(searchTerm);
+  }
+
   isPartnerValidated(partner: any): boolean {
     return partner.validated;
   }
 
   validatePartner(id: number): void {
-    const confirmMessage = this.translate.instant('CONFIRM.VALIDATE_TEXT');
-    if (confirm(confirmMessage)) {
-      this.systemService.validatePartner(id).subscribe(
-        (response) => {
-          this.toastr.success(
-            this.translate.instant(response.message || 'SUCCESS.VALIDATE_PARTNER'),
-            this.translate.instant('SUCCESS.TITLE')
-          );
-          const partnerIndex = this.partners.findIndex(p => p.id === id);
-          if (partnerIndex !== -1) {
-            this.partners[partnerIndex].validated = true;
-            this.partners[partnerIndex].status = true;
-            this.dataSource.data = [...this.partners];
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: this.translate.instant('CONFIRM.VALIDATE_TITLE'),
+        message: this.translate.instant('CONFIRM.VALIDATE_TEXT'),
+        confirmText: this.translate.instant('CONFIRM.VALIDATE_CONFIRM'),
+        cancelText: this.translate.instant('CONFIRM.VALIDATE_CANCEL'),
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.systemService.validatePartner(id).subscribe(
+          (response) => {
+            this.toastr.success(
+              this.translate.instant(response.message || 'SUCCESS.VALIDATE_PARTNER'),
+              this.translate.instant('SUCCESS.TITLE')
+            );
+            this.getPartners(); // Refresh the list
+          },
+          (error) => {
+            this.toastr.error(
+              this.translate.instant(error.error?.message || 'ERROR.VALIDATE_FAILED'),
+              this.translate.instant('ERROR.TITLE')
+            );
+            console.error('Error validating partner:', error);
           }
-        },
-        (error) => {
-          this.toastr.error(
-            this.translate.instant(error.error?.message || 'ERROR.VALIDATE_FAILED'),
-            this.translate.instant('ERROR.TITLE')
-          );
-          console.error('Error validating partner:', error);
-        }
-      );
-    } else {
-      this.toastr.info(
-        this.translate.instant('INFO.VALIDATE_CANCELLED'),
-        this.translate.instant('INFO.TITLE')
-      );
-    }
+        );
+      } else {
+        this.toastr.info(this.translate.instant('INFO.VALIDATE_CANCELLED'), this.translate.instant('INFO.TITLE'));
+      }
+    });
   }
 
   deletePartner(id: number): void {
-    const confirmMessage = this.translate.instant('CONFIRM.DELETE_TEXT');
-    if (confirm(confirmMessage)) {
-      this.systemService.deletePartner(id).subscribe(
-        (response) => {
-          this.toastr.success(
-            this.translate.instant(response.message || 'SUCCESS.DELETE_PARTNER'),
-            this.translate.instant('SUCCESS.TITLE')
-          );
-          this.getPartners();
-        },
-        (error) => {
-          this.toastr.error(
-            this.translate.instant(error.error?.message || 'ERROR.DELETE_FAILED'),
-            this.translate.instant('ERROR.TITLE')
-          );
-          console.error('Error deleting partner:', error);
-        }
-      );
-    } else {
-      this.toastr.info(
-        this.translate.instant('INFO.DELETE_CANCELLED'),
-        this.translate.instant('INFO.TITLE')
-      );
-    }
-  }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: this.translate.instant('factures.CONFIRM.DELETE_TITLE'),
+        message: this.translate.instant('CONFIRM.DELETE_TEXT'),
+        cancelText: this.translate.instant('factures.CONFIRM.CANCEL'),
+        confirmText: this.translate.instant('factures.CONFIRM.OK'),
+      },
+    });
 
-  onPageChange(event: any): void {
-    this.dataSource.paginator!.pageIndex = event.pageIndex;
-    this.dataSource.paginator!.pageSize = event.pageSize;
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.systemService.deletePartner(id).subscribe(
+          (response) => {
+            this.toastr.success(
+              this.translate.instant(response.message || 'SUCCESS.DELETE_PARTNER'),
+              this.translate.instant('SUCCESS.TITLE')
+            );
+            this.getPartners();
+          },
+          (error) => {
+            this.toastr.error(
+              this.translate.instant(error.error?.message || 'ERROR.DELETE_FAILED'),
+              this.translate.instant('ERROR.TITLE')
+            );
+            console.error('Error deleting partner:', error);
+          }
+        );
+      } else {
+        this.toastr.info(this.translate.instant('INFO.DELETE_CANCELLED'), this.translate.instant('INFO.TITLE'));
+      }
+    });
   }
 
   isNavCollapsed = false;

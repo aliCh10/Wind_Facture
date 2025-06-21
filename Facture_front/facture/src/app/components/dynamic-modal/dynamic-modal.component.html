@@ -1,8 +1,18 @@
 <!-- Employee Modal -->
 <div *ngIf="data.type === 'employe'" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
   <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-2xl w-full mx-auto border-t-4 border-[#FFD700] transform transition-all duration-300 animate-slideUp">
+    <!-- Loading Overlay -->
+    <div *ngIf="isLoading" class="absolute inset-0 bg-[#FFD700] bg-opacity-30 flex items-center justify-center z-10 rounded-2xl animate-fadeIn">
+      <div class="text-center">
+        <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+        <p class="mt-2 text-gray-800 font-semibold" translate>employee.form.buttons.addSaving</p>
+      </div>
+    </div>
+
     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-3xl font-bold text-gray-800" translate>employee.form.addTitle</h2>
+      <h2 class="text-3xl font-bold text-gray-800" translate>
+        {{ data.employee ? 'employee.form.editTitle' : 'employee.form.addTitle' }}
+      </h2>
       <button (click)="onClose()" class="text-gray-500 hover:text-gray-700 transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -10,7 +20,7 @@
       </button>
     </div>
 
-    <form [formGroup]="employeeForm">
+    <form [formGroup]="employeeForm" *ngIf="!isLoading">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Name -->
         <div class="space-y-1">
@@ -20,6 +30,7 @@
             [placeholder]="'employee.form.name.placeholder' | translate">
           <div *ngIf="employeeForm.get('name')?.touched && employeeForm.get('name')?.invalid" class="text-red-500 text-xs mt-1">
             <span *ngIf="employeeForm.get('name')?.hasError('required')" translate>employee.form.name.error</span>
+            <span *ngIf="employeeForm.get('name')?.hasError('minlength')" translate>employee.form.name.minLength</span>
           </div>
         </div>
 
@@ -31,6 +42,7 @@
             [placeholder]="'employee.form.secondName.placeholder' | translate">
           <div *ngIf="employeeForm.get('secondName')?.touched && employeeForm.get('secondName')?.invalid" class="text-red-500 text-xs mt-1">
             <span *ngIf="employeeForm.get('secondName')?.hasError('required')" translate>employee.form.secondName.error</span>
+            <span *ngIf="employeeForm.get('secondName')?.hasError('minlength')" translate>employee.form.secondName.minLength</span>
           </div>
         </div>
 
@@ -42,6 +54,7 @@
             [placeholder]="'employee.form.job.placeholder' | translate">
           <div *ngIf="employeeForm.get('post')?.touched && employeeForm.get('post')?.invalid" class="text-red-500 text-xs mt-1">
             <span *ngIf="employeeForm.get('post')?.hasError('required')" translate>employee.form.job.error</span>
+            <span *ngIf="employeeForm.get('post')?.hasError('minlength')" translate>employee.form.job.minLength</span>
           </div>
         </div>
 
@@ -53,7 +66,7 @@
             [placeholder]="'employee.form.phone.placeholder' | translate">
           <div *ngIf="employeeForm.get('tel')?.touched && employeeForm.get('tel')?.invalid" class="text-red-500 text-xs mt-1">
             <span *ngIf="employeeForm.get('tel')?.hasError('required')" translate>employee.form.phone.error</span>
-            <span *ngIf="employeeForm.get('tel')?.hasError('pattern')" translate>DYNAMIC_MODAL.EMPLOYEE.form.phone.error.pattern</span>
+            <span *ngIf="employeeForm.get('tel')?.hasError('pattern')" translate>employee.form.phone.error.pattern</span>
           </div>
         </div>
 
@@ -65,7 +78,7 @@
             [placeholder]="'employee.form.email.placeholder' | translate">
           <div *ngIf="employeeForm.get('email')?.touched && employeeForm.get('email')?.invalid" class="text-red-500 text-xs mt-1">
             <span *ngIf="employeeForm.get('email')?.hasError('required')" translate>employee.form.email.error</span>
-            <span *ngIf="employeeForm.get('email')?.hasError('email')" translate>DYNAMIC_MODAL.EMPLOYEE.form.email.error.email</span>
+            <span *ngIf="employeeForm.get('email')?.hasError('email') || employeeForm.get('email')?.hasError('pattern')" translate>employee.form.email.error.email</span>
           </div>
         </div>
 
@@ -77,8 +90,14 @@
             [placeholder]="'employee.form.department.placeholder' | translate">
           <div *ngIf="employeeForm.get('department')?.touched && employeeForm.get('department')?.invalid" class="text-red-500 text-xs mt-1">
             <span *ngIf="employeeForm.get('department')?.hasError('required')" translate>employee.form.department.error</span>
+            <span *ngIf="employeeForm.get('department')?.hasError('minlength')" translate>employee.form.department.minLength</span>
           </div>
         </div>
+      </div>
+
+      <!-- Debug Form Status -->
+      <div class="text-sm text-gray-500 mt-2">
+        Form Valid: {{ employeeForm.valid }} | Form Errors: {{ employeeForm.errors | json }}
       </div>
 
       <!-- Buttons -->
@@ -90,10 +109,12 @@
         <button type="button" (click)="onSave()" [disabled]="isLoading || employeeForm.invalid"
           class="save-button px-8 py-3 bg-gradient-to-r from-[#FFD700] to-[#FFB600] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] flex items-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed">
           <svg *ngIf="!isLoading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 0 011.414 0z" clip-rule="evenodd" />
           </svg>
-          <span *ngIf="!isLoading" translate>employee.form.buttons.addSave</span>
-          <span *ngIf="isLoading" class="loading" translate>employee.form.buttons.addSaving</span>
+          <span *ngIf="!isLoading" translate>
+            {{ data.employee ? 'employee.form.buttons.save' : 'employee.form.buttons.addSave' }}
+          </span>
+          <span *ngIf="isLoading" class="append-dot" translate>employee.form.buttons.addSaving</span>
         </button>
       </div>
     </form>
@@ -103,6 +124,14 @@
 <!-- Client Modal -->
 <div *ngIf="data.type === 'client'" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
   <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-2xl w-full mx-auto border-t-4 border-[#FFD700] transform transition-all duration-300 animate-slideUp">
+    <!-- Loading Overlay -->
+    <div *ngIf="isLoading" class="absolute inset-0 bg-[#FFD700] bg-opacity-30 flex items-center justify-center z-10 rounded-2xl animate-fadeIn">
+      <div class="text-center">
+        <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+        <p class="mt-2 text-gray-800 font-semibold" translate>DYNAMIC_MODAL.CLIENT.form.buttons.saving</p>
+      </div>
+    </div>
+
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-3xl font-bold text-gray-800" translate>DYNAMIC_MODAL.CLIENT.form.addTitle</h2>
       <button (click)="onClose()" class="text-gray-500 hover:text-gray-700 transition-colors">
@@ -112,7 +141,7 @@
       </button>
     </div>
 
-    <form [formGroup]="clientForm">
+    <form [formGroup]="clientForm" *ngIf="!isLoading">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Client Name -->
         <div class="space-y-1">
@@ -146,18 +175,19 @@
             [placeholder]="'DYNAMIC_MODAL.CLIENT.form.address.placeholder' | translate">
           <div *ngIf="clientForm.get('clientAddress')?.touched && clientForm.get('clientAddress')?.invalid" class="text-red-500 text-xs mt-1">
             <span *ngIf="clientForm.get('clientAddress')?.hasError('required')" translate>DYNAMIC_MODAL.CLIENT.validation.address.required</span>
+            <span *ngIf="clientForm.get('clientAddress')?.hasError('minlength')" translate>DYNAMIC_MODAL.CLIENT.validation.address.minlength</span>
           </div>
         </div>
 
         <!-- RIB -->
         <div class="space-y-1 md:col-span-2">
           <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>CLIENTS_PAGE.RIB</label>
-          <input matInput formControlName="clientRIB" required
+          <input matInput formControlName="rib" required
             class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
             [placeholder]="'DYNAMIC_MODAL.CLIENT.form.rib.placeholder' | translate">
-          <div *ngIf="clientForm.get('clientRIB')?.touched && clientForm.get('clientRIB')?.invalid" class="text-red-500 text-xs mt-1">
-            <span *ngIf="clientForm.get('clientRIB')?.hasError('required')" translate>DYNAMIC_MODAL.CLIENT.validation.rib.required</span>
-            <span *ngIf="clientForm.get('clientRIB')?.hasError('pattern')" translate>DYNAMIC_MODAL.CLIENT.validation.rib.pattern</span>
+          <div *ngIf="clientForm.get('rib')?.touched && clientForm.get('rib')?.invalid" class="text-red-500 text-xs mt-1">
+            <span *ngIf="clientForm.get('rib')?.hasError('required')" translate>DYNAMIC_MODAL.CLIENT.validation.rib.required</span>
+            <span *ngIf="clientForm.get('rib')?.hasError('minlength')" translate>DYNAMIC_MODAL.CLIENT.validation.rib.minlength</span>
           </div>
         </div>
       </div>
@@ -171,10 +201,10 @@
         <button type="button" (click)="onSave()" [disabled]="isLoading || clientForm.invalid"
           class="save-button px-8 py-3 bg-gradient-to-r from-[#FFD700] to-[#FFB600] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] flex items-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed">
           <svg *ngIf="!isLoading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 0 011.414 0z" clip-rule="evenodd" />
           </svg>
           <span *ngIf="!isLoading" translate>DYNAMIC_MODAL.CLIENT.form.buttons.save</span>
-          <span *ngIf="isLoading" class="loading" translate>DYNAMIC_MODAL.CLIENT.form.buttons.saving</span>
+          <span *ngIf="isLoading" class="append-dot" translate>DYNAMIC_MODAL.CLIENT.form.buttons.saving</span>
         </button>
       </div>
     </form>
@@ -184,6 +214,14 @@
 <!-- Service Modal -->
 <div *ngIf="data.type === 'service'" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
   <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-2xl w-full mx-auto border-t-4 border-[#FFD700] transform transition-all duration-300 animate-slideUp">
+    <!-- Loading Overlay -->
+    <div *ngIf="isLoading" class="absolute inset-0 bg-[#FFD700] bg-opacity-30 flex items-center justify-center z-10 rounded-2xl animate-fadeIn">
+      <div class="text-center">
+        <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+        <p class="mt-2 text-gray-800 font-semibold" translate>SERVICES_PAGE.form.buttons.addSaving</p>
+      </div>
+    </div>
+
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-3xl font-bold text-gray-800" translate>SERVICES_PAGE.form.addTitle</h2>
       <button (click)="onClose()" class="text-gray-500 hover:text-gray-700 transition-colors">
@@ -217,18 +255,6 @@
           </div>
         </div>
 
-        <!-- Quantity -->
-        <div class="space-y-1">
-          <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>SERVICES_PAGE.form.serviceQuantity.label</label>
-          <input matInput type="number" formControlName="serviceQuantity" required min="1"
-            class="mt-1 block w-full px-4 py-3 border-0 bg-gray-50 rounded-xl shadow-sm focus:ring-2 focus:ring-[#FFD700] focus:bg-white focus:shadow-md transition-all duration-200 placeholder-gray-400"
-            [placeholder]="'SERVICES_PAGE.form.serviceQuantity.placeholder' | translate">
-          <div *ngIf="serviceForm.get('serviceQuantity')?.touched && serviceForm.get('serviceQuantity')?.invalid" class="text-red-500 text-xs mt-1">
-            <span *ngIf="serviceForm.get('serviceQuantity')?.hasError('required')" translate>SERVICES_PAGE.form.serviceQuantity.error.required</span>
-            <span *ngIf="serviceForm.get('serviceQuantity')?.hasError('min')" translate>SERVICES_PAGE.form.serviceQuantity.error.min</span>
-          </div>
-        </div>
-
         <!-- Price -->
         <div class="space-y-1">
           <label class="block text-sm font-semibold text-gray-600 uppercase tracking-wider" translate>SERVICES_PAGE.form.servicePrice.label</label>
@@ -251,10 +277,10 @@
         <button type="button" (click)="onSave()" [disabled]="isLoading || serviceForm.invalid"
           class="save-button px-8 py-3 bg-gradient-to-r from-[#FFD700] to-[#FFB600] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] flex items-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed">
           <svg *ngIf="!isLoading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 0 011.414 0z" clip-rule="evenodd" />
           </svg>
           <span *ngIf="!isLoading" translate>SERVICES_PAGE.form.buttons.addSave</span>
-          <span *ngIf="isLoading" class="loading" translate>SERVICES_PAGE.form.buttons.addSaving</span>
+          <span *ngIf="isLoading" class="append-dot" translate>SERVICES_PAGE.form.buttons.addSaving</span>
         </button>
       </div>
     </form>
